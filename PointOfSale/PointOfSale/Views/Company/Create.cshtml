@@ -1,0 +1,63 @@
+﻿@{ Layout = null; }
+
+@model POS.DataAccessLayer.Models.Company.CompanyModel
+
+<form method="post" asp-action="Create" id="companyForm" enctype="multipart/form-data" novalidate>
+    <div class="row">
+        <input type="hidden" asp-for="CompanyId" />
+        <input type="hidden" asp-for="Logo" />
+        <div class="col-md-6 form-group">
+            <label>Name</label>
+            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Arabic Name</label>
+            <input type="text" asp-for="ArabicName" class="form-control" maxlength="160" />
+            <span asp-validation-for="ArabicName" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Email</label>
+            <input type="email" asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Contact #</label>
+            <input type="text" asp-for="ContactNo" class="form-control" />
+            <span asp-validation-for="ContactNo" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Fax #</label>
+            <input type="text" asp-for="FaxNo" class="form-control" />
+            <span asp-validation-for="FaxNo" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>CR #</label>
+            <input type="text" asp-for="CrNumber" class="form-control" />
+            <span asp-validation-for="CrNumber" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Tax #</label>
+            <input type="text" asp-for="TaxNumber" class="form-control" />
+            <span asp-validation-for="TaxNumber" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Logo</label>
+            <input type="file" name="file" class="form-control" />
+        </div>
+        <div class="col-md-12 form-group">
+            <label>Address</label>
+            <textarea asp-for="Address" class="form-control" maxlength="1000" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="col-md-12 form-group">
+            <label>Thank You Note</label>
+            <textarea asp-for="ThankyouNote" class="form-control" maxlength="500" />
+            <span asp-validation-for="ThankyouNote" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>

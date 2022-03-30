@@ -1,0 +1,18 @@
+﻿@{ Layout = null; }
+
+@model POS.DataAccessLayer.Models.Payment.PaymentTypeModel
+
+<form method="post" asp-action="Create" id="companyForm" enctype="multipart/form-data" novalidate>
+    <div class="row">
+        <input type="hidden" asp-for="PaymentId" />
+        <div class="col-md-6 form-group">
+            <label>Name</label>
+            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>

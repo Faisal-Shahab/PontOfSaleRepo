@@ -1,0 +1,33 @@
+﻿@{ Layout = null; }
+
+@model POS.DataAccessLayer.Models.Subscriptions.SubscriptionModel
+
+<form method="post" asp-action="Create" id="subscriptionForm" novalidate>
+    <div class="row">
+        <input type="hidden" asp-for="SubscriptionId" />
+        <div class="col-md-6 form-group">
+            <label>Name</label>
+            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Arabic Name</label>
+            <input type="text" asp-for="ArabicName" class="form-control" maxlength="160" />
+            <span asp-validation-for="ArabicName" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Max Accounts</label>
+            <input type="text" asp-for="MaxAccounts" class="form-control" />
+            <span asp-validation-for="MaxAccounts" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Max Orders</label>
+            <input type="text" asp-for="MaxOrders" class="form-control" />
+            <span asp-validation-for="MaxOrders" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>

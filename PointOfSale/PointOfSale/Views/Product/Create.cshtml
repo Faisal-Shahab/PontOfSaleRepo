@@ -1,0 +1,77 @@
+﻿@{ Layout = null; }
+
+@model PointOfSale.Model.ProductViewModel
+
+<form method="post" asp-action="Create" id="categoryForm" novalidate>
+    <div class="row">
+        <input type="hidden" asp-for="ProductId" />
+        <div class="col-md-6 form-group">
+            <label>Company</label>
+            <select asp-for="CompanyId" asp-items="@(new SelectList(ViewBag.Companies,"Value","Text"))" class="form-control">
+                <option value="0">Select</option>
+            </select>
+            <span asp-validation-for="CompanyId" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Category Id</label>
+            <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,"Value","Text"))" class="form-control">
+                <option value="0">Select</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Name</label>
+            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Arabic Name</label>
+            <input type="text" asp-for="ArabicName" class="form-control" maxlength="500" />
+            <span asp-validation-for="ArabicName" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Size</label>
+            <input type="text" asp-for="Size" class="form-control" maxlength="15" />
+            <span asp-validation-for="Size" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Color</label>
+            <input type="text" asp-for="Color" class="form-control" maxlength="60" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Quantity</label>
+            <input type="text" asp-for="Quantity" class="form-control" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Cost Price</label>
+            <input type="text" asp-for="CostPrice" class="form-control" />
+            <span asp-validation-for="CostPrice" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Sale Price</label>
+            <input type="text" asp-for="SalePrice" class="form-control" />
+            <span asp-validation-for="SalePrice" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Discout Percentage</label>
+            <input type="text" asp-for="DiscoutPercentage" class="form-control" />
+            <span asp-validation-for="DiscoutPercentage" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Bar code</label>
+            <input type="text" asp-for="Barcode" class="form-control" maxlength="100" />
+            <span asp-validation-for="Barcode" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Is Tax Applied</label>
+            <input type="checkbox" asp-for="IsTaxApplied" />
+            <span asp-validation-for="IsTaxApplied" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>

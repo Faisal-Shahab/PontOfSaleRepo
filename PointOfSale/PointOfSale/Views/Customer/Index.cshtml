@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>List of Customers</h4>
+    </div>
+    <div class="col-md-6 text-right">
+        <button id="add-new" class="btn btn-primary btn-sm">Add</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered" id="customerDataTable">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Customer Name</td>
+                    <td>Company Name</td>
+                    <td>Contact#</td>
+                    <td>Address</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<!--begin::Modal-->
+
+<partial name="_modal">
+    <!--end::Modal-->
+
+    @section scripts{
+
+        <script src="~/js/utils/datatable.js"></script>
+        <script src="~/js/pages/customer.js" asp-append-version="true"></script>
+    }

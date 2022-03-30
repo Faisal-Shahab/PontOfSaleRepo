@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>List of Products</h4>
+    </div>
+    <div class="col-md-6 text-right">
+        <button id="add-new" class="btn btn-primary btn-sm">Add</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered" id="productDataTable">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Product Name</td>
+                    <td>Company Name</td>
+                    <td>Category Name</td>
+                    <td>Qty</td>
+                    <td>Cost Price</td>
+                    <td>Sale Price</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<!--begin::Modal-->
+
+<partial name="_modal">
+    <!--end::Modal-->
+
+    @section scripts{
+
+        <script src="~/js/utils/datatable.js"></script>
+        <script src="~/js/pages/product.js" asp-append-version="true"></script>
+    }

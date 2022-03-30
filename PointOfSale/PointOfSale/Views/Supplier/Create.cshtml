@@ -1,0 +1,44 @@
+﻿@{ Layout = null; }
+
+@model POS.DataAccessLayer.Models.SupplierModel
+<form method="post" asp-action="Create" id="supplierForm" novalidate>
+    <div class="row">
+        <input type="hidden" asp-for="SupplierId" />
+        @*<div class="col-md-6 form-group">
+            <label>Company</label>
+            <select asp-for="CompanyId" asp-items="@(new SelectList(ViewBag.Companies,"Value","Text"))" class="form-control">
+                <option value="0">Select</option>
+            </select>
+            <span asp-validation-for="CompanyId" class="text-danger"></span>
+        </div>*@
+        <div class="col-md-6 form-group">
+            <label>Name</label>
+            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Email</label>
+            <input type="email" asp-for="Email" class="form-control" maxlength="40" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Contact#</label>
+            <input type="text" asp-for="ContactNo" class="form-control" maxlength="16" />
+            <span asp-validation-for="ContactNo" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Balance</label>
+            <input type="text" asp-for="Balance" class="form-control" />
+            <span asp-validation-for="Balance" class="text-danger"></span>
+        </div>
+        <div class="col-md-12 form-group">
+            <label>Address</label>
+            <textarea asp-for="Address" class="form-control" maxlength="500">@Model.Address</textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>
