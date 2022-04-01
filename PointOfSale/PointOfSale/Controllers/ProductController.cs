@@ -57,8 +57,7 @@ namespace PointOfSale.Controllers
         [HttpPost]
         public async Task<JsonResult> Create(ProductViewModel model, string user)
         {
-            bool result = false; ModelState.Remove("ProductId");
-
+            bool result = false; ModelState.Remove("ProductId");            
             if (ModelState.IsValid)
             {
                 if (model.ProductId > 0)

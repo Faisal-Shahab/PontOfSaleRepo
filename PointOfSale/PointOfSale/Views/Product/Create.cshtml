@@ -4,14 +4,7 @@
 
 <form method="post" asp-action="Create" id="categoryForm" novalidate>
     <div class="row">
-        <input type="hidden" asp-for="ProductId" />
-        <div class="col-md-6 form-group">
-            <label>Company</label>
-            <select asp-for="CompanyId" asp-items="@(new SelectList(ViewBag.Companies,"Value","Text"))" class="form-control">
-                <option value="0">Select</option>
-            </select>
-            <span asp-validation-for="CompanyId" class="text-danger"></span>
-        </div>
+        <input type="hidden" asp-for="ProductId" />        
         <div class="col-md-6 form-group">
             <label>Category Id</label>
             <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,"Value","Text"))" class="form-control">
