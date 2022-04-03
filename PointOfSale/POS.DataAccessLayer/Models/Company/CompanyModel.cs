@@ -1,5 +1,6 @@
 ﻿using POS.DataAccessLayer.Models.Category;
 using POS.DataAccessLayer.Models.Customer;
+using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
 using System;
@@ -44,5 +45,7 @@ namespace POS.DataAccessLayer.Models.Company
         public virtual ICollection<CategoryModel> Categories { get; set; }
         public virtual ICollection<ProductModel> Products { get; set; }
         public virtual ICollection<CompanySubscriptionModel> CompanySubscriptions { get; set; }
+        public virtual ICollection<SaleOrder> SaleOrders { get; set; }
+        public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
     }
 }

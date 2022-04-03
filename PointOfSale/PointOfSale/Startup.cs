@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Services;
 
 namespace PointOfSale
@@ -30,31 +31,28 @@ namespace PointOfSale
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<AppDbContext>
-                (
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-                );
+            (options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
                 options.Lockout.MaxFailedAccessAttempts = 0;
             }).AddEntityFrameworkStores<AppDbContext>()
                .AddDefaultTokenProviders()
                .AddRoleManager<RoleManager<IdentityRole>>();
+
+
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddScoped<IProductServices, ProductServices>();
             services.AddScoped<IDropdownsServices, DropdownsServices>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
 
         }
 

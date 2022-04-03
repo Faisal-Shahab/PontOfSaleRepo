@@ -26,5 +26,6 @@ namespace POS.DataAccessLayer.Models.Customer
         public DateTime CreateAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public virtual CompanyModel Company { get; set; }
+        public virtual ICollection<SaleOrder> SaleOrders { get; set; }
     }
 }

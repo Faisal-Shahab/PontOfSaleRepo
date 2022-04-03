@@ -1,0 +1,22 @@
+﻿@model PointOfSale.Model.RoleViewModel
+
+@{ ViewData["Title"] = "Role"; Layout = null; }
+
+
+<form id="roleForm" action="CreateRole" novalidate="novalidate">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label>Name</label>
+            <input asp-for="RoleId" type="hidden" />
+            <input class="form-control" asp-for="RoleName" type="text">
+            <span asp-validation-for="RoleName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+</form>
+
+
+<partial name="_ValidationScriptsPartial" />

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using POS.DataAccessLayer.Models.Company;
+using POS.DataAccessLayer.Models.Customer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -18,6 +20,10 @@ namespace POS.DataAccessLayer.Models
         public DateTime? UpdatedAt { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
+
+        public virtual ICollection<SaleOrderDetails> SaleOrderDetails { get; set; }
+        public virtual CompanyModel Company { get; set; }
+        public virtual CustomerModel Customer { get; set; }
     }
 
 
@@ -35,5 +41,6 @@ namespace POS.DataAccessLayer.Models
         public DateTime? UpdatedAt { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
+        public virtual SaleOrder SaleOrder { get; set; }
     }
 }

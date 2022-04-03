@@ -1,4 +1,5 @@
 ﻿using POS.DataAccessLayer.Models.Company;
+using POS.DataAccessLayer.Models.Order;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,5 +27,6 @@ namespace POS.DataAccessLayer.Models
         public DateTime CreateAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public virtual CompanyModel Company { get; set; }
+        public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
     }
 }

@@ -1,0 +1,75 @@
+﻿@{
+    Layout = null;
+}
+@model PointOfSale.Model.RegisterViewModel
+
+<form method="post" action="Registration" id="accountForm">
+    <div class="row">
+        <div class="col-md-4 form-group">
+            <label>Company</label>
+            <select asp-for="CompanyId" asp-items="@(new SelectList(ViewBag.Companies,"Value","Text"))" class="form-control">
+                <option value="0">Select</option>
+            </select>
+            <span asp-validation-for="CompanyId" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Full Name</label>
+            <input class="form-control" asp-for="Name" type="text" value="">
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label>User Name</label>
+            <input class="form-control" type="text" asp-for="UserName" value="">
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label>Email Address</label>
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="la la-at"></i></span></div>
+                <input type="email" asp-for="Email" class="form-control" value="" placeholder="Email" aria-describedby="basic-addon1">
+            </div>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Password</label>
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="la la-lock"></i></span></div>
+                <input type="password" asp-for="Password" class="form-control" value="" placeholder="password" aria-describedby="basic-addon1">
+            </div>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Confirm Password</label>
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="la la-lock"></i></span></div>
+                <input type="password" asp-for="ConfirmPassword" class="form-control" value="" placeholder="password" aria-describedby="basic-addon1">
+            </div>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Contact Phone</label>
+            <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="la la-phone"></i></span></div>
+                <input type="tel" asp-for="PhoneNumber" class="form-control" value="" placeholder="phone" aria-describedby="basic-addon1">
+            </div>
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label>User Role</label>
+            <select asp-for="Role" class="form-control" asp-items="@(new SelectList(ViewBag.Roles,"Value","Text"))">
+                <option value="">Please select role</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-sm-12 text-right">
+            <button type="submit" class="pull-right btn btn-success btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u right">Submit</button>
+        </div>
+    </div>
+</form>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>

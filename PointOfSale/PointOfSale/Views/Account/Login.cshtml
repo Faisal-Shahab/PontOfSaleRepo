@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+@model PointOfSale.Model.Account.LoginViewModel
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form method="post" asp-controller="Account" asp-action="Login" novalidate>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <label>Name</label>
+                    <input type="text" asp-for="Username" class="form-control" maxlength="160" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 form-group">
+                    <label>Arabic Name</label>
+                    <input type="text" asp-for="Password" class="form-control" maxlength="160" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 form-group">
+                    <label>RememberMe</label>
+                    <input type="checkbox" asp-for="Rememberme" />
+                </div>
+                <div class="col-md-12 form-group">
+                    <input type="submit" class="btn btn-primary" value="Login">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+
+</div>

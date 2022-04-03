@@ -4,14 +4,7 @@
 
 <form method="post" asp-action="Create" id="categoryForm" novalidate>
     <div class="row">
-        <input type="hidden" asp-for="CategoryId" />
-        @*<div class="col-md-6 form-group">
-            <label>Company</label>
-            <select asp-for="CompanyId" asp-items="@(new SelectList(ViewBag.Companies,"Value","Text"))" class="form-control">
-                <option value="0">Select</option>
-            </select>
-            <span asp-validation-for="CompanyId" class="text-danger"></span>
-        </div>*@
+        <input type="hidden" asp-for="CategoryId" />        
         <div class="col-md-6 form-group">
             <label>Name</label>
             <input type="text" asp-for="Name" class="form-control" maxlength="160" />
@@ -22,10 +15,10 @@
             <input type="text" asp-for="ArabicName" class="form-control" maxlength="500" />
             <span asp-validation-for="ArabicName" class="text-danger"></span>
         </div>
-
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         <input type="submit" class="btn btn-primary" value="Submit">
     </div>
 </form>
+<partial name="_ValidationScriptsPartial" />

@@ -89,5 +89,15 @@ namespace POS.DataAccessLayer.Services
 
             return selectList;
         }
+
+        public async Task<List<SelectListViewModel>> RolesDropdown()
+        {
+            var selectList = await _appDbContext.Roles.Select(x => new SelectListViewModel
+            {
+                Text = x.Name,
+                Value = x.Id
+            }).ToListAsync();
+            return selectList;
+        }
     }
 }

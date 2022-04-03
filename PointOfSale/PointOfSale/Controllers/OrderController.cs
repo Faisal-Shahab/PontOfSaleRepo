@@ -34,7 +34,7 @@ namespace PointOfSale.Controllers
             return View();
         }
 
-
+        #region ==== Sales ==== 
         public async Task<IActionResult> Sales()
         {
 
@@ -123,9 +123,92 @@ namespace PointOfSale.Controllers
             }
         }
 
+        #endregion
+
+
+        #region ==== Purchase ==== 
+        public async Task<IActionResult> Purchase()
+        {
+
+            ViewBag.PaymentTypes = await _dropdownsServices.PaymentTypesDropdown();
+            return View();
+        }
+
+     
+
+        public async Task<JsonResult> GetSuppliers(string value)
+        {
+            try
+            {
+                var customers = await _dropdownsServices.CustomersDropdown(value);
+                return Json(customers);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public IActionResult CreatePurchaseOrder(SaleOrder saleOrder, List<SaleOrderDetails> details)
+        {
+            using (var trans = _appDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    int invNumber = _appDbContext.SaleOrder.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
+                    saleOrder.CompanyId = CompanyId;
+                    saleOrder.InvNumber = invNumber;
+                    saleOrder.CreatedAt = DateTime.Now.AddHours(3);
+                    saleOrder.CreatedBy = user;
+                    _appDbContext.SaleOrder.Add(saleOrder);
+                    _appDbContext.SaveChanges();
+
+                    var productIds = details.Select(x => x.ProductId).ToArray();
+
+                    var products = _appDbContext.Products.Where(x => productIds.Contains(x.ProductId)).ToList();
+
+                    foreach (var order in details)
+                    {
+                        order.OrderId = saleOrder.OrderId;
+                        order.CreatedAt = DateTime.Now.AddHours(3);
+                        order.CreatedBy = user;
+                        _appDbContext.SaleOrderDetails.Add(order);
+
+                        var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
+                        if (product != null)
+                        {
+                            product.Quantity = product.Quantity + order.Quantity;
+                            _appDbContext.Products.Update(product);
+                        }
+                    }
+
+                    _appDbContext.SaveChanges();
+
+                    var companyDetails = _appDbContext.Companies.Where(x => x.CompanyId == CompanyId).Select(c => new
+                    {
+                        companyName = LanguageId == 1 ? c.Name : c.ArabicName,
+                        c.TaxNumber,
+                        c.CrNumber,
+                        c.ThankyouNote,
+                        invNumber = invNumber
+
+                    }).FirstOrDefault();
+
+                    trans.Commit();
+                    return Json(new { status = true, message = "Order has been placed successfully", companyDetails = companyDetails });
+                }
+                catch (Exception e)
+                {
+                    trans.Rollback();
+                    return Json(new { status = false, message = "Operation failed" });
+                }
+            }
+        }
+
+        #endregion
         //public IActionResult PrintInvoice(SaleOrderViewModel sale)
         //{
-        
+
         //    return View(new SaleOrderViewModel());
         //}
 
