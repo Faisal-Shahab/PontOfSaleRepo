@@ -79,6 +79,19 @@ namespace POS.DataAccessLayer.Services
             return selectList;
         }
 
+
+        public async Task<List<SelectListViewModel>> SuppliersDropdown(string value)
+        {
+            var selectList = await _appDbContext.Suppliers
+                          .Where(x => x.CompanyId == CompanyId && x.ContactNo.Contains(value)).Take(10)
+                          .Select(x => new SelectListViewModel
+                          {
+                              Text = x.Name,
+                              Value = x.SupplierId.ToString()
+                          }).ToListAsync();
+            return selectList;
+        }
+
         public async Task<List<SelectListViewModel>> SubscriptionsDropdown(string value)
         {
             var selectList = await _appDbContext.Subscriptions.Select(x => new SelectListViewModel

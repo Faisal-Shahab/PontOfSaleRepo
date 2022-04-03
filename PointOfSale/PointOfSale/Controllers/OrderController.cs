@@ -3,6 +3,7 @@ using PointOfSale.Model;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models;
+using POS.DataAccessLayer.Models.Order;
 using Rotativa.AspNetCore;
 using System;
 using System.Collections.Generic;
@@ -115,7 +116,7 @@ namespace PointOfSale.Controllers
                     trans.Commit();
                     return Json(new { status = true, message = "Order places successfully", companyDetails = companyDetails });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
                     return Json(new { status = false, message = "Operation failed" });
@@ -127,6 +128,7 @@ namespace PointOfSale.Controllers
 
 
         #region ==== Purchase ==== 
+
         public async Task<IActionResult> Purchase()
         {
 
@@ -134,14 +136,12 @@ namespace PointOfSale.Controllers
             return View();
         }
 
-     
-
         public async Task<JsonResult> GetSuppliers(string value)
         {
             try
             {
-                var customers = await _dropdownsServices.CustomersDropdown(value);
-                return Json(customers);
+                var suppliers = await _dropdownsServices.SuppliersDropdown(value);
+                return Json(suppliers);
             }
             catch (Exception e)
             {
@@ -149,18 +149,18 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public IActionResult CreatePurchaseOrder(SaleOrder saleOrder, List<SaleOrderDetails> details)
+        public IActionResult CreatePurchaseOrder(PurchaseOrder purchaseOrder, List<PurchaseOrderDetails> details)
         {
             using (var trans = _appDbContext.Database.BeginTransaction())
             {
                 try
                 {
-                    int invNumber = _appDbContext.SaleOrder.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
-                    saleOrder.CompanyId = CompanyId;
-                    saleOrder.InvNumber = invNumber;
-                    saleOrder.CreatedAt = DateTime.Now.AddHours(3);
-                    saleOrder.CreatedBy = user;
-                    _appDbContext.SaleOrder.Add(saleOrder);
+                    int invNumber = _appDbContext.PurchaseOrders.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
+                    purchaseOrder.CompanyId = CompanyId;
+                    purchaseOrder.InvNumber = invNumber;
+                    purchaseOrder.CreatedAt = DateTime.Now.AddHours(3);
+                    purchaseOrder.CreatedBy = user;
+                    _appDbContext.PurchaseOrders.Add(purchaseOrder);
                     _appDbContext.SaveChanges();
 
                     var productIds = details.Select(x => x.ProductId).ToArray();
@@ -169,10 +169,10 @@ namespace PointOfSale.Controllers
 
                     foreach (var order in details)
                     {
-                        order.OrderId = saleOrder.OrderId;
+                        order.OrderId = purchaseOrder.OrderId;
                         order.CreatedAt = DateTime.Now.AddHours(3);
                         order.CreatedBy = user;
-                        _appDbContext.SaleOrderDetails.Add(order);
+                        _appDbContext.PurchaseOrderDetails.Add(order);
 
                         var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
                         if (product != null)
@@ -197,7 +197,7 @@ namespace PointOfSale.Controllers
                     trans.Commit();
                     return Json(new { status = true, message = "Order has been placed successfully", companyDetails = companyDetails });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
                     return Json(new { status = false, message = "Operation failed" });
@@ -206,11 +206,11 @@ namespace PointOfSale.Controllers
         }
 
         #endregion
+
         //public IActionResult PrintInvoice(SaleOrderViewModel sale)
         //{
 
         //    return View(new SaleOrderViewModel());
         //}
-
     }
 }

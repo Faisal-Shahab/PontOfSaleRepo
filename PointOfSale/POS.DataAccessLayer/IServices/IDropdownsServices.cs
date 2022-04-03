@@ -15,5 +15,6 @@ namespace POS.DataAccessLayer.IServices
         Task<List<SelectListViewModel>> CustomersDropdown(string value);
         Task<List<SelectListViewModel>> SubscriptionsDropdown(string value);
         Task<List<SelectListViewModel>> RolesDropdown();
+        Task<List<SelectListViewModel>> SuppliersDropdown(string value);
     }
 }
