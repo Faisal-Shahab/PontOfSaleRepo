@@ -6,21 +6,25 @@
 <div class="row">
     <div class="col-md-4"></div>
     <div class="col-md-4">
-        <form method="post" asp-controller="Account" asp-action="Login" novalidate>
+        <form method="post" asp-action="Login" novalidate>
             <div class="row">
                 <div class="col-md-12 form-group">
-                    <label>Name</label>
+                    <label>User Name</label>
                     <input type="text" asp-for="Username" class="form-control" maxlength="160" />
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 form-group">
-                    <label>Arabic Name</label>
+                    <label>Password</label>
                     <input type="text" asp-for="Password" class="form-control" maxlength="160" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="col-md-12 form-group">
-                    <label>RememberMe</label>
+                <div class="col-md-6 form-group">
+                    <label>Remember Me</label>
                     <input type="checkbox" asp-for="Rememberme" />
+                </div>
+
+                <div class="col-md-6 form-group text-right">
+                    <a asp-action="ForgetPassword" asp-controller="Account">Forget Password</a>
                 </div>
                 <div class="col-md-12 form-group">
                     <input type="submit" class="btn btn-primary" value="Login">

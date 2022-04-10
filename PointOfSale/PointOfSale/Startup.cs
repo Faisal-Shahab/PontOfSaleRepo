@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Admin.Components;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -48,7 +49,10 @@ namespace PointOfSale
                .AddRoleManager<RoleManager<IdentityRole>>();
 
 
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddMvc(options => { 
+                options.EnableEndpointRouting = false;
+               // options.Filters.Add<AuthorizedAction>();
+            });
 
             services.AddScoped<IProductServices, ProductServices>();
             services.AddScoped<IDropdownsServices, DropdownsServices>();

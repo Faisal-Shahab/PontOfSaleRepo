@@ -16,8 +16,13 @@ function initTable() {
             { data: "userName", "sortable": false },
             { data: "phoneNumber", "sortable": false },
             { data: "email", "sortable": false },          
-            { data: "role", "sortable": false },          
-            { data: "isActive", "sortable": false },          
+            { data: "roleName", "sortable": false },          
+            {
+                "sortable": false,
+                "mRender": function (data, type, row) {
+                    return '<label class="kt-checkbox kt-checkbox--brand"><input type="checkbox" class="is-active"' + (row.isActive ? ' checked' : '') + '/><span></span></label>';
+                }
+            },        
             {
                 "data": null,
                 "defaultContent": "<button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'edit')\"> <span class=\"flaticon-edit\"></span> </button> <button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'delete')\"><span class=\"flaticon2-trash\"></span></button>"
@@ -40,12 +45,43 @@ var closeModal = function () {
     $(".modal-body").html("");
 }
 
+
+function status() { 
+    $("#accountsDataTable").find('tbody').off().on('change', 'input[type="checkbox"]', function () {
+        var _class = $(this).attr("class");
+        var tr = $(this).closest("tr");
+        var data = $('#accountsDataTable').DataTable().row(tr).data();
+
+        if (this.checked) {
+            if (_class == 'is-active') { data.isActive = true; }
+        } else {
+            if (_class == 'is-active') { data.isActive = false; }
+        }
+        postStatus(data);
+    });
+}
+
+function postStatus(data) {
+
+    $.post('/Account/ActiveInActiveUser', { userName: data.userName, status: data.isActive }, function (response) {
+        if (response.status) {
+            alert(response.message)
+            const successMsg = { IsError: false, Message: response.message, Title: "success" }
+            //AppAlerts.actionAlert(successMsg);
+        } else {
+            const errorMsg = { IsError: true, Message: response.message, Title: "error" }
+           // AppAlerts.actionAlert(errorMsg);
+        }
+    });
+
+}
+
 function getId(event, buttonName) {
     const tr = $(event).closest("tr");
     const id = $(tr).find('td:eq(0)').text();
     if (buttonName == 'edit') {
         $('#kt_modal_4_2').modal('show');
-        $(".modal-body").load('/Account/EditRegistration?id=' + id, function () {
+        $(".modal-body").load('/Account/EditRegistration?userName=' + id, function () {
             initEvents();
         });
 
@@ -79,6 +115,7 @@ function getId(event, buttonName) {
 }
 
 function initEvents() {
+   
     $('#accountForm').submit(function (event) {
         event.preventDefault(); //prevent default action 
         const formData = $(this).serialize();
@@ -111,5 +148,6 @@ function initEvents() {
 
 jQuery(document).ready(function () {
     initTable();
+    status();
     $.fn.dataTable.ext.errMode = 'none';
 });

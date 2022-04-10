@@ -3,31 +3,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models.Category;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
 using POS.DataAccessLayer.ViewModels;
 
 namespace PointOfSale.Controllers
 {
+    //[Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private int languageId;
         IProductServices _productServices;
         IDropdownsServices _dropdownsServices;
-        public ProductController(IProductServices productServices, IDropdownsServices dropdownsServices)
+        UserManager<User> _userManager;
+        public ProductController(IProductServices productServices, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
             languageId = 1;
             _productServices = productServices;
             _dropdownsServices = dropdownsServices;
-            _dropdownsServices.LanguageId = 1;
-            _productServices.CompanyId = 1;
+            _dropdownsServices.LanguageId = languageId;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -38,6 +43,8 @@ namespace PointOfSale.Controllers
         public async Task<JsonResult> GetProducts(SearchFilter filter)
         {
             filter.LanguageId = languageId;
+            var user = await _userManager.GetUserAsync(User);
+            _productServices.CompanyId = (int)user.CompanyId;
             var data = await _productServices.GetProducts(filter);
             return Json(new
             {
@@ -50,31 +57,47 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> Create()
         {
+            var user = await _userManager.GetUserAsync(User);
+            _dropdownsServices.CompanyId = (int)user.CompanyId;
             ViewBag.Categories = await _dropdownsServices.CategoriesDropdown();
             return View();
         }
 
         [HttpPost]
-        public async Task<JsonResult> Create(ProductViewModel model, string user)
+        public async Task<JsonResult> Create(ProductViewModel model)
         {
-            bool result = false; ModelState.Remove("ProductId");            
-            if (ModelState.IsValid)
+            bool result = false; ModelState.Remove("ProductId");
+
+            try
             {
-                if (model.ProductId > 0)
+                if (ModelState.IsValid)
                 {
-                    result = await _productServices.Update(model, user);
+                    var user = await _userManager.GetUserAsync(User);
+                    _productServices.CompanyId = (int)user.CompanyId;
+                    if (model.ProductId > 0)
+                    {
+                        result = await _productServices.Update(model, user.UserName);
+                    }
+                    else
+                    {
+                        result = await _productServices.Insert(model, user.UserName);
+                    }
+                    return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
                 }
-                else
-                {
-                    result = await _productServices.Insert(model, user);
-                }
-                return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
+                return Json(new { status = false, message = "Invalid input please fill the form" });
             }
-            return Json(new { status = false, message = "Invalid input please fill the form" });
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            _dropdownsServices.CompanyId = (int)user.CompanyId;
+            _productServices.CompanyId = (int)user.CompanyId;
             ViewBag.Categories = await _dropdownsServices.CategoriesDropdown();
             var product = await _productServices.GetProductById(id);
             return View("Create", product);

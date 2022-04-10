@@ -40,12 +40,12 @@ namespace POS.DataAccessLayer.Models.Company
         public DateTime CreateAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public virtual ICollection<CustomerModel> Customers { get; set; }
-        public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<SupplierModel> Suppliers { get; set; }
         public virtual ICollection<CategoryModel> Categories { get; set; }
         public virtual ICollection<ProductModel> Products { get; set; }
         public virtual ICollection<CompanySubscriptionModel> CompanySubscriptions { get; set; }
         public virtual ICollection<SaleOrder> SaleOrders { get; set; }
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

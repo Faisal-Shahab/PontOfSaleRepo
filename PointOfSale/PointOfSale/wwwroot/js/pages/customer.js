@@ -14,8 +14,7 @@ function initTable() {
         "filter": true, //set to false to Disable filter (search box)            
         "columns": [
             { data: "customerId", "sortable": false },
-            { data: "name", "sortable": false },
-            { data: "companyName", "sortable": false, "searchable": false },
+            { data: "name", "sortable": false },            
             { data: "contactNo", "sortable": false, "searchable": false },
             { data: "address", "sortable": false, "searchable": false },
             {

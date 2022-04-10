@@ -108,7 +108,7 @@ namespace POS.DataAccessLayer.Services
             var selectList = await _appDbContext.Roles.Select(x => new SelectListViewModel
             {
                 Text = x.Name,
-                Value = x.Id
+                Value = x.NormalizedName               
             }).ToListAsync();
             return selectList;
         }

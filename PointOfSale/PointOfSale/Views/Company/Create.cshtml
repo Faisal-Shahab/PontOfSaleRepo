@@ -1,11 +1,12 @@
 ﻿@{ Layout = null; }
 
-@model POS.DataAccessLayer.Models.Company.CompanyModel
+@model PointOfSale.Model.CompanyViewModel
 
 <form method="post" asp-action="Create" id="companyForm" enctype="multipart/form-data" novalidate>
     <div class="row">
         <input type="hidden" asp-for="CompanyId" />
         <input type="hidden" asp-for="Logo" />
+        <input type="hidden" asp-for="UserEmail" />
         <div class="col-md-6 form-group">
             <label>Name</label>
             <input type="text" asp-for="Name" class="form-control" maxlength="160" />
@@ -16,11 +17,34 @@
             <input type="text" asp-for="ArabicName" class="form-control" maxlength="160" />
             <span asp-validation-for="ArabicName" class="text-danger"></span>
         </div>
-        <div class="col-md-6 form-group">
+        <div class="col-md-12 form-group">
             <label>Email</label>
             <input type="email" asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
+        @if (Model != null)
+        {
+            if (Model.CompanyId > 0)
+            {
+                <div class="col-md-12 form-group">
+                    <label>Current Password</label>
+                    <input type="password" asp-for="CurrentPassword" class="form-control" />
+                    <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                </div>
+            }
+        }
+
+        <div class="col-md-6 form-group">
+            <label>Password</label>
+            <input type="password" asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-group">
+            <label>Confirm Password</label>
+            <input type="password" asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
         <div class="col-md-6 form-group">
             <label>Contact #</label>
             <input type="text" asp-for="ContactNo" class="form-control" />

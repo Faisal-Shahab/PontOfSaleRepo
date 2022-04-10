@@ -1,14 +1,23 @@
 ﻿@{
     ViewData["Title"] = "Company";
 }
+@using POS.DataAccessLayer.Models.Security;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> _userManager
 
+@{
+    var user = await _userManager.GetUserAsync(User);
+}
 <div class="row">
     <div class="col-md-6">
         <h4>List of Companies</h4>
     </div>
-    <div class="col-md-6 text-right">
-        <button id="add-new" class="btn btn-primary btn-sm">Add</button>
-    </div>
+    @if (user.CompanyId == null)
+    {
+        <div class="col-md-6 text-right">
+            <button id="add-new" class="btn btn-primary btn-sm">Add</button>
+        </div>
+    }
 </div>
 
 <div class="row">
@@ -18,6 +27,9 @@
                 <tr>
                     <td>Id</td>
                     <td>Name</td>
+                    <td>Email</td>
+                    <td>Contact#</td>
+                    <td>Fax#</td>
                     <td>Actions</td>
                 </tr>
             </thead>

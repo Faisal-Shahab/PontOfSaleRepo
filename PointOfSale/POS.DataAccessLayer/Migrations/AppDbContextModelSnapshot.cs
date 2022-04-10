@@ -838,11 +838,43 @@ namespace POS.DataAccessLayer.Migrations
                     b.ToTable("Suppliers");
                 });
 
+            modelBuilder.Entity("POS.DataAccessLayer.ViewModels.UserViewModel", b =>
+                {
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("UserView");
+                });
+
             modelBuilder.Entity("POS.DataAccessLayer.Models.Security.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -1049,9 +1081,7 @@ namespace POS.DataAccessLayer.Migrations
                 {
                     b.HasOne("POS.DataAccessLayer.Models.Company.CompanyModel", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
                 });
 #pragma warning restore 612, 618
         }

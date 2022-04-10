@@ -7,6 +7,7 @@ using POS.DataAccessLayer.Models.Customer;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Payment;
 using POS.DataAccessLayer.Models.Subscriptions;
+using POS.DataAccessLayer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,6 +33,8 @@ namespace POS.DataAccessLayer
         public DbSet<SaleOrderDetails> SaleOrderDetails { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderDetails> PurchaseOrderDetails { get; set; }
+        
+        public DbQuery<UserViewModel> UserView { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -11,5 +11,6 @@ namespace PointOfSale.Model
         public string RoleId { get; set; }
         [Required]
         public string RoleName { get; set; }
+        public bool IsCompanyRole { get; set; }
     }
 }

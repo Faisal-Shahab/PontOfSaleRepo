@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models.Customer;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.ViewModels;
 using System;
 using System.Linq;
@@ -8,29 +11,29 @@ using System.Threading.Tasks;
 
 namespace PointOfSale.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CustomerController : Controller
     {
         IRepository<CustomerModel> _customerRepo;
-        private readonly string user;
-        private readonly int companyId;
-        private int languageId;        
+        private int languageId;
         IDropdownsServices _dropdownsServices;
-        public CustomerController(IRepository<CustomerModel> customerRepo, IDropdownsServices dropdownsServices)
+        UserManager<User> _userManager;
+        public CustomerController(IRepository<CustomerModel> customerRepo, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
             _customerRepo = customerRepo;
-            user = "test";
             languageId = 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;
-            companyId = 1;
+            _userManager = userManager;
         }
 
         public IActionResult Index() => View();
 
         public async Task<JsonResult> GetCustomers(SearchFilter filter)
         {
+            var user = await _userManager.GetUserAsync(User);
             var customers = await _customerRepo.GetAll();
-            customers = customers.Where(x => x.CompanyId == companyId);
+            customers = customers.Where(x => x.CompanyId == user.CompanyId);
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var isNumber = double.TryParse(filter.SearchTerm, out double numericValue);
@@ -49,8 +52,7 @@ namespace PointOfSale.Controllers
                 x.CustomerId,
                 x.Name,
                 x.ContactNo,
-                x.Address,
-                CompanyName = (languageId == 1) ? x.Company.Name : x.Company.ArabicName
+                x.Address                
             });
             return Json(new
             {
@@ -70,19 +72,20 @@ namespace PointOfSale.Controllers
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
                 if (model.CustomerId > 0)
                 {
                     model.UpdatedAt = DateTime.Now;
-                    model.UpdatedBy = user;
-                    model.CompanyId = companyId;
+                    model.UpdatedBy = user.UserName;
+                    model.CompanyId = (int)user.CompanyId;
                     result = await _customerRepo.Update(model);
                 }
                 else
                 {
                     model.CreateAt = DateTime.Now;
                     model.UpdatedAt = DateTime.Now;
-                    model.CreateBy = user;
-                    model.CompanyId = companyId;
+                    model.CreateBy = user.UserName;
+                    model.CompanyId = (int)user.CompanyId;
                     result = await _customerRepo.Insert(model);
                 }
                 return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
@@ -91,14 +94,25 @@ namespace PointOfSale.Controllers
         }
 
         public async Task<IActionResult> Edit(int id)
-        {           
+        {
+            var user = await _userManager.GetUserAsync(User);            
+            
             var customer = await _customerRepo.GetById(id);
-            return View("Create", customer);
+            if (customer.CompanyId == user.CompanyId)
+                return View("Create", customer);
+            else
+                return View("Create", new CustomerModel());
         }
 
         public async Task<JsonResult> Delete(int id)
         {
-            var result = await _customerRepo.Delete(new CustomerModel { CustomerId = id });
+            var user = await _userManager.GetUserAsync(User);
+            bool result = false;
+            var customer = await _customerRepo.GetById(id);
+            if (customer.CompanyId == user.CompanyId)
+            {
+                 result = await _customerRepo.Delete(customer);              
+            }
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
         }
     }

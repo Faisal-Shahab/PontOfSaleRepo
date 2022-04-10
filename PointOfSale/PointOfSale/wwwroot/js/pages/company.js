@@ -12,6 +12,9 @@ function initTable() {
         "columns": [
             { data: "companyId", "sortable": false },
             { data: "name", "sortable": false },
+            { data: "email", "sortable": false },
+            { data: "contactNo", "sortable": false },
+            { data: "faxNo", "sortable": false },
             {
                 "data": null,
                 "defaultContent": "<button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'edit')\"> <span class=\"flaticon-edit\"></span> </button> <button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'delete')\"><span class=\"flaticon2-trash\"></span></button>"

@@ -3,57 +3,57 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models.Category;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
 
 namespace PointOfSale.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         IRepository<CategoryModel> _categoryRepo;
         IRepository<CategoryDescriptionModel> _categoryDescRepo;
         AppDbContext _context;
-        private readonly string user;
         private int languageId;
-        private readonly int companyId;
-        IDropdownsServices _dropdownsServices;
+        UserManager<User> _userManager;
         public CategoryController(IRepository<CategoryModel> categoryRepo,
-            IRepository<CategoryDescriptionModel> categoryDescRepo, AppDbContext context
-            , IDropdownsServices dropdownsServices)
+            IRepository<CategoryDescriptionModel> categoryDescRepo, AppDbContext context,
+           UserManager<User> userManager)
         {
             _categoryRepo = categoryRepo;
             _categoryDescRepo = categoryDescRepo;
             _context = context;
-            user = "test";
             languageId = 1;
-            _dropdownsServices = dropdownsServices;
-            _dropdownsServices.LanguageId = 1;
-            companyId = 1;
+            _userManager = userManager;
         }
 
         public IActionResult Index() => View();
 
-        public JsonResult GetCategories()
+        public async Task<JsonResult> GetCategories()
         {
+            var user = await _userManager.GetUserAsync(User);
             return Json(new
             {
-                data = _context.Categories.Where(x=>x.CompanyId == companyId).Select(x => new
+                data = _context.Categories.Where(x => x.CompanyId == user.CompanyId).Select(x => new
                 {
-                    x.CategoryId,                    
+                    x.CategoryId,
                     CategoryName = x.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == languageId).Name
                 })
             });
         }
 
         public async Task<IActionResult> Create()
-        {            
+        {
             return View();
         }
 
@@ -64,29 +64,31 @@ namespace PointOfSale.Controllers
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
                 if (model.CategoryId > 0)
                 {
-                    var data = _context.Categories.Where(x => x.CompanyId == companyId && x.CategoryId == model.CategoryId).Select(x => new
+
+                    var data = _context.Categories.Where(x => x.CompanyId == user.CompanyId && x.CategoryId == model.CategoryId).Select(x => new
                     {
                         Category = x,
                         EngData = x.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == 1),
                         ArData = x.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == 2)
                     }).FirstOrDefault();
 
-                   // data.Category.CompanyId = model.CompanyId;
+                    // data.Category.CompanyId = model.CompanyId;
                     data.Category.UpdatedAt = DateTime.UtcNow.AddHours(3);
-                    data.Category.UpdatedBy = user;
+                    data.Category.UpdatedBy = user.UserName;
                     result = await _categoryRepo.Update(data.Category);
                     if (result)
                     {
                         data.EngData.Name = model.Name;
                         data.EngData.UpdatedAt = DateTime.UtcNow.AddHours(3);
-                        data.EngData.UpdatedBy = user;
+                        data.EngData.UpdatedBy = user.UserName;
                         result = await _categoryDescRepo.Update(data.EngData);
 
                         data.ArData.Name = model.ArabicName;
                         data.ArData.UpdatedAt = DateTime.UtcNow.AddHours(3);
-                        data.ArData.UpdatedBy = user;
+                        data.ArData.UpdatedBy = user.UserName;
                         result = await _categoryDescRepo.Update(data.ArData);
                     }
                 }
@@ -94,10 +96,10 @@ namespace PointOfSale.Controllers
                 {
                     CategoryModel category = new CategoryModel
                     {
-                        CompanyId = companyId,
+                        CompanyId = (int)user.CompanyId,
                         CreateAt = DateTime.UtcNow.AddHours(3),
                         UpdatedAt = DateTime.UtcNow.AddHours(3),
-                        CreateBy = user
+                        CreateBy = user.UserName
                     };
                     var success = await _categoryRepo.Insert(category);
                     if (success)
@@ -109,7 +111,7 @@ namespace PointOfSale.Controllers
                             LanguageId = 1,
                             CreateAt = DateTime.UtcNow.AddHours(3),
                             UpdatedAt = DateTime.UtcNow.AddHours(3),
-                            CreateBy = user
+                            CreateBy = user.UserName
                         });
 
                         result = await _categoryDescRepo.Insert(new CategoryDescriptionModel
@@ -119,7 +121,7 @@ namespace PointOfSale.Controllers
                             LanguageId = 2,
                             CreateAt = DateTime.UtcNow.AddHours(3),
                             UpdatedAt = DateTime.UtcNow.AddHours(3),
-                            CreateBy = user
+                            CreateBy = user.UserName
                         });
 
                     }
@@ -131,10 +133,10 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.Companies = await _dropdownsServices.CompaniesDropdown();
-            var category = await _context.Categories.Where(x => x.CompanyId == companyId && x.CategoryId == id).Select(x => new CategoryViewModel
+            var user = await _userManager.GetUserAsync(User);
+            var category = await _context.Categories.Where(x => x.CompanyId == user.CompanyId && x.CategoryId == id).Select(x => new CategoryViewModel
             {
-                CategoryId = x.CategoryId,                
+                CategoryId = x.CategoryId,
                 Name = x.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == 1).Name,
                 ArabicName = x.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == 2).Name
             }).FirstOrDefaultAsync();
@@ -143,7 +145,10 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> Delete(int id)
         {
-            var result = await _categoryRepo.Delete(new CategoryModel { CategoryId = id });
+            var user = await _userManager.GetUserAsync(User);
+            var cateories = await _categoryRepo.GetAll();
+            var cat = cateories.FirstOrDefault(x => x.CompanyId == user.CompanyId && x.CategoryId == id);
+            var result = await _categoryRepo.Delete(cat);
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
         }
     }

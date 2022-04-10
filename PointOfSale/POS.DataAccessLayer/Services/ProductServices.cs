@@ -52,7 +52,7 @@ namespace POS.DataAccessLayer.Services
             ProductModel product = new ProductModel
             {
                 CategoryId = model.CategoryId,
-                CompanyId = model.CompanyId,
+                CompanyId = CompanyId,
                 Barcode = model.Barcode,
                 CostPrice = model.CostPrice,
                 SalePrice = model.SalePrice,
@@ -147,7 +147,8 @@ namespace POS.DataAccessLayer.Services
 
         public async Task<bool> Delete(int id)
         {
-            _appDbContext.Products.Remove(new ProductModel { ProductId = id });
+            var product = await _appDbContext.Products.AsNoTracking().FirstOrDefaultAsync(x => x.CompanyId == CompanyId && x.ProductId == id);
+            _appDbContext.Products.Remove(product);
             return (await _appDbContext.SaveChangesAsync()) > 0;
         }
     }
