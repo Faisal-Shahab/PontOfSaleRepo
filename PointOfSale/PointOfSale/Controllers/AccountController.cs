@@ -16,7 +16,7 @@ using POS.DataAccessLayer.ViewModels;
 
 namespace PointOfSale.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles="Admin")] 
     public class AccountController : Controller
     {
         AppDbContext _appContext;
