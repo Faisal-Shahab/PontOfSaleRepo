@@ -1,70 +1,318 @@
-﻿@{ Layout = null; }
+﻿@model PointOfSale.Model.ProductViewModel
 
-@model PointOfSale.Model.ProductViewModel
+@{
+    ViewData["Title"] = "Create Product";
+}
 
-<form method="post" asp-action="Create" id="categoryForm" novalidate>
-    <div class="row">
-        <input type="hidden" asp-for="ProductId" />        
-        <div class="col-md-6 form-group">
-            <label>Category Id</label>
-            <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,"Value","Text"))" class="form-control">
-                <option value="0">Select</option>
-            </select>
-            <span asp-validation-for="CategoryId" class="text-danger"></span>
+<!--begin::Form-->
+<form id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/Product/index">
+    <!--begin::Aside column-->
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+        <!--begin::Thumbnail settings-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Thumbnail</h2>
+                </div>
+                <!--end::Card title-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body text-center pt-0">
+                <!--begin::Image input-->
+                <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url(assets/media/svg/files/blank-image.svg)">
+                    <!--begin::Preview existing avatar-->
+                    <div class="image-input-wrapper w-150px h-150px"></div>
+                    <!--end::Preview existing avatar-->
+                    <!--begin::Label-->
+                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                        <i class="bi bi-pencil-fill fs-7"></i>
+                        <!--begin::Inputs-->
+                        <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                        <input type="hidden" name="avatar_remove" />
+                        <input type="hidden" name="Image" id="avatar_base64" />
+                        <!--end::Inputs-->
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Cancel-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                        <i class="bi bi-x fs-2"></i>
+                    </span>
+                    <!--end::Cancel-->
+                    <!--begin::Remove-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                        <i class="bi bi-x fs-2"></i>
+                    </span>
+                    <!--end::Remove-->
+                </div>
+                <!--end::Image input-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
+                <!--end::Description-->
+            </div>
+            <!--end::Card body-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Name</label>
-            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+        <!--end::Thumbnail settings-->
+        <!--begin::Category & tags-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Product Details</h2>
+                </div>
+                <!--end::Card title-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <!--begin::Input group-->
+                <!--begin::Label-->
+                <label class="form-label">Categories</label>
+                <!--end::Label-->
+                <!--begin::Select2-->
+                <select class="form-select mb-2"
+                        data-control="select2" asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,"Value","Text"))" data-placeholder="Select an option" data-allow-clear="true">
+                    <option value="0">Select an option</option>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7 mb-7">Add product to a category.</div>
+                <!--end::Description-->
+                <!--end::Input group-->
+                <!--begin::Button-->
+                <a href="/Category/Create" class="btn btn-light-primary btn-sm mb-10">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr087.svg-->
+                    <span class="svg-icon svg-icon-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor" />
+                            <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->Create new category
+                </a>
+                <!--end::Button-->
+            </div>
+            <!--end::Card body-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Arabic Name</label>
-            <input type="text" asp-for="ArabicName" class="form-control" maxlength="500" />
-            <span asp-validation-for="ArabicName" class="text-danger"></span>
+        <!--end::Category & tags-->
+        <!--begin::Weekly sales-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Weekly Sales</h2>
+                </div>
+                <!--end::Card title-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <span class="text-muted">No data available. Sales data will begin capturing once product has been published.</span>
+            </div>
+            <!--end::Card body-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Size</label>
-            <input type="text" asp-for="Size" class="form-control" maxlength="15" />
-            <span asp-validation-for="Size" class="text-danger"></span>
+        <!--end::Weekly sales-->
+    </div>
+    <!--end::Aside column-->
+    <!--begin::Main column-->
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <!--begin:::Tabs-->
+        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-bold mb-n2">
+            <!--begin:::Tab item-->
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">General</a>
+            </li>
+            <!--end:::Tab item-->
+            <!--begin:::Tab item-->
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">Advanced</a>
+            </li>
+            <!--end:::Tab item-->
+        </ul>
+        <!--end:::Tabs-->
+        <!--begin::Tab content-->
+        <div class="tab-content">
+            <!--begin::Tab pane-->
+            <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <!--begin::General options-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>General</h2>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Product Name</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="Name" class="form-control mb-2" placeholder="Product name" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">A product name is required and recommended to be unique.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Product Arabic Name</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="ArabicName" class="form-control mb-2" placeholder="Product arabicname" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">A product name is required and recommended to be unique.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::General options-->
+                    <!--begin::Pricing-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>Pricing</h2>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Cost Price</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="CostPrice" class="form-control mb-2" placeholder="Product cost price" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Set the product purchase price.</div>
+                                <!--end::Description-->
+                            </div>
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Sale Price</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="SalePrice" class="form-control mb-2" placeholder="Product sale price" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Set the product sale price.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="fv-row mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label">Discount</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="DiscoutPercentage" class="form-control mb-2" placeholder="Product discount sale price" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Set the discount on product sale price.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::Pricing-->
+                </div>
+            </div>
+            <!--end::Tab pane-->
+            <!--begin::Tab pane-->
+            <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <!--begin::Inventory-->
+                    <div class="card card-flush py-4">
+                        <!--begin::Card header-->
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>Inventory</h2>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body pt-0">
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Barcode</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="text" asp-for="Barcode" class="form-control mb-2" placeholder="Barcode Number" />
+                                <!--end::Input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Enter the product barcode number.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 fv-row">
+                                <!--begin::Label-->
+                                <label class="required form-label">Quantity</label>
+                                <!--end::Label-->
+                                <input type="number" asp-for="Quantity" class="form-control mb-2" placeholder="On shelf" />
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Enter the product quantity.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="fv-row">
+                                <!--begin::Input-->
+                                <div class="form-check form-check-custom form-check-solid mb-2">
+                                    <input class="form-check-input" type="checkbox" asp-for="IsTaxApplied" />
+                                    <label class="form-check-label">Tax Applied</label>
+                                </div>
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::Inventory-->
+                </div>
+            </div>
+            <!--end::Tab pane-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Color</label>
-            <input type="text" asp-for="Color" class="form-control" maxlength="60" />
-            <span asp-validation-for="Color" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Quantity</label>
-            <input type="text" asp-for="Quantity" class="form-control" />
-            <span asp-validation-for="Quantity" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Cost Price</label>
-            <input type="text" asp-for="CostPrice" class="form-control" />
-            <span asp-validation-for="CostPrice" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Sale Price</label>
-            <input type="text" asp-for="SalePrice" class="form-control" />
-            <span asp-validation-for="SalePrice" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Discout Percentage</label>
-            <input type="text" asp-for="DiscoutPercentage" class="form-control" />
-            <span asp-validation-for="DiscoutPercentage" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Bar code</label>
-            <input type="text" asp-for="Barcode" class="form-control" maxlength="100" />
-            <span asp-validation-for="Barcode" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Is Tax Applied</label>
-            <input type="checkbox" asp-for="IsTaxApplied" />
-            <span asp-validation-for="IsTaxApplied" class="text-danger"></span>
+        <!--end::Tab content-->
+        <div class="d-flex justify-content-end">
+            <!--begin::Button-->
+            <a href="/Product/Index" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
+            <!--end::Button-->
+            <!--begin::Button-->
+            <button type="submit" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-progress">
+                    Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+            </button>
+            <!--end::Button-->
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Submit">
-    </div>
+    <!--end::Main column-->
 </form>
+<!--end::Form-->
+
+@section Scripts{
+
+    <script src="~/assets/js/custom/apps/ecommerce/catalog/save-product.js"></script>
+}

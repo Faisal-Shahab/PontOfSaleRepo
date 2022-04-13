@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
 using POS.DataAccessLayer.IServices;
-using POS.DataAccessLayer.Models.Category;
-using POS.DataAccessLayer.Models.Company;
+using POS.DataAccessLayer.Models;
 using POS.DataAccessLayer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace POS.DataAccessLayer.Services
@@ -39,89 +37,59 @@ namespace POS.DataAccessLayer.Services
             return products.OrderByDescending(x => x.ProductId).Skip(filter.Start).Take(filter.PageLength)
                             .Select(x => new ProductsListViewModel
                             {
-                                Product = x,
-                                ProductName = x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == filter.LanguageId).Name,
-                                CategoryName = x.Category.CategoryDescriptions.FirstOrDefault(x => x.LanguageId == filter.LanguageId).Name,
-                                CompanyName = (filter.LanguageId == 1) ? x.Company.Name : x.Company.ArabicName,
+                                ProductId = x.ProductId,
+                                Name = filter.LanguageId == 1 ? x.Name : x.NameAr,
+                                CategoryName = filter.LanguageId == 1 ? x.Category.Name : x.NameAr,
+                                Quantity = x.Quantity,
+                                CostPrice = x.CostPrice,
+                                SalePrice = x.SalePrice,
+                                Discount = x.Discount,
                                 Total = total
                             });
         }
 
         public async Task<bool> Insert(ProductViewModel model, string user)
         {
-            ProductModel product = new ProductModel
+            Product product = new Product
             {
+                Name = model.Name,
+                NameAr = model.ArabicName,
                 CategoryId = model.CategoryId,
                 CompanyId = CompanyId,
                 Barcode = model.Barcode,
                 CostPrice = model.CostPrice,
                 SalePrice = model.SalePrice,
-                Size = model.Size,
                 Quantity = model.Quantity,
-                DiscoutPercentage = model.DiscoutPercentage,
+                Discount = model.DiscoutPercentage,
                 IsTaxApplied = model.IsTaxApplied,
-                Color = model.Color,
                 CreateAt = DateTime.UtcNow.AddHours(3),
                 UpdatedAt = DateTime.UtcNow.AddHours(3),
                 CreateBy = user
             };
+
             _appDbContext.Products.Add(product);
 
-            _appDbContext.SaveChanges();
-
-            _appDbContext.ProductDescriptions.Add(new ProductDescriptionModel
-            {
-                ProductId = product.ProductId,
-                Name = model.Name,
-                LanguageId = 1,
-                CreateAt = DateTime.UtcNow.AddHours(3),
-                UpdatedAt = DateTime.UtcNow.AddHours(3),
-                CreateBy = user
-            });
-
-            _appDbContext.ProductDescriptions.Add(new ProductDescriptionModel
-            {
-                ProductId = product.ProductId,
-                Name = model.ArabicName,
-                LanguageId = 2,
-                UpdatedAt = DateTime.UtcNow.AddHours(3),
-                UpdatedBy = user
-            });
-            return _appDbContext.SaveChanges() > 0;
+            return await _appDbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> Update(ProductViewModel model, string user)
         {
-            var data = _appDbContext.Products.Where(x => x.CompanyId == CompanyId && x.ProductId == model.ProductId).Select(x => new
-            {
-                Product = x,
-                EngData = x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == 1),
-                ArData = x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == 2)
-            }).FirstOrDefault();
+            var data = _appDbContext.Products.Where(x => x.CompanyId == CompanyId
+                                                && x.ProductId == model.ProductId).FirstOrDefault();
+            data.Name = model.Name;
+            data.NameAr = model.ArabicName;
+            data.CompanyId = CompanyId;
+            data.CategoryId = model.CategoryId;
+            data.Barcode = model.Barcode;
+            data.CostPrice = model.CostPrice;
+            data.SalePrice = model.SalePrice;
+            data.Quantity = model.Quantity;
+            data.Discount = model.DiscoutPercentage;
+            data.IsTaxApplied = model.IsTaxApplied;
+            data.UpdatedAt = DateTime.UtcNow.AddHours(3);
+            data.UpdatedBy = user;
+            _appDbContext.Products.Update(data);
 
-            data.Product.CompanyId = CompanyId;
-            data.Product.CategoryId = model.CategoryId;
-            data.Product.Barcode = model.Barcode;
-            data.Product.CostPrice = model.CostPrice;
-            data.Product.SalePrice = model.SalePrice;
-            data.Product.Size = model.Size;
-            data.Product.Quantity = model.Quantity;
-            data.Product.DiscoutPercentage = model.DiscoutPercentage;
-            data.Product.IsTaxApplied = model.IsTaxApplied;
-            data.Product.Color = model.Color;
-            data.Product.UpdatedAt = DateTime.UtcNow.AddHours(3);
-            data.Product.UpdatedBy = user;
-            _appDbContext.Products.Update(data.Product);
-
-            data.EngData.Name = model.Name;
-            data.EngData.UpdatedAt = DateTime.UtcNow.AddHours(3);
-            data.EngData.UpdatedBy = user;
-            _appDbContext.ProductDescriptions.Update(data.EngData);
-
-            data.ArData.Name = model.ArabicName;
-            data.ArData.UpdatedAt = DateTime.UtcNow.AddHours(3);
-            data.ArData.UpdatedBy = user;
-            _appDbContext.ProductDescriptions.Update(data.ArData);
             return (await _appDbContext.SaveChangesAsync()) > 0;
         }
 
@@ -130,18 +98,16 @@ namespace POS.DataAccessLayer.Services
             return await _appDbContext.Products.Where(x => x.CompanyId == CompanyId && x.ProductId == id).Select(x => new ProductViewModel
             {
                 ProductId = x.ProductId,
-                CategoryId = x.CategoryId,
+                CategoryId = (int)x.CategoryId,
                 CompanyId = x.CompanyId,
                 CostPrice = x.CostPrice,
                 SalePrice = x.SalePrice,
-                Size = x.Size,
                 Quantity = x.Quantity,
-                Color = x.Color,
                 IsTaxApplied = x.IsTaxApplied,
-                DiscoutPercentage = x.DiscoutPercentage,
+                DiscoutPercentage = (int)x.Discount,
                 Barcode = x.Barcode,
-                Name = x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == 1).Name,
-                ArabicName = x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == 2).Name
+                Name = x.Name,
+                ArabicName = x.NameAr
             }).FirstOrDefaultAsync();
         }
 

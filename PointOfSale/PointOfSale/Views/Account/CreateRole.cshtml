@@ -2,25 +2,23 @@
 
 @{ ViewData["Title"] = "Role"; Layout = null; }
 
-
-<form id="roleForm" action="CreateRole" novalidate="novalidate">
-    <div class="row">
-        <div class="form-group col-md-6">
-            <label>Name</label>
-            <input asp-for="RoleId" type="hidden" />
-            <input class="form-control" asp-for="RoleName" type="text">
-            <span asp-validation-for="RoleName" class="text-danger"></span>
-        </div>
-        <div class="form-group col-md-6">
-            <label>Is Company Role</label>
-            <input type="checkbox" asp-for="IsCompanyRole" />
-        </div>
+<form id="roleForm" asp-controller="Account" asp-action="CreateRole" class="form">
+    <div class="fv-row mb-10">
+        <input type="hidden" asp-for="RoleId" />
+        <label class="required form-label">Role</label>
+        <input class="form-control form-control-solid mb-3 mb-lg-0" asp-for="RoleName" type="text">
+        <span asp-validation-for="RoleName" class="text-danger fs-7"></span>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Submit">
+    <div class="text-center">
+        <button type="reset" onclick="closeModal()" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+        <button type="submit" class="btn btn-primary">
+            <span class="indicator-label">Submit</span>
+            <span class="indicator-progress">
+                Please wait...
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
+        </button>
     </div>
 </form>
-
 
 <partial name="_ValidationScriptsPartial" />

@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
-using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
-using POS.DataAccessLayer.Models.Category;
 using POS.DataAccessLayer.Models.Security;
-using POS.DataAccessLayer.Models.Subscriptions;
 using POS.DataAccessLayer.ViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PointOfSale.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private int languageId;
@@ -82,14 +74,13 @@ namespace PointOfSale.Controllers
                     {
                         result = await _productServices.Insert(model, user.UserName);
                     }
-                    return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
+                    return Json(new { success = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
                 }
-                return Json(new { status = false, message = "Invalid input please fill the form" });
+                return Json(new { success = false, message = "Invalid input please fill the form" });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
-                throw;
+                return Json(new { success = false, message = "Operation failed" });
             }
         }
 
@@ -105,6 +96,8 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> Delete(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            _productServices.CompanyId = (int)user.CompanyId;
             var result = await _productServices.Delete(id);
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
         }

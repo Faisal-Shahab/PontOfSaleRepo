@@ -16,7 +16,7 @@ using POS.DataAccessLayer.ViewModels;
 
 namespace PointOfSale.Controllers
 {
-    [Authorize(Roles="Admin")]  
+    [Authorize(Roles = "Admin")]
     public class AccountController : Controller
     {
         AppDbContext _appContext;
@@ -37,7 +37,6 @@ namespace PointOfSale.Controllers
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = 1;
             _signInManager = signInManager;
-
         }
 
         #region =========== User Reg =========
@@ -71,6 +70,7 @@ namespace PointOfSale.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         public async Task<IActionResult> Registration()
         {
@@ -80,6 +80,7 @@ namespace PointOfSale.Controllers
         }
 
         //superadmin,admin,company, co
+        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
@@ -121,6 +122,7 @@ namespace PointOfSale.Controllers
         }
 
         // user role should be admin for this action
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> EditRegistration(string userName)
         {
             var user = new User();
@@ -144,37 +146,39 @@ namespace PointOfSale.Controllers
             };
 
             ViewBag.Roles = await _dropdownsServices.RolesDropdown();
-            return View("Registration", model);
+            return View(model);
 
         }
 
+        [Authorize(Roles = "Admin,User")]
         [HttpPost]
         public async Task<IActionResult> UpdateRegistration(RegisterViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var user = await _userManager.GetUserAsync(User);
+                    var user = await _userManager.FindByNameAsync(model.UserName);
                     user.Email = model.Email;
                     user.Name = model.Name;
-                    user.UserName = model.UserName;
-                    user.DateCreated = DateTime.UtcNow.AddHours(3);
+                    user.DateUpdated = DateTime.UtcNow.AddHours(3);
                     user.PhoneNumber = model.PhoneNumber;
                     user.UpdatedBy = user.UserName;
 
                     var result = await _userManager.UpdateAsync(user);
-
-                    if (result.Succeeded)
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (result.Succeeded && User.IsInRole("Admin"))
                     {
-                        var currentUser = await _userManager.FindByNameAsync(user.UserName);
-                        await _userManager.AddToRoleAsync(currentUser, model.Role);
-                        return Json(new { status = result.Succeeded, message = "Record updated successfully" });
+                        var isRemoved = await _userManager.RemoveFromRolesAsync(user, roles);
+                        if (isRemoved.Succeeded)
+                        {
+                            await _userManager.AddToRoleAsync(user, model.Role);
+                            return Json(new { status = result.Succeeded, message = "Record updated successfully" });
+                        }
                     }
-                    return Json(new { status = result.Succeeded, message = "Operation falied" });
+                    return Json(new { status = result.Succeeded, message = result.Succeeded ? "Record updated successfully" : "Operation falied" });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return Json(new { status = false, message = "Operation falied" });
                 }
@@ -193,6 +197,19 @@ namespace PointOfSale.Controllers
             }
             user.IsActive = status;
             var isSaved = await _userManager.UpdateAsync(user);
+            return Json(new { status = isSaved.Succeeded, message = isSaved.Succeeded ? "Status updated successfully" : "operation faild, please try again" });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> Delete(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var loginUser = await _userManager.GetUserAsync(User);
+            if (user == null || user.CompanyId != loginUser.CompanyId)
+            {
+                return Json(new { status = false, message = "operation faild, please try again" });
+            }
+            var isSaved = await _userManager.DeleteAsync(user);
             return Json(new { status = isSaved.Succeeded, message = isSaved.Succeeded ? "Status updated successfully" : "operation faild, please try again" });
         }
 
@@ -252,7 +269,7 @@ namespace PointOfSale.Controllers
                 RoleId = role.Id,
                 RoleName = role.Name
             };
-            return View("index", model);
+            return View("CreateRole", model);
         }
 
         [HttpPost]
@@ -280,7 +297,7 @@ namespace PointOfSale.Controllers
         public IActionResult Login()
         {
             var message = TempData["SuccessMsg"];
-            return View();
+            return View("SignIn");
         }
 
 
@@ -291,20 +308,19 @@ namespace PointOfSale.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return View(model);
+                    return View("SignIn", model);
 
                 var user = await _userManager.FindByNameAsync(model.Username);
                 if (user == null || !user.IsActive)
                 {
                     ModelState.AddModelError("", "invalid username || password");
-                    return View(model);
+                    return View("SignIn", model);
                 }
 
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.Rememberme, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
-
                     var roles = await _userManager.GetRolesAsync(user);
                     if (roles.Contains("Admin")) { return RedirectToAction("index"); }
                     else if (roles.Contains("User"))
@@ -316,12 +332,12 @@ namespace PointOfSale.Controllers
                     return View(model);
                 }
                 ModelState.AddModelError("", "invalid username || password");
-                return View(model);
+                return View("SignIn", model);
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "invalid username || password");
-                return View(model);
+                return View("SignIn", model);
             }
         }
 

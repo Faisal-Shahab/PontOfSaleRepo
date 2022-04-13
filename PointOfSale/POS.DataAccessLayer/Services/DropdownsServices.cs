@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POS.DataAccessLayer.IServices;
-using POS.DataAccessLayer.Models.Category;
 using POS.DataAccessLayer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace POS.DataAccessLayer.Services
@@ -25,7 +23,7 @@ namespace POS.DataAccessLayer.Services
             var selectList = await _appDbContext.Categories.Where(x => x.CompanyId == CompanyId)
                 .Select(x => new SelectListViewModel
                 {
-                    Text = x.CategoryDescriptions.FirstOrDefault(c => c.LanguageId == LanguageId).Name,
+                    Text = LanguageId == 1 ? x.Name : x.NameAr,
                     Value = x.CategoryId.ToString()
                 }).ToListAsync();
             return selectList;
@@ -35,14 +33,14 @@ namespace POS.DataAccessLayer.Services
         {
             var products = _appDbContext.Products.Where(x => x.CompanyId == CompanyId);
 
-            products = products.Where(x => x.Barcode == value || x.ProductDescriptions.FirstOrDefault(x => x.LanguageId == 1).Name.ToLower().Contains(value.ToLower()));
+            products = products.Where(x => x.Barcode == value || x.Name.ToLower().Contains(value.ToLower()));
 
             var result = await products.Select(x => new ProductListViewModel
             {
                 Id = x.ProductId,
-                Name = x.ProductDescriptions.FirstOrDefault(p => p.LanguageId == LanguageId).Name,
+                Name = LanguageId == 1 ? x.Name : x.NameAr,
                 Price = x.SalePrice,
-                Discount = x.DiscoutPercentage
+                Discount = x.Discount
             }).ToListAsync();
             return result;
         }
@@ -108,7 +106,7 @@ namespace POS.DataAccessLayer.Services
             var selectList = await _appDbContext.Roles.Select(x => new SelectListViewModel
             {
                 Text = x.Name,
-                Value = x.NormalizedName               
+                Value = x.NormalizedName
             }).ToListAsync();
             return selectList;
         }

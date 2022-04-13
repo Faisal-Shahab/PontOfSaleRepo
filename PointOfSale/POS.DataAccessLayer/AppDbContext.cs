@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using POS.DataAccessLayer.Models;
-using POS.DataAccessLayer.Models.Category;
 using POS.DataAccessLayer.Models.Company;
 using POS.DataAccessLayer.Models.Customer;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Payment;
 using POS.DataAccessLayer.Models.Subscriptions;
 using POS.DataAccessLayer.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace POS.DataAccessLayer
 {
@@ -22,10 +18,8 @@ namespace POS.DataAccessLayer
         public DbSet<CompanyModel> Companies { get; set; }
         public DbSet<SubscriptionModel> Subscriptions { get; set; }
         public DbSet<CompanySubscriptionModel> CompanySubscriptions { get; set; }
-        public DbSet<CategoryModel> Categories { get; set; }
-        public DbSet<CategoryDescriptionModel> CategoryDescriptions { get; set; }
-        public DbSet<ProductModel> Products { get; set; }
-        public DbSet<ProductDescriptionModel> ProductDescriptions { get; set; }
+        public DbSet<Category> Categories { get; set; }        
+        public DbSet<Product> Products { get; set; }        
         public DbSet<SupplierModel> Suppliers { get; set; }
         public DbSet<CustomerModel> Customers { get; set; }
         public DbSet<PaymentTypeModel> PaymentTypes { get; set; }
@@ -33,7 +27,8 @@ namespace POS.DataAccessLayer
         public DbSet<SaleOrderDetails> SaleOrderDetails { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderDetails> PurchaseOrderDetails { get; set; }
-        
+
+        [System.Obsolete]
         public DbQuery<UserViewModel> UserView { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

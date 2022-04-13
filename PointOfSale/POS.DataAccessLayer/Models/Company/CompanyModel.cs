@@ -1,12 +1,10 @@
-﻿using POS.DataAccessLayer.Models.Category;
-using POS.DataAccessLayer.Models.Customer;
+﻿using POS.DataAccessLayer.Models.Customer;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace POS.DataAccessLayer.Models.Company
 {
@@ -41,8 +39,8 @@ namespace POS.DataAccessLayer.Models.Company
         public DateTime UpdatedAt { get; set; }
         public virtual ICollection<CustomerModel> Customers { get; set; }
         public virtual ICollection<SupplierModel> Suppliers { get; set; }
-        public virtual ICollection<CategoryModel> Categories { get; set; }
-        public virtual ICollection<ProductModel> Products { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<CompanySubscriptionModel> CompanySubscriptions { get; set; }
         public virtual ICollection<SaleOrder> SaleOrders { get; set; }
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }

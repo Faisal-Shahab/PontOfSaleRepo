@@ -12,8 +12,7 @@ namespace PointOfSale.Model
         [Required]
         public int CompanyId { get; set; }
         [Required]
-        public string Name { get; set; }
-        [Required]
+        public string Name { get; set; }        
         public string ArabicName { get; set; }
     }
 }

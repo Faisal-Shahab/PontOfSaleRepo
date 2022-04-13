@@ -11,8 +11,8 @@ function initTable() {
         "filter": true, //set to false to Disable filter (search box)            
         "columns": [
             { data: "categoryId", "sortable": false },
-            { data: "companyName", "sortable": false },
-            { data: "categoryName", "sortable": false },
+            { data: "name", "sortable": false },
+            { data: "nameAr", "sortable": false },
             {
                 "data": null,
                 "defaultContent": "<button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'edit')\"> <span class=\"flaticon-edit\"></span> </button> <button class=\"btn btn-default btn-sm\" onclick=\"getId(this,'delete')\"><span class=\"flaticon2-trash\"></span></button>"
