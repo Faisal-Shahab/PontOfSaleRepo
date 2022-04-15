@@ -1,24 +1,51 @@
 "use strict";
-var KTAppEcommerceSaveCategory = function () {
+var KTAppEcommerceSaveCompany = function () {
 
     return {
         init: function () {
             (() => {
                 let e;
-                const t = document.getElementById("kt_ecommerce_add_category_form"),
+                const t = document.getElementById("kt_ecommerce_add_company_form"),
 
-                    o = document.getElementById("kt_ecommerce_add_category_submit");
-
+                    o = document.getElementById("kt_ecommerce_add_company_submit");
 
                 e = FormValidation.formValidation(t, {
                     fields: {
+
                         Name: {
                             validators: {
                                 notEmpty: {
-                                    message: "Category name is required"
+                                    message: "Company name is required"
                                 }
                             }
-                        }
+                        },
+                        Email: {
+                            validators: {
+                                notEmpty: {
+                                    message: "Email is required"
+                                }
+                            }
+                        },
+                        Password: {
+                            validators: {
+                                notEmpty: {
+                                    message: "Password is required"
+                                }
+                            }
+                        },
+                        ConfirmPassword: {
+                            validators: {
+                                notEmpty: {
+                                    message: 'The password confirmation is required'
+                                },
+                                identical: {
+                                    compare: function () {
+                                        return form.querySelector('[name="Password"]').value;
+                                    },
+                                    message: 'The password and its confirm are not the same'
+                                }
+                            }
+                        },
                     },
                     plugins: {
                         trigger: new FormValidation.plugins.Trigger,
@@ -31,6 +58,7 @@ var KTAppEcommerceSaveCategory = function () {
                 }),
 
                     o.addEventListener("click", (a => {
+
                         a.preventDefault(), e && e.validate().then((function (e) {
 
                             "Valid" === e ? (o.setAttribute("data-kt-indicator", "on"),
@@ -41,11 +69,11 @@ var KTAppEcommerceSaveCategory = function () {
                                     bg = bg.replace('url(', '').replace(')', '').replace(/\"/gi, "");
                                     $("#avatar_base64").val(bg);
                                     o.removeAttribute("data-kt-indicator");
-                                    var data = $('#kt_ecommerce_add_category_form').serializeArray();
+                                    var data = $('#kt_ecommerce_add_company_form').serializeArray();
 
-                                    $.post("/category/create", data, function (res) {
-                                   
-                                        if (res.success) {
+                                    $.post("/company/create", data, function (res) {
+
+                                        if (res.status) {
                                             Swal.fire({
                                                 text: "Form has been successfully submitted!",
                                                 icon: "success",
@@ -56,7 +84,7 @@ var KTAppEcommerceSaveCategory = function () {
                                                 }
                                             }).then((function (e) {
                                                 e.isConfirmed && (o.disabled = !1)
-                                                window.location.href = '/Category/Index';
+                                                window.location.href = '/company/Index';
                                             }))
                                         } else {
                                             Swal.fire({
@@ -80,5 +108,5 @@ var KTAppEcommerceSaveCategory = function () {
     }
 }();
 KTUtil.onDOMContentLoaded((function () {
-    KTAppEcommerceSaveCategory.init()
+    KTAppEcommerceSaveCompany.init()
 }));

@@ -51,6 +51,7 @@ namespace PointOfSale.Controllers
             {
                 x.CustomerId,
                 x.Name,
+                x.Email,
                 x.ContactNo,
                 x.Address                
             });

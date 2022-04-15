@@ -1,37 +1,76 @@
-﻿@{ Layout = null; }
+﻿
 
 @model POS.DataAccessLayer.Models.Customer.CustomerModel
-<form method="post" asp-action="Create" id="customerForm" novalidate>
-    <div class="row">
-        <input type="hidden" asp-for="CustomerId" />
-        <div class="col-md-6 form-group">
-            <label>Name</label>
-            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+
+<form id="kt_ecommerce_add_customer_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/Categories/Index">
+    <!--begin::Main column-->
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <!--begin::General options-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>General</h2>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <!--begin::Input group-->
+                <div class="mb-10 fv-row">
+                    <!--begin::Label-->
+                    <input type="hidden" asp-for="CustomerId" />
+                    <label class="required form-label">Customer Name</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input type="text" asp-for="Name" class="form-control mb-2" placeholder="Customer name english" />
+                    <!--end::Input-->
+                    <!--begin::Description-->
+                    <div class="text-muted fs-7">A name is required.</div>
+                    <!--end::Description-->
+                </div>
+
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Email Address</label>
+                    <input type="email" asp-for="Email" class="form-control mb-2" placeholder="something@gmail.com" />
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Contact #</label>
+                    <input type="text" asp-for="ContactNo" class="form-control mb-2" />
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="form-label">Balance</label>
+                    <input type="text" asp-for="Balance" class="form-control mb-2" />
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="form-label">Address</label>
+                    <textarea asp-for="Address" class="form-control mb-2" maxlength="500">@Model.Address</textarea>
+                </div>
+
+            </div>
+            <!--end::Card header-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Email</label>
-            <input type="email" asp-for="Email" class="form-control" maxlength="40" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Contact#</label>
-            <input type="text" asp-for="ContactNo" class="form-control" maxlength="16" />
-            <span asp-validation-for="ContactNo" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Balance</label>
-            <input type="text" asp-for="Balance" class="form-control" />
-            <span asp-validation-for="Balance" class="text-danger"></span>
-        </div>
-        <div class="col-md-12 form-group">
-            <label>Address</label>
-            <textarea asp-for="Address" class="form-control" maxlength="500">@Model.Address</textarea>
-            <span asp-validation-for="Address" class="text-danger"></span>
+        <!--end::General options-->
+        <!--end::Automation-->
+        <div class="d-flex justify-content-end">
+            <!--begin::Button-->
+            <a href="/Customer/Index" id="kt_ecommerce_add_customer_cancel" class="btn btn-light me-5">Cancel</a>
+            <!--end::Button-->
+            <!--begin::Button-->
+            <button type="submit" id="kt_ecommerce_add_customer_submit" class="btn btn-primary">
+                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-progress">
+                    Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+            </button>
+            <!--end::Button-->
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Submit">
-    </div>
+    <!--end::Main column-->
 </form>
+
+@section Scripts{
+
+    <script src="~/js/pages/Customer/save-customer.js"></script>
+}

@@ -1,13 +1,13 @@
 "use strict";
-var KTAppEcommerceSaveCategory = function () {
+var KTAppEcommerceSaveCustomer = function () {
 
     return {
         init: function () {
             (() => {
                 let e;
-                const t = document.getElementById("kt_ecommerce_add_category_form"),
+                const t = document.getElementById("kt_ecommerce_add_customer_form"),
 
-                    o = document.getElementById("kt_ecommerce_add_category_submit");
+                    o = document.getElementById("kt_ecommerce_add_customer_submit");
 
 
                 e = FormValidation.formValidation(t, {
@@ -15,7 +15,7 @@ var KTAppEcommerceSaveCategory = function () {
                         Name: {
                             validators: {
                                 notEmpty: {
-                                    message: "Category name is required"
+                                    message: "customer name is required"
                                 }
                             }
                         }
@@ -37,15 +37,15 @@ var KTAppEcommerceSaveCategory = function () {
                                 o.disabled = !0,
                                 setTimeout((function () {
 
-                                    var bg = $('.image-input-wrapper').css('background-image');
-                                    bg = bg.replace('url(', '').replace(')', '').replace(/\"/gi, "");
-                                    $("#avatar_base64").val(bg);
-                                    o.removeAttribute("data-kt-indicator");
-                                    var data = $('#kt_ecommerce_add_category_form').serializeArray();
+                                    //var bg = $('.image-input-wrapper').css('background-image');
+                                    //bg = bg.replace('url(', '').replace(')', '').replace(/\"/gi, "");
+                                    //$("#avatar_base64").val(bg);
+                                    //o.removeAttribute("data-kt-indicator");
+                                    var data = $('#kt_ecommerce_add_customer_form').serializeArray();
 
-                                    $.post("/category/create", data, function (res) {
+                                    $.post("/customer/create", data, function (res) {
                                    
-                                        if (res.success) {
+                                        if (res.status) {
                                             Swal.fire({
                                                 text: "Form has been successfully submitted!",
                                                 icon: "success",
@@ -56,7 +56,7 @@ var KTAppEcommerceSaveCategory = function () {
                                                 }
                                             }).then((function (e) {
                                                 e.isConfirmed && (o.disabled = !1)
-                                                window.location.href = '/Category/Index';
+                                                window.location.href = '/customer/Index';
                                             }))
                                         } else {
                                             Swal.fire({
@@ -80,5 +80,5 @@ var KTAppEcommerceSaveCategory = function () {
     }
 }();
 KTUtil.onDOMContentLoaded((function () {
-    KTAppEcommerceSaveCategory.init()
+    KTAppEcommerceSaveCustomer.init()
 }));

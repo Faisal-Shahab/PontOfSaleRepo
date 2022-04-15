@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
+using POS.DataAccessLayer.ViewModels;
 using Rotativa.AspNetCore;
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,46 @@ namespace PointOfSale.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public async Task<JsonResult> GetSaleOrders(SearchFilter filter)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var query = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId);
+                int totalRows = query.Count();
+                var data = await query.OrderByDescending(x => x.OrderId).Skip(filter.Start).Take(filter.PageLength)
+                             .Select(x => new
+                             {
+                                 x.OrderId,
+                                 CustomerName = x.Customer.Name,
+                                 x.Total,
+                                 OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
+                                 UpdatedDate = x.UpdatedAt.HasValue ? x.UpdatedAt.Value.ToString("yyyy-MM-dd") : ""
+                             }).ToListAsync();
+
+                return Json(new
+                {
+                    sEcho = filter.Draw,
+                    iTotalRecords = totalRows,
+                    iTotalDisplayRecords = totalRows,
+                    aaData = data
+                });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<JsonResult> DeleteSaleOrders(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var order = await _appDbContext.SaleOrder.FirstOrDefaultAsync(x => x.CompanyId == user.CompanyId && x.OrderId == id);
+            _appDbContext.SaleOrder.Remove(order);
+            return Json(new { status = await _appDbContext.SaveChangesAsync() > 0 });
         }
 
         #region ==== Sales ==== 
@@ -117,13 +159,14 @@ namespace PointOfSale.Controllers
                         c.TaxNumber,
                         c.CrNumber,
                         c.ThankyouNote,
-                        invNumber = invNumber
+                        invNumber = invNumber,
+                        date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm")
                     }).FirstOrDefault();
 
                     trans.Commit();
                     return Json(new { status = true, message = "Order places successfully", companyDetails = companyDetails });
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     trans.Rollback();
                     return Json(new { status = false, message = "Operation failed" });

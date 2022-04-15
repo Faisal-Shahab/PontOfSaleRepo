@@ -41,8 +41,8 @@ namespace PointOfSale.Controllers
             return Json(new
             {
                 sEcho = filter.Draw,
-                iTotalRecords = data.FirstOrDefault().Total,
-                iTotalDisplayRecords = data.FirstOrDefault().Total,
+                iTotalRecords = data.FirstOrDefault()?.Total ?? 0,
+                iTotalDisplayRecords = data.FirstOrDefault()?.Total ?? 0,
                 aaData = data
             });
         }

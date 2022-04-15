@@ -1,87 +1,157 @@
-﻿@{ Layout = null; }
+﻿@model PointOfSale.Model.CompanyViewModel
 
-@model PointOfSale.Model.CompanyViewModel
-
-<form method="post" asp-action="Create" id="companyForm" enctype="multipart/form-data" novalidate>
-    <div class="row">
-        <input type="hidden" asp-for="CompanyId" />
-        <input type="hidden" asp-for="Logo" />
-        <input type="hidden" asp-for="UserEmail" />
-        <div class="col-md-6 form-group">
-            <label>Name</label>
-            <input type="text" asp-for="Name" class="form-control" maxlength="160" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Arabic Name</label>
-            <input type="text" asp-for="ArabicName" class="form-control" maxlength="160" />
-            <span asp-validation-for="ArabicName" class="text-danger"></span>
-        </div>
-        <div class="col-md-12 form-group">
-            <label>Email</label>
-            <input type="email" asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        @if (Model != null)
-        {
-            if (Model.CompanyId > 0)
-            {
-                <div class="col-md-12 form-group">
-                    <label>Current Password</label>
-                    <input type="password" asp-for="CurrentPassword" class="form-control" />
-                    <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+<form id="kt_ecommerce_add_company_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/company/Index">
+    <!--begin::Aside column-->
+    <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
+        <!--begin::Thumbnail settings-->
+        <div class="card card-flush py-8">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <!--begin::Card title-->
+                <div class="card-title">
+                    <h2>Thumbnail</h2>
                 </div>
-            }
-        }
-
-        <div class="col-md-6 form-group">
-            <label>Password</label>
-            <input type="password" asp-for="Password" class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
+                <!--end::Card title-->
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body text-center pt-0">
+                <!--begin::Image input-->
+                <div class="image-input image-input-empty image-input-outline mb-3" data-kt-image-input="true" style="background-image: url(assets/media/svg/files/blank-image.svg)">
+                    <!--begin::Preview existing avatar-->
+                    <div class="image-input-wrapper w-150px h-150px"></div>
+                    <!--end::Preview existing avatar-->
+                    <!--begin::Label-->
+                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                        <!--begin::Icon-->
+                        <i class="bi bi-pencil-fill fs-7"></i>
+                        <!--end::Icon-->
+                        <!--begin::Inputs-->
+                        <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                        <input type="hidden" name="avatar_remove" />
+                        <input type="hidden" asp-for="Image" id="avatar_base64" />
+                        <!--end::Inputs-->
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Cancel-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                        <i class="bi bi-x fs-2"></i>
+                    </span>
+                    <!--end::Cancel-->
+                    <!--begin::Remove-->
+                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                        <i class="bi bi-x fs-2"></i>
+                    </span>
+                    <!--end::Remove-->
+                </div>
+                <!--end::Image input-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Set the category thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
+                <!--end::Description-->
+            </div>
+            <!--end::Card body-->
         </div>
-        <div class="col-md-6 form-group">
-            <label>Confirm Password</label>
-            <input type="password" asp-for="ConfirmPassword" class="form-control" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 form-group">
-            <label>Contact #</label>
-            <input type="text" asp-for="ContactNo" class="form-control" />
-            <span asp-validation-for="ContactNo" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Fax #</label>
-            <input type="text" asp-for="FaxNo" class="form-control" />
-            <span asp-validation-for="FaxNo" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>CR #</label>
-            <input type="text" asp-for="CrNumber" class="form-control" />
-            <span asp-validation-for="CrNumber" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Tax #</label>
-            <input type="text" asp-for="TaxNumber" class="form-control" />
-            <span asp-validation-for="TaxNumber" class="text-danger"></span>
-        </div>
-        <div class="col-md-6 form-group">
-            <label>Logo</label>
-            <input type="file" name="file" class="form-control" />
-        </div>
-        <div class="col-md-12 form-group">
-            <label>Address</label>
-            <textarea asp-for="Address" class="form-control" maxlength="1000" />
-            <span asp-validation-for="Address" class="text-danger"></span>
-        </div>
-        <div class="col-md-12 form-group">
-            <label>Thank You Note</label>
-            <textarea asp-for="ThankyouNote" class="form-control" maxlength="500" />
-            <span asp-validation-for="ThankyouNote" class="text-danger"></span>
-        </div>
+        <!--end::Thumbnail settings-->
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Submit">
+    <!--end::Aside column-->
+    <!--begin::Main column-->
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+        <!--begin::General options-->
+        <div class="card card-flush py-4">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>General</h2>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <!--begin::Input group-->
+                <div class="mb-10 fv-row">
+                    <input type="hidden" asp-for="CompanyId" />
+                    <input type="hidden" asp-for="Logo" />
+                    <input type="hidden" asp-for="UserEmail" />
+                    <label class="required form-label">Company Name</label>
+                    <input type="text" asp-for="Name" class="form-control mb-2" placeholder="Company name english" />
+                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Company Name (Arabic)</label>
+                    <input type="text" asp-for="ArabicName" class="form-control mb-2" placeholder="Company name arabic" />
+                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Email</label>
+                    <input type="text" asp-for="Email" class="form-control mb-2" placeholder="something@gmail.com" />
+                    <div class="text-muted fs-7">A email is required and recommended to be unique.</div>
+                </div>
+
+                @if (Model != null)
+                {
+                    if (Model.CompanyId > 0)
+                    {
+                        <div class="mb-10 fv-row">
+                            <label class="required form-label">Current Password</label>
+                            <input type="password" asp-for="CurrentPassword" class="form-control" />
+                            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                        </div>
+                    }
+                }
+
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Password</label>
+                    <input type="text" asp-for="Password" class="form-control mb-2" placeholder="******" />
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Confirm Password</label>
+                    <input type="text" asp-for="ConfirmPassword" class="form-control mb-2" placeholder="******" />
+                </div>
+
+                <div class="mb-10 fv-row">                    
+                    <label class="required form-label">Contact #</label>
+                    <input type="text" asp-for="ContactNo" class="form-control mb-2" placeholder="009223123123" />                    
+                </div>
+                <div class="mb-10 fv-row">                   
+                    <label class="required form-label">Fax #</label>                   
+                    <input type="text" asp-for="FaxNo" class="form-control mb-2" placeholder="009223123123" />                    
+                </div>
+                <div class="mb-10 fv-row">                    
+                    <label class="required form-label">CR #</label>                   
+                    <input type="text" asp-for="CrNumber" class="form-control mb-2" placeholder="009223123123" />                    
+                </div>
+
+                <div class="mb-10 fv-row">                    
+                    <label class="required form-label">Tax #</label> 
+                    <input type="text" asp-for="TaxNumber" class="form-control mb-2" />
+                </div>
+
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Address</label>
+                    <textarea asp-for="Address" class="form-control mb-2">@Model.Address</textarea>
+                </div>
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Thank You Note</label>
+                    <textarea asp-for="ThankyouNote" class="form-control mb-2">@Model.ThankyouNote</textarea>
+                </div>
+            </div>            
+        </div>
+        <div class="d-flex justify-content-end">
+            <a href="/Company/Index" id="kt_ecommerce_add_company_cancel" class="btn btn-light me-5">Cancel</a>
+            <button type="submit" id="kt_ecommerce_add_company_submit" class="btn btn-primary">
+                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-progress">
+                    Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+            </button>       
+        </div>
     </div>
 </form>
+
+@section Scripts{
+
+    @*<script src="~/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>*@
+    <script src="~/assets/js/custom/apps/ecommerce/company/save-company.js"></script>
+}
+

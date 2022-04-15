@@ -63,13 +63,18 @@ namespace PointOfSale.Controllers
             });
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.CompanyId > 0)
+            {
+                return RedirectToAction("index");
+            }
             return View();
         }
 
         [HttpPost]
-        public async Task<JsonResult> Create(CompanyViewModel viewModel, IFormFile file)
+        public async Task<JsonResult> Create(CompanyViewModel viewModel, IFormFile avatar)
         {
             try
             {
@@ -82,7 +87,7 @@ namespace PointOfSale.Controllers
                     var loginUser = await _userManager.GetUserAsync(User);
                     var model = PosAutoMaper.Map<CompanyModel, CompanyViewModel>(new CompanyModel(), viewModel);
 
-                    if (file != null) { model.Logo = UploadImage(file); }
+                    if (viewModel.Image != null) { model.Logo = UploadImage(viewModel.Image); }
                     if (model.CompanyId > 0)
                     {
                         model.UpdatedAt = DateTime.UtcNow.AddHours(3);
@@ -153,13 +158,22 @@ namespace PointOfSale.Controllers
             return View("Create", model);
         }
 
-        private string UploadImage(IFormFile file)
+        private string UploadImage(string image)
         {
+
+            var imageStr = image.Split("base64,");
+
+            byte[] bytes = Convert.FromBase64String(imageStr[1]);
+
+            MemoryStream stream = new MemoryStream(bytes);
+            IFormFile file = new FormFile(stream, 0, bytes.Length, "company_logo", "company_logo." + imageStr[0].Split("/")[1].Replace(";", ""));
+            //
             var _folder = "CompanyLogo";
             var uniqueFileName = GetUniqueFileName(file.FileName);
             var uploads = Path.Combine(_hostingEnvironment.WebRootPath, _folder);
             var filePath = Path.Combine(uploads, uniqueFileName);
             file.CopyTo(new FileStream(filePath, FileMode.Create));
+            stream.Dispose();
             file = null;
             return uniqueFileName;
         }

@@ -53,7 +53,7 @@ var KTAppEcommerceSaveProduct = function () {
 
                     o.addEventListener("click", (a => {
                         a.preventDefault(), e && e.validate().then((function (e) {
-                            debugger;
+                           
                             "Valid" === e ? (o.setAttribute("data-kt-indicator", "on"),
                                 o.disabled = !0,
                                 setTimeout((function () {
@@ -77,7 +77,7 @@ var KTAppEcommerceSaveProduct = function () {
                                                 }
                                             }).then((function (e) {
                                                 e.isConfirmed && (o.disabled = !1)
-                                                window.location.href = '/Category/Index';
+                                                window.location.href = '/Product/Index';
                                             }))
                                         } else {
                                             Swal.fire({

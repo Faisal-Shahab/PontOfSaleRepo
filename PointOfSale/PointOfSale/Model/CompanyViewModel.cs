@@ -40,6 +40,7 @@ namespace PointOfSale.Model
         [Required]
         [Compare("Password")]
         [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }        
+        public string ConfirmPassword { get; set; }
+        public string Image { get; set; }
     }
 }
