@@ -31,6 +31,8 @@ namespace POS.DataAccessLayer.Models.Company
         public string ThankyouNote { get; set; }
         [StringLength(500)]
         public string Logo { get; set; }
+        [StringLength(50)]
+        public string Printer { get; set; }
         [StringLength(100)]
         public string CreateBy { get; set; }
         [StringLength(100)]

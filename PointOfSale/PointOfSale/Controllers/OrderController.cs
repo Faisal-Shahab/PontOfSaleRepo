@@ -9,9 +9,13 @@ using POS.DataAccessLayer.Models;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.ViewModels;
+using QRCoder;
 using Rotativa.AspNetCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -83,7 +87,11 @@ namespace PointOfSale.Controllers
         #region ==== Sales ==== 
         public async Task<IActionResult> Sales()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            ViewBag.Company = await _appDbContext.Companies.FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
             ViewBag.PaymentTypes = await _dropdownsServices.PaymentTypesDropdown();
+
             return View();
         }
 
@@ -138,12 +146,14 @@ namespace PointOfSale.Controllers
 
                     foreach (var order in details)
                     {
+                        var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
                         order.OrderId = saleOrder.OrderId;
                         order.CreatedAt = DateTime.Now.AddHours(3);
                         order.CreatedBy = user.UserName;
+                        order.CostPrice = product.CostPrice;
                         _appDbContext.SaleOrderDetails.Add(order);
 
-                        var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
+
                         if (product != null)
                         {
                             product.Quantity = product.Quantity - order.Quantity;
@@ -153,18 +163,15 @@ namespace PointOfSale.Controllers
 
                     _appDbContext.SaveChanges();
 
-                    var companyDetails = _appDbContext.Companies.Where(x => x.CompanyId == user.CompanyId).Select(c => new
+                    var orderData = new
                     {
-                        companyName = LanguageId == 1 ? c.Name : c.ArabicName,
-                        c.TaxNumber,
-                        c.CrNumber,
-                        c.ThankyouNote,
                         invNumber = invNumber,
-                        date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm")
-                    }).FirstOrDefault();
+                        date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
+                        qrCode = GenerateQC(invNumber.ToString())
+                    };
 
                     trans.Commit();
-                    return Json(new { status = true, message = "Order places successfully", companyDetails = companyDetails });
+                    return Json(new { status = true, message = "Order places successfully", orderData = orderData });
                 }
                 catch (Exception e)
                 {
@@ -174,6 +181,33 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<JsonResult> GetOrderDetails(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var order = await _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId && x.OrderId == id)
+                           .Select(x => new
+                           {
+                               x.OrderId,
+                               x.InvNumber,
+                               x.Total,
+                               Date = x.CreatedAt.ToString("yyyy-MM-dd"),
+                               CustomerName = x.Customer.Name,
+                               CustomerEmail = x.Customer.Email,
+                               CompanyLogo = x.Company.Logo,
+                               CompanyName = x.Company.Name,
+                               CompanyCrNumber = x.Company.CrNumber,
+                               CompanyTaxNumber = x.Company.TaxNumber,
+                               Details = x.SaleOrderDetails,
+                               //details = x.SaleOrderDetails.Select(d => new
+                               //{
+                               //    productName = d.Product.Name,
+                               //    d.SalePrice,
+                               //    d.Quantity,
+                               //    d.SubTotal
+                               //})
+                           }).ToListAsync();
+            return Json(order);
+        }
         #endregion
 
 
@@ -257,6 +291,23 @@ namespace PointOfSale.Controllers
             }
         }
 
-        #endregion     
+        #endregion
+
+        private string GenerateQC(string value)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData QrCodeInfo = qrGenerator.CreateQrCode(value, QRCodeGenerator.ECCLevel.Q);
+                QRCode QrCode = new QRCode(QrCodeInfo);
+                using (Bitmap bitMap = QrCode.GetGraphic(20))
+                {
+                    bitMap.Save(ms, ImageFormat.Png);
+                    value = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
+            return value;
+        }
     }
 }

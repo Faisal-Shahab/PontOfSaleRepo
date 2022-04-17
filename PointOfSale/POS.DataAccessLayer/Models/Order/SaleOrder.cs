@@ -3,6 +3,7 @@ using POS.DataAccessLayer.Models.Customer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace POS.DataAccessLayer.Models
@@ -13,7 +14,7 @@ namespace POS.DataAccessLayer.Models
         public long OrderId { get; set; }
         public long InvNumber { get; set; }
         public int CompanyId { get; set; }
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public decimal Total { get; set; }
         public int PaymentTypeId { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -31,9 +32,11 @@ namespace POS.DataAccessLayer.Models
     {
         [Key]
         public long OrderDetailId { get; set; }
+        [ForeignKey("SaleOrder")]
         public long OrderId { get; set; }
         public int ProductId { get; set; }
         public decimal SalePrice { get; set; }
+        public decimal CostPrice { get; set; }
         public int Quantity { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Tax { get; set; }
@@ -42,5 +45,6 @@ namespace POS.DataAccessLayer.Models
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public virtual SaleOrder SaleOrder { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

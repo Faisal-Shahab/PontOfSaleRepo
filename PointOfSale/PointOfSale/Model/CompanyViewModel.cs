@@ -25,6 +25,7 @@ namespace PointOfSale.Model
         [StringLength(60)]
         public string TaxNumber { get; set; }
         public string Logo { get; set; }
+        public string Printer { get; set; }
         [StringLength(500)]
         public string ThankyouNote { get; set; }
         public string UserEmail  { get; set; }

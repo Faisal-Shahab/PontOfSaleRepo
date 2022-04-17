@@ -19,7 +19,7 @@ namespace POS.DataAccessLayer.Models.Security
         public string UpdatedBy { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.UtcNow.AddHours(3);
         public DateTime DateUpdated { get; set; }
-        public virtual ICollection<IdentityUserRole<string>> Roles { get; set; }
+      //  public virtual ICollection<IdentityUserRole<string>> Roles { get; set; }
         public virtual CompanyModel Company { get; set; }
     }
 }

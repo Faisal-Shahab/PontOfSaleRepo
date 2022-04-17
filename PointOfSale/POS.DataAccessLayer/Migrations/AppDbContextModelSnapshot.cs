@@ -195,14 +195,9 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles");
                 });
@@ -226,45 +221,7 @@ namespace POS.DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.CategoryDescriptionModel", b =>
-                {
-                    b.Property<int>("CategoryDescriptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(160)")
-                        .HasMaxLength(160);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("CategoryDescriptionId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CategoryDescriptions");
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.CategoryModel", b =>
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -278,122 +235,25 @@ namespace POS.DataAccessLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameAr")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CategoryId");
 
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.ProductDescriptionModel", b =>
-                {
-                    b.Property<int>("ProductDescriptionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(160)")
-                        .HasMaxLength(160);
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("ProductDescriptionId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductDescriptions");
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.ProductModel", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Barcode")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(60)")
-                        .HasMaxLength(60);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("CostPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<decimal>("DiscoutPercentage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsTaxApplied")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Size")
-                        .HasColumnType("nvarchar(15)")
-                        .HasMaxLength(15);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("ProductId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.Company.CompanyModel", b =>
@@ -440,6 +300,10 @@ namespace POS.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(160)")
                         .HasMaxLength(160);
+
+                    b.Property<string>("Printer")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("TaxNumber")
                         .HasColumnType("nvarchar(60)")
@@ -572,9 +436,6 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<long?>("PurchaseOrderOrderId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -592,7 +453,9 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.HasKey("OrderDetailId");
 
-                    b.HasIndex("PurchaseOrderOrderId");
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("PurchaseOrderDetails");
                 });
@@ -613,6 +476,64 @@ namespace POS.DataAccessLayer.Migrations
                     b.ToTable("PaymentTypes");
                 });
 
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsTaxApplied")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("POS.DataAccessLayer.Models.SaleOrder", b =>
                 {
                     b.Property<long>("OrderId")
@@ -629,7 +550,7 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<long>("InvNumber")
@@ -663,6 +584,9 @@ namespace POS.DataAccessLayer.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -677,9 +601,6 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<long?>("SaleOrderOrderId")
-                        .HasColumnType("bigint");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
@@ -698,7 +619,9 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.HasKey("OrderDetailId");
 
-                    b.HasIndex("SaleOrderOrderId");
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("SaleOrderDetails");
                 });
@@ -840,6 +763,9 @@ namespace POS.DataAccessLayer.Migrations
 
             modelBuilder.Entity("POS.DataAccessLayer.ViewModels.UserViewModel", b =>
                 {
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -943,10 +869,6 @@ namespace POS.DataAccessLayer.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("POS.DataAccessLayer.Models.Security.User", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -958,43 +880,10 @@ namespace POS.DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.CategoryDescriptionModel", b =>
-                {
-                    b.HasOne("POS.DataAccessLayer.Models.Category.CategoryModel", "Category")
-                        .WithMany("CategoryDescriptions")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.CategoryModel", b =>
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Category", b =>
                 {
                     b.HasOne("POS.DataAccessLayer.Models.Company.CompanyModel", "Company")
                         .WithMany("Categories")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.ProductDescriptionModel", b =>
-                {
-                    b.HasOne("POS.DataAccessLayer.Models.Category.ProductModel", "Product")
-                        .WithMany("ProductDescriptions")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("POS.DataAccessLayer.Models.Category.ProductModel", b =>
-                {
-                    b.HasOne("POS.DataAccessLayer.Models.Category.CategoryModel", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("POS.DataAccessLayer.Models.Company.CompanyModel", "Company")
-                        .WithMany("Products")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1028,7 +917,28 @@ namespace POS.DataAccessLayer.Migrations
                 {
                     b.HasOne("POS.DataAccessLayer.Models.Order.PurchaseOrder", "PurchaseOrder")
                         .WithMany("PurchaseOrderDetails")
-                        .HasForeignKey("PurchaseOrderOrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Product", b =>
+                {
+                    b.HasOne("POS.DataAccessLayer.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("POS.DataAccessLayer.Models.Company.CompanyModel", "Company")
+                        .WithMany("Products")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.SaleOrder", b =>
@@ -1041,16 +951,22 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.HasOne("POS.DataAccessLayer.Models.Customer.CustomerModel", "Customer")
                         .WithMany("SaleOrders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.SaleOrderDetails", b =>
                 {
                     b.HasOne("POS.DataAccessLayer.Models.SaleOrder", "SaleOrder")
                         .WithMany("SaleOrderDetails")
-                        .HasForeignKey("SaleOrderOrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.Subscriptions.CompanySubscriptionModel", b =>

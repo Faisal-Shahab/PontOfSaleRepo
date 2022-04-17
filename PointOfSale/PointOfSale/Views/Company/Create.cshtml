@@ -92,6 +92,16 @@
                     if (Model.CompanyId > 0)
                     {
                         <div class="mb-10 fv-row">
+                            <label class="form-label">Printer</label>
+                            <select class="form-select mb-2" data-control="select2" asp-for="Printer" data-placeholder="Select an option" data-allow-clear="true">
+                                <option value="">Select an option</option>
+                                <option value="Thermal">Thermal</option>
+                                <option value="A4">A4</option>
+                            </select>
+                            <div class="text-muted fs-7 mb-7">Set the invoice print size.</div>
+                        </div>
+
+                        <div class="mb-10 fv-row">
                             <label class="required form-label">Current Password</label>
                             <input type="password" asp-for="CurrentPassword" class="form-control" />
                             <span asp-validation-for="CurrentPassword" class="text-danger"></span>
@@ -108,21 +118,21 @@
                     <input type="text" asp-for="ConfirmPassword" class="form-control mb-2" placeholder="******" />
                 </div>
 
-                <div class="mb-10 fv-row">                    
+                <div class="mb-10 fv-row">
                     <label class="required form-label">Contact #</label>
-                    <input type="text" asp-for="ContactNo" class="form-control mb-2" placeholder="009223123123" />                    
+                    <input type="text" asp-for="ContactNo" class="form-control mb-2" placeholder="009223123123" />
                 </div>
-                <div class="mb-10 fv-row">                   
-                    <label class="required form-label">Fax #</label>                   
-                    <input type="text" asp-for="FaxNo" class="form-control mb-2" placeholder="009223123123" />                    
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Fax #</label>
+                    <input type="text" asp-for="FaxNo" class="form-control mb-2" placeholder="009223123123" />
                 </div>
-                <div class="mb-10 fv-row">                    
-                    <label class="required form-label">CR #</label>                   
-                    <input type="text" asp-for="CrNumber" class="form-control mb-2" placeholder="009223123123" />                    
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">CR #</label>
+                    <input type="text" asp-for="CrNumber" class="form-control mb-2" placeholder="009223123123" />
                 </div>
 
-                <div class="mb-10 fv-row">                    
-                    <label class="required form-label">Tax #</label> 
+                <div class="mb-10 fv-row">
+                    <label class="required form-label">Tax #</label>
                     <input type="text" asp-for="TaxNumber" class="form-control mb-2" />
                 </div>
 
@@ -134,7 +144,7 @@
                     <label class="required form-label">Thank You Note</label>
                     <textarea asp-for="ThankyouNote" class="form-control mb-2">@Model.ThankyouNote</textarea>
                 </div>
-            </div>            
+            </div>
         </div>
         <div class="d-flex justify-content-end">
             <a href="/Company/Index" id="kt_ecommerce_add_company_cancel" class="btn btn-light me-5">Cancel</a>
@@ -144,7 +154,7 @@
                     Please wait...
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                 </span>
-            </button>       
+            </button>
         </div>
     </div>
 </form>

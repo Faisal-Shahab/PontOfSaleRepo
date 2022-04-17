@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace POS.DataAccessLayer.Models.Order
@@ -29,6 +30,7 @@ namespace POS.DataAccessLayer.Models.Order
     {
         [Key]
         public long OrderDetailId { get; set; }
+        [ForeignKey("PurchaseOrder")]
         public long OrderId { get; set; }
         public int ProductId { get; set; }
         public decimal SalePrice { get; set; }
@@ -39,5 +41,6 @@ namespace POS.DataAccessLayer.Models.Order
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public virtual PurchaseOrder PurchaseOrder { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

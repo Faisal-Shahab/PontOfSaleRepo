@@ -41,6 +41,42 @@ namespace PointOfSale.Controllers
 
         #region =========== User Reg =========
 
+        [AllowAnonymous]
+        public async Task<IActionResult> Seed()
+        {
+            User user = new User
+            {
+                UserName = "Faisal",
+                PhoneNumber = "00000",
+                Email = "faisal@gmail.com",
+                Name = "Faisal",
+                CompanyId = null,
+                DateCreated = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            //await _userManager.CreateAsync(user, "admin123");
+
+            //IdentityRole identityRole = new IdentityRole
+            //{
+            //    Name = "Admin"
+            //};
+
+            //await _roleManager.CreateAsync(identityRole);
+            try
+            {
+                var currentUser = await _userManager.FindByNameAsync(user.UserName);
+                await _userManager.AddToRoleAsync(currentUser, "ADMIN");
+                return RedirectToAction("login");
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        
+        }
+
         public IActionResult Index()
         {
             return View();

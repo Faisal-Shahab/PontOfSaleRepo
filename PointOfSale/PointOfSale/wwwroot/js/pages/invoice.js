@@ -67,7 +67,7 @@ function initEvents() {
 
 function submitForm() {
 
-    const customerId = ($("#customerId").data("uiAutocomplete").selectedItem ?.id || 0);
+    const customerId = ($("#customerId").data("uiAutocomplete").selectedItem ?.id || null);
 
     details = [];
 
@@ -96,7 +96,11 @@ function submitForm() {
                         confirmButton: "btn fw-bold btn-primary"
                     }
                 }).then((function () {
-                    report(response.companyDetails);
+                    console.log(printerSize);
+                    if (printerSize === "Thermal")
+                        report(response.orderData);
+                    else reportAFour(response.orderData);
+
                     $('#itemsList tbody').html('');
                 }))
             } else {
@@ -230,12 +234,10 @@ function removeItem(ele) {
 }
 
 function report(data) {
-    $('#companyName').text(data.companyName)
-    $('#regNum').text(data.crNumber)
-    $('#taxNum').text(data.taxNumber)
+
     $('#invNum').text("Inv-" + data.invNumber)
     $('#orderTime').text(data.date)
-    $('#thankNote').text(data.thankyouNote);
+    $('#qrCode').attr('src', data.qrCode);
 
     let _html = "";
     $('#tbl_data tbody').html(_html);
@@ -250,14 +252,45 @@ function report(data) {
     printInvoice();
 }
 
+
+function reportAFour(data) {
+
+    $('#invNum').text("#" + data.orderId)
+    $('#invNum').text("#Inv-" + data.invNumber)
+    $('#invDate').text(data.date)
+    $('#qrCode').attr('src', data.qrCode);
+
+    let _html = "";
+    $('#itemsBody').html(_html);
+    let total = 0;
+    $.each(details, function (i, val) {
+        _html += `<tr><td><div class="d-flex align-items-center"><div class="ms-5"><div class="fw-bolder">${val.productName}</div></div></div>
+                        </td><td class="text-end">${val.salePrice}</td><td class="text-end">${val.quantity}</td><td class="text-end">${val.subtotal}</td></tr>`;
+        total += parseFloat(val.subtotal);
+    });
+    $('#itemsBody').append(_html);
+    $('#subTotal').text(total.toFixed(2))
+    $('#grandTotal').text(total.toFixed(2))
+
+
+    printInvoice();
+}
+
+
 function printInvoice() {
+    const _head = printerSize === "Thermal" ? "" : '<head><link href="https://localhost:44374/assets/css/style.bundle.css" rel="stylesheet" type="text/css"></head>';
     var myPrintContent = document.getElementById('invoice-POS');
     var myPrintWindow = window.open('', 'invoice-POS');
+    myPrintWindow.document.write(`<html><title>Print</title>${_head}<body>`);
     myPrintWindow.document.write(myPrintContent.innerHTML);
+    myPrintWindow.document.write('</body></html>');
     myPrintWindow.document.close();
-    myPrintWindow.focus();
-    myPrintWindow.print();
-    myPrintWindow.close();
+
+    setTimeout(function () {
+        myPrintWindow.focus();
+        myPrintWindow.print();
+        myPrintWindow.close();
+    }, 100);
     return false;
 }
 

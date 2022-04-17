@@ -87,9 +87,9 @@ namespace PointOfSale.Controllers
                     var loginUser = await _userManager.GetUserAsync(User);
                     var model = PosAutoMaper.Map<CompanyModel, CompanyViewModel>(new CompanyModel(), viewModel);
 
-                    if (viewModel.Image != null) { model.Logo = UploadImage(viewModel.Image); }
+                    if (viewModel.Image != "none") { model.Logo = UploadImage(viewModel.Image); }
                     if (model.CompanyId > 0)
-                    {
+                    {                        
                         model.UpdatedAt = DateTime.UtcNow.AddHours(3);
                         model.UpdatedBy = loginUser.UserName;
                         result = await _companyRepo.Update(model);
@@ -114,7 +114,7 @@ namespace PointOfSale.Controllers
                     }
                     else
                     {
-
+                        model.Printer = "Thermal";
                         model.CreateAt = DateTime.UtcNow.AddHours(3);
                         model.UpdatedAt = DateTime.UtcNow.AddHours(3);
                         _appDbContext.Companies.Add(model);
