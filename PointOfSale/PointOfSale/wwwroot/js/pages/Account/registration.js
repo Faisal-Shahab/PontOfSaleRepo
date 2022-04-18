@@ -79,13 +79,26 @@ function status() {
 function postStatus(data) {
 
     $.post('/Account/ActiveInActiveUser', { userName: data.userName, status: data.isActive }, function (response) {
-        if (response.status) {
-            alert(response.message)
-            const successMsg = { IsError: false, Message: response.message, Title: "success" }
-            //AppAlerts.actionAlert(successMsg);
+        if (response.status) {           
+            Swal.fire({
+                text: response.message,
+                icon: "success",
+                buttonsStyling: !1,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-primary"
+                }
+            });
         } else {
-            const errorMsg = { IsError: true, Message: response.message, Title: "error" }
-            // AppAlerts.actionAlert(errorMsg);
+            Swal.fire({
+                text: "Operation failed",
+                icon: "error",
+                buttonsStyling: !1,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-primary"
+                }
+            })
         }
     });
 
@@ -144,18 +157,31 @@ function initEvents() {
             data: formData,
             dataType: 'json',
             success: function (data) {
-                if (data.status) {
-                    alert(data.message);
-                    //const successMsg = { IsError: false, Message: data.message, Title: "success" }
-                    //AppAlerts.actionAlert(successMsg);
-                    //utils.resetForm('.kt-form');
-                    $('#kt_modal_add_user').modal('hide');
-                    $('#kt_table_users').DataTable().ajax.reload();
-                    closeModal();
-                } else {
-                    alert(data.message);
-                    //const errorMsg = { IsError: true, Message: data.message, Title: "error" }
-                    //AppAlerts.actionAlert(errorMsg);
+                if (data.status) {                    
+                    Swal.fire({
+                        text: response.message,
+                        icon: "success",
+                        buttonsStyling: !1,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary"
+                        }
+                    }).then((function () {
+                        $('#kt_modal_add_user').modal('hide');
+                        $('#kt_table_users').DataTable().ajax.reload();
+                        closeModal();
+                    }));
+                   
+                } else {  
+                    Swal.fire({
+                        text: response.message,
+                        icon: "error",
+                        buttonsStyling: !1,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary"
+                        }
+                    })
                 }
             }
         });

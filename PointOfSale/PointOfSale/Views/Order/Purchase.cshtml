@@ -1,373 +1,357 @@
 ﻿@{
-    ViewData["Title"] = "Sales";
+    ViewData["Title"] = "Purchase";
+    var company = ViewBag.Company;
 }
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
 
-
-<div class="row">
-    <div class="form-group col-md-4">
-        <label>Invoice#</label>
-        <input type="text" class="form-control" id="invoiceNumber" />
+<div class="d-flex flex-column flex-lg-row">
+    <!--begin::Content-->
+    <div class="flex-lg-row-fluid mb-10 mb-lg-0 me-lg-7 me-xl-10">
+        <!--begin::Card-->
+        <div class="card">
+            <!--begin::Card body-->
+            <div class="card-body p-12">
+                <!--begin::Form-->
+                <form action="" id="kt_invoice_form">
+                    <!--begin::Wrapper-->
+                    <div class="d-flex flex-column align-items-start flex-xxl-row">
+                        <div class="d-flex flex-center flex-equal fw-row text-nowrap order-1 order-xxl-2 me-4" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Enter invoice number">
+                            <span class="fs-2x fw-bolder text-gray-800">Invoice</span>
+                            @*<input type="text" class="form-control form-control-flush fw-bolder text-muted fs-3 w-125px" value="2021001" placehoder="..." />*@
+                        </div>
+                    </div>
+                    <!--end::Top-->
+                    <!--begin::Separator-->
+                    <div class="separator separator-dashed my-10"></div>
+                    <!--end::Separator-->
+                    <!--begin::Wrapper-->
+                    <div class="mb-0">
+                        <div class="row gx-10 mb-10">
+                            <div class="d-flex align-items-center position-relative my-1">
+                                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                        <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                                    </svg>
+                                </span>
+                                <input type="text" id="productId" class="form-control form-control-solid ps-14" placeholder="Select Items" />
+                            </div>
+                        </div>
+                        <!--begin::Table wrapper-->
+                        <div class="table-responsive mb-10">
+                            <div class="form-group col-md-12">
+                                <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700" id="itemsList">
+                                    <thead>
+                                        <tr class="border-bottom fs-7 fw-bolder text-gray-700 text-uppercase">
+                                            <th style="display:none">Id</th>
+                                            <th class="min-w-200px w-475px">Product Name</th>
+                                            <th class="min-w-150px w-150px">Price/Unit</th>
+                                            <th>Disc(%)</th>
+                                            <th class="min-w-150px w-150px">Disc Price</th>
+                                            <th class="min-w-75px w-75px">Qty</th>
+                                            <th class="min-w-100px w-150px text-end">Total</th>
+                                            <th class="min-w-75px w-75px text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="border-top border-top-dashed align-top fs-6 fw-bolder text-gray-700">
+                                            <th class="text-primary">
+                                                @*<button class="btn btn-link py-1" data-kt-element="add-item">Add item</button>*@
+                                            </th>
+                                            <th colspan="2" class="border-bottom border-bottom-dashed ps-0">
+                                                <div class="d-flex flex-column align-items-start">
+                                                    <div class="fs-5">Subtotal</div>
+                                                    <button class="btn btn-link py-1" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Coming soon">Add tax</button>
+                                                    <button class="btn btn-link py-1" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Coming soon">Add discount</button>
+                                                </div>
+                                            </th>
+                                            <th colspan="3" class="border-bottom border-bottom-dashed text-end">
+                                                $
+                                                <span class="grandTotal">0.00</span>
+                                            </th>
+                                        </tr>
+                                        <tr class="align-top fw-bolder text-gray-700">
+                                            <th></th>
+                                            <th colspan="2" class="fs-4 ps-0">Total</th>
+                                            <th colspan="3" class="text-end fs-4 text-nowrap">
+                                                $
+                                                <span class="grandTotal">0.00</span>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--end::Wrapper-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Card-->
     </div>
-    <div class="form-group col-md-4">
-        <label>Suppliers</label>
-        <input type="text" class="form-control" id="supplierId" />
+    <!--end::Content-->
+    <!--begin::Sidebar-->
+    <div class="flex-lg-auto min-w-lg-300px">
+        <!--begin::Card-->
+        <div class="card" data-kt-sticky="true" data-kt-sticky-name="invoice" data-kt-sticky-offset="{default: false, lg: '200px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}" data-kt-sticky-left="auto" data-kt-sticky-top="150px" data-kt-sticky-animation="false" data-kt-sticky-zindex="95">
+            <!--begin::Card body-->
+            <div class="card-body p-10">
+                <div class="mb-8">
+                    <div class="d-flex align-items-center position-relative my-1">
+                        <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                            </svg>
+                        </span>
+                        <input type="text" id="supplierId" class="form-control form-control-solid ps-14" placeholder="Select supplier" />
+                    </div>
+                </div>
+                <div class="separator separator-dashed mb-8"></div>
+                <div class="mb-8">
+                    <label class="form-label fw-bolder fs-6 text-gray-700 mb-5">Payment Methods</label>
+                    @foreach (var item in ViewBag.PaymentTypes)
+                    {
+                        <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                            <span class="form-check-label ms-0 fw-bolder fs-6 text-gray-700">@item.Text</span>
+                            <input class="form-check-input" name="paymentType" checked type="radio" value="@item.Value" />
+                        </label>
+                    }
+                </div>
+                <div class="separator separator-dashed mb-8"></div>
+                <button type="submit" class="btn btn-primary w-100" onclick="submitForm()">
+                    <!--begin::Svg Icon | path: icons/duotune/general/gen016.svg-->
+                    <span class="svg-icon svg-icon-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M15.43 8.56949L10.744 15.1395C10.6422 15.282 10.5804 15.4492 10.5651 15.6236C10.5498 15.7981 10.5815 15.9734 10.657 16.1315L13.194 21.4425C13.2737 21.6097 13.3991 21.751 13.5557 21.8499C13.7123 21.9488 13.8938 22.0014 14.079 22.0015H14.117C14.3087 21.9941 14.4941 21.9307 14.6502 21.8191C14.8062 21.7075 14.9261 21.5526 14.995 21.3735L21.933 3.33649C22.0011 3.15918 22.0164 2.96594 21.977 2.78013C21.9376 2.59432 21.8452 2.4239 21.711 2.28949L15.43 8.56949Z" fill="currentColor" />
+                            <path opacity="0.3" d="M20.664 2.06648L2.62602 9.00148C2.44768 9.07085 2.29348 9.19082 2.1824 9.34663C2.07131 9.50244 2.00818 9.68731 2.00074 9.87853C1.99331 10.0697 2.04189 10.259 2.14054 10.4229C2.23919 10.5869 2.38359 10.7185 2.55601 10.8015L7.86601 13.3365C8.02383 13.4126 8.19925 13.4448 8.37382 13.4297C8.54839 13.4145 8.71565 13.3526 8.85801 13.2505L15.43 8.56548L21.711 2.28448C21.5762 2.15096 21.4055 2.05932 21.2198 2.02064C21.034 1.98196 20.8409 1.99788 20.664 2.06648Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->Send Invoice
+                </button>
+            </div>
+            <!--end::Card body-->
+        </div>
+        <!--end::Card-->
     </div>
-    <div class="form-group col-md-4">
-        <label>Payment Types</label>
-        <select asp-items="@(new SelectList(ViewBag.PaymentTypes,"Value","Text"))" class="form-control" id="paymentType">
-            <option value="">Select</option>
-        </select>
-    </div>
-    <div class="form-group col-md-12" style="border-bottom:1px dashed"></div>
+    <!--end::Sidebar-->
 </div>
-<br />
-<div class="row">
-    <div class="form-group col-md-4">
-        <label>Product</label>
-        <input type="text" id="productId" class="form-control" />
-    </div>
-</div>
 
-<div class="row">
-    <div class="form-group col-md-12 text-right">
-        <input type="button" onclick="submitForm()" class="btn btn-warning" value="Place Order" />
-    </div>
-    <div class="form-group col-md-12">
-        <table class="table table-striped" id="itemsList">
-            <thead>
-                <tr>
-                    <th style="display:none">Id</th>
-                    <th style="width:300px">Product Name</th>
-                    <th>Price/Unit</th>
-                    <th>Disc(%)</th>
-                    <th>Disc Price</th>
-                    <th>Qty</th>
-                    <th style="width:160px">Sub total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-            <tfoot>
-                <tr><td colspan="5" class="text-right"><b>Total</b></td><td><input type="text" class="form-control" disabled id="grandTotal" /></td></tr>
-            </tfoot>
+@if (company.Printer.ToLower() == "thermal")
+{
+    <div id="invoice-POS" style="display:none;background-color: white !important; margin-bottom: 0px !important;padding:3px;">
+        <center>
+            <h2 style="text-align: center;margin-top: 0px;">Invoice</h2>
+            @*<div class="info" style="margin-top: -10px; margin-bottom: -20px;">
+                    <img src="/logo2.jpeg" style="width:150px;height:150px" alt="">
+                </div>*@
+            <!--End Info-->
+            <h3 style="text-align: center;">@company.Name</h3>
+        </center>
+        <!--End InvoiceTop-->
+        <hr style="color:black;font-weight:boder; margin-top: 0px; margin-bottom: 0px;">
+
+        <!--End Invoice Mid-->
+        <!-- Start of Invoice Header -->
+        <table style="margin-top: -3px;width: 100%;background-color:#ebdcdc !important;font-size:13px;">
+            <tr>
+                <td style="text-align:right;width:50%"><b>Company Reg #</b></td>
+                <td style="text-align:left;width:50%">@company.CrNumber</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;width:50%"><b>Tax #</b></td>
+                <td style="text-align:left;width:50%">@company.TaxNumber</td>
+            </tr>
+            <tr style="background-color:white;">
+                <td colspan="2" style="text-align:center; background-color:white;" id="orderTime"></td>
+            </tr>
+            <tr style="background-color:white;">
+                <td style="background-color:white;width:50%;">Invoice #</td>
+                <td style="text-align:right;background-color:white;width:50%;" id="invNum"></td>
+            </tr>
         </table>
-    </div>
-</div>
+        <hr style="color:black;font-weight:boder; margin-bottom: 0px;">
+        <!-- End of Invoice Header -->
 
+        <div id="bot" style="margin-bottom: 5px !important">
+            <div id="table">
+                <table class="contentTable" style="width: 100%;border:1px solid black;border-collapse: collapse" id="tbl_data">
+                    <thead>
+                        <tr class="tblstyle" style="background-color:#ebdcdc;border:1px solid black">
+                            <th class="tblstyle" style="width: 55%; text-align:center !important">Item Name</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">Rate</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">Qty</th>
+                            <th class="tblstyle" style="width: 15%;text-align:center !important">Amount</th>
+                        </tr>
+                    </thead>
+                    <!-- End of table Header -->
+                    <tbody style="background-color:white; font-size:13px;">
+                    </tbody>
+                </table>
+                <br>
 
-
-<div id="invoice-POS" style="display:none;background-color: white !important; margin-bottom: 0px !important;padding:3px;">
-
-    <center>
-        <h2 style="text-align: center;margin-top: 0px;">Invoice</h2>
-        <div class="info" style="margin-top: -10px; margin-bottom: -20px;">
-            <img src="/logo2.jpeg" style="width:80%" alt="">
-        </div>
-        <!--End Info-->
-        <h3 style="text-align: center;" id="companyName"></h3>
-    </center>
-    <!--End InvoiceTop-->
-    <hr style="color:black;font-weight:boder; margin-top: 0px; margin-bottom: 0px;">
-
-    <!--End Invoice Mid-->
-    <!-- Start of Invoice Header -->
-    <table style="margin-top: -3px;width: 100%;background-color:#ebdcdc !important;font-size:13px;">
-        <tr>
-            <td style="text-align:right;width:50%"><b>Company Reg #</b></td>
-            <td style="text-align:left;width:50%" id="regNum"></td>
-        </tr>
-        <tr>
-            <td style="text-align:right;width:50%"><b>Tax #</b></td>
-            <td style="text-align:left;width:50%" id="taxNum"></td>
-        </tr>
-        <tr style="background-color:white;">
-            <td colspan="2" style="text-align:center; background-color:white;" id="orderTime"></td>
-        </tr>
-        <tr style="background-color:white;">
-            <td style="background-color:white;width:50%;">Invoice #</td>
-            <td style="text-align:right;background-color:white;width:50%;" id="invNumb"></td>
-        </tr>
-    </table>
-    <hr style="color:black;font-weight:boder; margin-bottom: 0px;">
-    <!-- End of Invoice Header -->
-
-    <div id="bot" style="margin-bottom: 5px !important">
-        <div id="table">
-            <table class="contentTable" style="width: 100%;border:1px solid black;border-collapse: collapse" id="tbl_data">
-                <thead>
-                    <tr class="tblstyle" style="background-color:#ebdcdc;border:1px solid black">
-                        <th class="tblstyle" style="width: 55%; text-align:center !important">Item Name</th>
-                        <th class="tblstyle" style="width: 15%; text-align:center !important">Rate</th>
-                        <th class="tblstyle" style="width: 15%; text-align:center !important">Qty</th>
-                        <th class="tblstyle" style="width: 15%;text-align:center !important">Amount</th>
-                    </tr>
-                </thead>
-                <!-- End of table Header -->
-                <tbody style="background-color:white; font-size:13px;">
-                </tbody>
-            </table>
-            <br>
-
-            <table style="margin-top: -13px;width: 100%;">
-                <tbody>
-                    <tr class="tabletitle">
-                        <td style="font-weight: bold;" id="supplierName">
-                        </td>
-                        <td class="payment">
-                            <h4></h4>
-                        </td>
-                        <td style="font-weight: bold;">
-                            Total Amount:
-                        </td>
-                        <td class="payment" id="totalPay" style="text-align:right;">
-                            0000
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!--End Table-->
-        <div id="legalcopy" style="margin-top: -20px !important; margin-bottom: 0px !important;">
-            <h4 style="text-align:center;" id="thankNote">****</h4>
-            <h5 style="text-align: center; margin-top: -18px;">Powered By .net</h5>
+                <table style="margin-top: -13px;width: 100%;">
+                    <tbody>
+                        <tr class="tabletitle">
+                            <td style="font-weight: bold;" id="customerName">
+                            </td>
+                            <td class="payment">
+                                <h4></h4>
+                            </td>
+                            <td style="font-weight: bold;">
+                                Total Amount:
+                            </td>
+                            <td class="payment" id="totalPay" style="text-align:right;">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--End Table-->
+            <div id="legalcopy" style="margin-top: -20px !important; margin-bottom: 0px !important;">
+                <h4 style="text-align:center;">@company.ThankyouNote</h4>
+                <h5 style="text-align: center; margin-top: -18px;">Powered By .net</h5>
+            </div>
+            <div style="text-align:center;">
+                <img id="qrCode" alt="" style="height:150px;width:150px" />
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="post d-flex flex-column-fluid" style="display:none !important;" id="invoice-POS">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!-- begin::Invoice 3-->
+            <div class="card">
+                <!-- begin::Body-->
+                <div class="card-body py-20">
+                    <!-- begin::Wrapper-->
+                    <div class="mw-lg-950px mx-auto w-100">
+                        <!-- begin::Header-->
+                        <div class="d-flex justify-content-between flex-column flex-sm-row mb-19">
+                            <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">@company.Name - INVOICE</h4>
+                            <img id="qrCode" alt="" style="height:150px;width:150px" />
+                            <!--end::Logo-->
+                            <div style="text-align:right !important;margin-top:-29%">
+                                <!--begin::Logo-->
+                                <a href="#">
+                                    <img alt="Logo" src="~/CompanyLogo/@company.Logo" style="text-align:right !important;width:150px" />
+                                </a>
+                                <!--end::Logo-->
+                                <!--begin::Text-->
+                                <div class="text-sm-end fw-bold fs-4 text-muted mt-7">
+                                    <div>Company Reg# <span>@company.CrNumber</span></div>
+                                    <div>Tax# <span id="taxNum">@company.TaxNumber</span></div>
+                                </div>
+                                <!--end::Text-->
+                            </div>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Body-->
+                        <div class="pb-12">
+                            <!--begin::Wrapper-->
+                            <div class="d-flex flex-column gap-7 gap-md-10">
+                                <!--begin::Message-->
+                                <div class="fw-bolder fs-2" id="customerName">
+                                    @*Dear Emma Bold
+                                        <span class="fs-6" id="customerEmail">(emma@intenso.com)</span>,*@
+                                    <br />
+                                    <span class="text-muted fs-5">@company.ThankyouNote</span>
+                                </div>
+                                <!--begin::Message-->
+                                <!--begin::Separator-->
+                                <div class="separator"></div>
+                                <!--begin::Separator-->
+                                <!--begin::Order details-->
+                                <div class="d-flex justify-content-between flex-column">
+                                    <div class="table-responsive mb-9">
+                                        <table class="table align-middle gy-5 fw-bolder mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-muted fw-bolder" style="padding-top:0px; padding-bottom:0px !important">Order ID</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:center;padding-top:0px;padding-bottom:0px !important">Date</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:right;padding-top:0px;padding-bottom:0px !important">Invoice ID</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fs-5" style="padding-top:0px;" id="orderId">#14534</th>
+                                                    <th class="fs-5" style="text-align:center;padding-top:0px;" id="invDate">30 March, 2022</th>
+                                                    <th class="fs-5" style="text-align:right;padding-top:0px;" id="invNum">#INV-000414</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
 
+                                <!--end::Order details-->
+                                <!--begin:Order summary-->
+                                <div class="d-flex justify-content-between flex-column">
+                                    <!--begin::Table-->
+                                    <div class="table-responsive border-bottom mb-9">
+                                        <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
+                                            <thead>
+                                                <tr class="border-bottom fs-6 fw-bolder text-muted">
+                                                    <th class="min-w-175px pb-2">Products</th>
+                                                    <th class="min-w-80px text-end pb-2">Price</th>
+                                                    <th class="min-w-80px text-end pb-2">QTY</th>
+                                                    <th class="min-w-100px text-end pb-2">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-bold text-gray-600" id="itemsBody">
+                                            </tbody>
+                                            <tfoot>
+                                                <!--begin::Subtotal-->
+                                                <tr>
+                                                    <td colspan="3" class="text-end">Subtotal</td>
+                                                    <td class="text-end" id="subTotal">$264.00</td>
+                                                </tr>
+                                                <!--end::Subtotal-->
+                                                <!--begin::VAT-->
+                                                <tr>
+                                                    <td colspan="3" class="text-end">VAT (0%)</td>
+                                                    <td class="text-end" id="tax">$0.00</td>
+                                                </tr>
+                                                <!--end::VAT-->
+                                                <!--begin::Grand total-->
+                                                <tr>
+                                                    <td colspan="3" class="fs-3 text-dark fw-bolder text-end">Grand Total</td>
+                                                    <td class="text-dark fs-3 fw-boldest text-end" id="grandTotal">$269.00</td>
+                                                </tr>
+                                                <!--end::Grand total-->
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <!--end::Table-->
+                                </div>
+                                <!--end:Order summary-->
+                            </div>
+                            <!--end::Wrapper-->
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!-- end::Wrapper-->
+                </div>
+                <!-- end::Body-->
+            </div>
+            <!-- end::Invoice 1-->
+        </div>
+        <!--end::Container-->
+    </div>
+}
 
 @section scripts{
 
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-
-    <script asp-append-version="true">
-
-        let products = [];        
-        let details = [];
-       // let supplierId = 0;
-        function initEvents() {
-            $("#supplierId").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Order/GetSuppliers",
-                        dataType: "json",
-                        data: { value: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return {
-                                    id: item.value,
-                                    value: item.text
-                                };
-                            }));                            
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function (event, ui) {
-                    //console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
-                    supplierId = ui.item.id;
-                }
-            });
-
-            $("#productId").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Order/GetProducts",
-                        dataType: "json",
-                        data: { value: request.term },
-                        success: function (data) {
-
-                            response($.map(data, function (item) {
-                                return {
-                                    id: item.id,
-                                    value: item.name
-                                };
-                            }));
-
-                            products = data;
-                        }
-                    });
-                },
-                minLength: 3,
-                //select: function (event, ui) {
-                //    //console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
-
-                //    const pro = products.filter(x => x.id == ui.item.id)[0];
-                //    //$('#price').val(pro.price);
-                //    //$('#discount').val(pro.discount);
-                //}
-            });
-
-            $("#productId").keydown(function (event) {
-                if (event.keyCode == 13) {
-                    if ($(this).val().length > 0) {
-                        event.preventDefault();
-                        addItemToList();
-                        $(this).val("");
-                    }
-                }
-            });
-        }
-
-        function submitForm() {
-
-            const supplierId = ($("#supplierId").data("uiAutocomplete").selectedItem ?.id || 0);
-
-            details = [];
-
-            const purchaseOrder = { supplierId: supplierId, paymentTypeId: $('#paymentType').val(), total: $('#grandTotal').val() };
-
-            $('#itemsList tbody tr').each(function () {
-
-                const productId = $(this).find('td:eq(0)').text();
-                const productName = $(this).find('td:eq(1)').text();
-                const disountedPrice = $(this).find('.discPrice').val();
-                const qty = $(this).find('.qty').val();
-                const subtotal = $(this).find('td:eq(6)').text();
-
-                details.push({ productId: productId, productName: productName, salePrice: disountedPrice, quantity: qty, subtotal: subtotal });
-            });
-
-            $.post('/Order/CreatePurchaseOrder', { purchaseOrder: purchaseOrder, details: details }, function (response) {
-                if (response.status) {
-                    alert(response.message);
-                    report(response.companyDetails);
-                    $('#itemsList tbody').html('');
-                }
-            });
-        }
-
-        function addItemToList() {
-
-            try {
-                const productId = ($("#productId").data("uiAutocomplete").selectedItem ?.id || 0);
-                const productName = ($("#productId").data("uiAutocomplete").selectedItem ?.value || "");
-
-                const data = products.filter(x => x.id == productId)[0];
-
-                if (data) {
-                    const discount = data.discount;
-                    const price = data.price;
-                    const qty = 1;
-                    const disountedPrice = (price - (((discount / 100) || 1) * price));
-
-                    const subtotal = ((disountedPrice === 0 ? price : disountedPrice) * qty);
-
-                    if (!isProductExist(productId)) {
-                        let _html = `<tr><td style="display:none">${productId}</td><td>${productName}</td>
-                                                                                                                                                                 <td><input type="text" class="form-control price" disabled value="${price}" /></td>
-                                                                                                                                                                 <td><input type="text" class="form-control dicPrecent" onkeyup="claculatPrecentage(this)" value="${discount}" /></td>
-                                                                                                                                                                 <td><input type="text" value="${(disountedPrice == 0 ? price : disountedPrice)}" disabled class="form-control discPrice"/></td>
-                                                                                                                                                                 <td><input type="text" onkeyup="claculatQty(this)" value="${qty}" class="form-control qty"/></td>
-                                                                                                                                                                 <td>${subtotal}</td>
-                                                                                                                                                                 <td><button class="btn btn-danger" onclick="removeItem(this)">Remove</button></td></tr>`
-                        $('#itemsList tbody').append(_html);
-                    }
-
-                    grandTotal();
-                } else {
-                    alert("please select the product");
-                }
-            }
-            catch (p) {
-                console.log(p);
-            }
-        }
-
-        function claculatPrecentage(ele) {
-            const element = $(ele);
-            const discount = parseFloat((element.val() || 0));
-            const price = parseFloat(element.parent('td').prev().children('.price').val());
-
-            const disountedPrice = (price - (((discount / 100) || 1) * price));
-            const discEle = element.parent('td').next().children('.discPrice');
-            discEle.val((disountedPrice == 0 ? price : disountedPrice));
-            const qtyEletd = discEle.parent('td').next();
-            qtyEletd.next().text((disountedPrice == 0 ? price : disountedPrice) * qtyEletd.children('.qty').val());
-
-            grandTotal();
-        }
-
-        function claculatQty(ele) {
-            const element = $(ele);
-            const qty = element.val();
-            const qtyTd = element.parent('td');
-            const price = qtyTd.prev().children('.discPrice').val();
-            qtyTd.next().text(qty * price);
-            grandTotal();
-        }
-
-        function grandTotal() {
-            let total = 0;
-            $('#itemsList tbody tr').each(function () {
-                const subtotal = parseFloat($(this).find('td:eq(6)').text());
-                total += subtotal;
-            });
-            $('#grandTotal').val(total);
-        }
-
-        function isProductExist(productId) {
-            isExist = false;
-
-
-            $('#itemsList tbody tr').each(function () {
-                const id = parseInt($(this).find('td:eq(0)').text());
-                if (id == productId) {
-                    const qtyEle = $(this).find('.qty');
-                    qtyEle.val(parseInt(qtyEle.val()) + 1);
-
-                    const disPrice = $(this).find('.discPrice').val();
-
-                    $(this).find('td:eq(6)').text(parseInt(qtyEle.val()) * disPrice);
-                    isExist = true;
-                }
-            });
-            return isExist;
-        }
-
-        function removeItem(ele) {
-            const element = $(ele);
-            element.closest('tr').remove();
-            grandTotal();
-        }
-
-        function report(data) {
-            $('#companyName').text(data.companyName)
-            $('#regNum').text(data.crNumber)
-            $('#taxNum').text(data.taxNumber)
-            $('#invNum').text("Inv-" + data.invNumber)
-            $('#thankNote').text(data.thankyouNote);
-
-            let _html = "";
-            $('#tbl_data tbody').html(_html);
-            let total = 0;
-            $.each(details, function (i, val) {
-                _html += `<tr><td>${val.productName}</td><td>${val.salePrice}</td><td>${val.quantity}</td><td>${val.subtotal}</td></tr>`;
-                total += val.subtotal;
-            });
-            $('#totalPay').text(total)
-            $('#tbl_data tbody').append(_html);
-
-            printInvoice();
-        }
-
-        function printInvoice() {
-            var myPrintContent = document.getElementById('invoice-POS');
-            var myPrintWindow = window.open('', 'invoice-POS');
-            myPrintWindow.document.write(myPrintContent.innerHTML);
-            myPrintWindow.document.close();
-            myPrintWindow.focus();
-            myPrintWindow.print();
-            myPrintWindow.close();
-            return false;
-        }
-
-        $(document).ready(function () {
-            initEvents();
-        });
+    <script>
+        var printerSize = '@company.Printer';
     </script>
-
+    <script src="~/js/pages/purchaseInvoice.js" asp-append-version="true"></script>
 
 }

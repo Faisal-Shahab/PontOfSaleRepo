@@ -166,6 +166,7 @@ namespace PointOfSale.Controllers
                     var orderData = new
                     {
                         invNumber = invNumber,
+                        orderId = saleOrder.OrderId,
                         date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
                         qrCode = GenerateQC(invNumber.ToString())
                     };
@@ -210,11 +211,12 @@ namespace PointOfSale.Controllers
         }
         #endregion
 
-
         #region ==== Purchase ==== 
 
         public async Task<IActionResult> Purchase()
         {
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.Company = await _appDbContext.Companies.FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
             ViewBag.PaymentTypes = await _dropdownsServices.PaymentTypesDropdown();
             return View();
         }
@@ -270,24 +272,59 @@ namespace PointOfSale.Controllers
 
                     _appDbContext.SaveChanges();
 
-                    var companyDetails = _appDbContext.Companies.Where(x => x.CompanyId == user.CompanyId).Select(c => new
+                    var purchaseDetails = new
                     {
-                        companyName = LanguageId == 1 ? c.Name : c.ArabicName,
-                        c.TaxNumber,
-                        c.CrNumber,
-                        c.ThankyouNote,
-                        invNumber = invNumber
-
-                    }).FirstOrDefault();
+                        orderId = purchaseOrder.OrderId,
+                        invNumber = invNumber,
+                        date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
+                        qrCode = GenerateQC(invNumber.ToString())
+                    };
 
                     trans.Commit();
-                    return Json(new { status = true, message = "Order has been placed successfully", companyDetails = companyDetails });
+                    return Json(new { status = true, message = "Order has been placed successfully", purchaseDetails = purchaseDetails });
                 }
                 catch (Exception)
                 {
                     trans.Rollback();
                     return Json(new { status = false, message = "Operation failed" });
                 }
+            }
+        }
+
+        public IActionResult PurchaseOrders()
+        {
+            return View();
+        }
+
+        public async Task<JsonResult> GetPurchaseOrders(SearchFilter filter)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var query = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId);
+                int totalRows = query.Count();
+                var data = await query.OrderByDescending(x => x.OrderId).Skip(filter.Start).Take(filter.PageLength)
+                             .Select(x => new
+                             {
+                                 x.OrderId,
+                                 supplierName = x.Supplier.Name,
+                                 x.Total,
+                                 OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
+                                 UpdatedDate = x.UpdatedAt.HasValue ? x.UpdatedAt.Value.ToString("yyyy-MM-dd") : ""
+                             }).ToListAsync();
+
+                return Json(new
+                {
+                    sEcho = filter.Draw,
+                    iTotalRecords = totalRows,
+                    iTotalDisplayRecords = totalRows,
+                    aaData = data
+                });
+            }
+            catch (Exception e)
+            {
+
+                throw;
             }
         }
 

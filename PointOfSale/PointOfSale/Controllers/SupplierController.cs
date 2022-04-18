@@ -65,6 +65,7 @@ namespace PointOfSale.Controllers
                 x.SupplierId,
                 x.Name,
                 x.ContactNo,
+                x.Email,
                 x.Address
             }).OrderByDescending(x => x.SupplierId).Skip(filter.Start).Take(filter.PageLength);
             return Json(new

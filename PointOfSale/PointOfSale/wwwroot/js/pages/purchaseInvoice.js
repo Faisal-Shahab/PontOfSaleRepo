@@ -2,10 +2,10 @@
 let details = [];
 
 function initEvents() {
-    $("#customerId").autocomplete({
+    $("#supplierId").autocomplete({
         source: function (request, response) {
             $.ajax({
-                url: "/Order/GetCustomers",
+                url: "/Order/GetSuppliers",
                 dataType: "json",
                 data: { value: request.term },
                 success: function (data) {
@@ -22,7 +22,7 @@ function initEvents() {
         minLength: 3,
         select: function (event, ui) {
             //console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
-            customerId = ui.item.id;
+            suuplierId = ui.item.id;
         }
     });
 
@@ -67,11 +67,11 @@ function initEvents() {
 
 function submitForm() {
 
-    const customerId = ($("#customerId").data("uiAutocomplete").selectedItem ?.id || null);
+    const supplierId = ($("#supplierId").data("uiAutocomplete").selectedItem ?.id || 0);
 
     details = [];
 
-    const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), total: $('.grandTotal').last().text() };
+    const purchaseOrder = { supplierId: supplierId, paymentTypeId: $('input[name="paymentType"]:checked').val(), total: $('.grandTotal').last().text() };
 
     $('#itemsList tbody tr').each(function () {
 
@@ -85,7 +85,7 @@ function submitForm() {
     });
 
     if (details.length > 0) {
-        $.post('/Order/CreateSaleOrder', { saleOrder: saleOrder, details: details }, function (response) {
+        $.post('/Order/CreatePurchaseOrder', { purchaseOrder: purchaseOrder, details: details }, function (response) {
             if (response.status) {
                 Swal.fire({
                     text: response.message,
@@ -96,10 +96,10 @@ function submitForm() {
                         confirmButton: "btn fw-bold btn-primary"
                     }
                 }).then((function () {
-                    console.log(printerSize);
+
                     if (printerSize === "Thermal")
-                        report(response.orderData);
-                    else reportAFour(response.orderData);
+                        report(response.purchaseDetails);
+                    else reportAFour(response.purchaseDetails);
 
                     $('#itemsList tbody').html('');
                     $('.grandTotal').text('0.00');
@@ -118,7 +118,7 @@ function submitForm() {
         });
     } else {
         Swal.fire({
-            text: "please add some items to list",
+            text: "please add some items to cart",
             icon: "error",
             buttonsStyling: !1,
             confirmButtonText: "Ok, got it!",
