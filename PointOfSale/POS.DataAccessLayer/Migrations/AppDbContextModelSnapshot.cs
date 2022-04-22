@@ -376,7 +376,7 @@ namespace POS.DataAccessLayer.Migrations
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.Order.PurchaseOrder", b =>
                 {
-                    b.Property<long>("OrderId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -408,7 +408,7 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("OrderId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
 
@@ -430,11 +430,11 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<long>("PurchaseOrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -453,11 +453,106 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.HasKey("OrderDetailId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseOrderId");
+
+                    b.ToTable("PurchaseOrderDetails");
+                });
+
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Order.ReturnOrder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("InvNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PaymentTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SaleOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("SaleOrderId");
+
+                    b.ToTable("ReturnOrders");
+                });
+
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Order.ReturnOrderDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ReturnOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("PurchaseOrderDetails");
+                    b.HasIndex("ReturnOrderId");
+
+                    b.ToTable("ReturnOrderDetails");
                 });
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.Payment.PaymentTypeModel", b =>
@@ -536,7 +631,7 @@ namespace POS.DataAccessLayer.Migrations
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.SaleOrder", b =>
                 {
-                    b.Property<long>("OrderId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -568,7 +663,7 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("OrderId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
 
@@ -593,14 +688,14 @@ namespace POS.DataAccessLayer.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<long>("SaleOrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("SalePrice")
                         .HasColumnType("decimal(18,2)");
@@ -619,9 +714,9 @@ namespace POS.DataAccessLayer.Migrations
 
                     b.HasKey("OrderDetailId");
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("SaleOrderId");
 
                     b.ToTable("SaleOrderDetails");
                 });
@@ -915,15 +1010,51 @@ namespace POS.DataAccessLayer.Migrations
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.Order.PurchaseOrderDetails", b =>
                 {
-                    b.HasOne("POS.DataAccessLayer.Models.Order.PurchaseOrder", "PurchaseOrder")
-                        .WithMany("PurchaseOrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("POS.DataAccessLayer.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.Order.PurchaseOrder", "PurchaseOrder")
+                        .WithMany("PurchaseOrderDetails")
+                        .HasForeignKey("PurchaseOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Order.ReturnOrder", b =>
+                {
+                    b.HasOne("POS.DataAccessLayer.Models.Company.CompanyModel", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.Customer.CustomerModel", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("POS.DataAccessLayer.Models.Order.ReturnOrderDetail", b =>
+                {
+                    b.HasOne("POS.DataAccessLayer.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.Order.ReturnOrder", "ReturnOrder")
+                        .WithMany("ReturnOrderDetails")
+                        .HasForeignKey("ReturnOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -956,15 +1087,15 @@ namespace POS.DataAccessLayer.Migrations
 
             modelBuilder.Entity("POS.DataAccessLayer.Models.SaleOrderDetails", b =>
                 {
-                    b.HasOne("POS.DataAccessLayer.Models.SaleOrder", "SaleOrder")
-                        .WithMany("SaleOrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("POS.DataAccessLayer.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS.DataAccessLayer.Models.SaleOrder", "SaleOrder")
+                        .WithMany("SaleOrderDetails")
+                        .HasForeignKey("SaleOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

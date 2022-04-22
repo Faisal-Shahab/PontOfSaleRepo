@@ -132,6 +132,7 @@ function initEvents() {
             processData: false,
             success: function (data) {
                 if (data.status) {
+                    $('#kt_modal_add_user').modal('hide');
                     Swal.fire({
                         text: data.message,
                         icon: "success",
@@ -140,11 +141,10 @@ function initEvents() {
                         customClass: {
                             confirmButton: "btn fw-bold btn-primary"
                         }
-                    }).then((function () {
-                        $('#kt_modal_add_user').modal('hide');
-                        $('#paymentTypeDataTable').DataTable().ajax.reload();
-                        closeModal();
-                    }))
+                    });
+                  
+                    $('#paymentTypeDataTable').DataTable().ajax.reload();
+                    closeModal();
 
                 } else {
                     Swal.fire({

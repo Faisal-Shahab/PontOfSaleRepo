@@ -54,17 +54,17 @@ namespace PointOfSale.Controllers
                 DateCreated = DateTime.UtcNow,
                 IsActive = true
             };
-
-            //await _userManager.CreateAsync(user, "admin123");
-
-            //IdentityRole identityRole = new IdentityRole
-            //{
-            //    Name = "Admin"
-            //};
-
-            //await _roleManager.CreateAsync(identityRole);
             try
             {
+                await _userManager.CreateAsync(user, "admin123");
+
+                IdentityRole identityRole = new IdentityRole
+                {
+                    Name = "Admin"
+                };
+
+                await _roleManager.CreateAsync(identityRole);
+
                 var currentUser = await _userManager.FindByNameAsync(user.UserName);
                 await _userManager.AddToRoleAsync(currentUser, "ADMIN");
                 return RedirectToAction("login");

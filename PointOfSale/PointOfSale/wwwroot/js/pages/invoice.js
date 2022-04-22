@@ -71,7 +71,7 @@ function submitForm() {
 
     details = [];
 
-    const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), total: $('.grandTotal').last().text() };
+    const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), discount: $('.totalDisc').text(), total: $('.grandTotal').last().text() };
 
     $('#itemsList tbody tr').each(function () {
 
@@ -80,8 +80,9 @@ function submitForm() {
         const disountedPrice = $(this).find('.discPrice').val();
         const qty = $(this).find('.qty').val();
         const subtotal = $(this).find('td:eq(6)').text();
+        const _discount = $(this).find('.dicPrecent').val();        
 
-        details.push({ productId: productId, productName: productName, salePrice: disountedPrice, quantity: qty, subtotal: subtotal });
+        details.push({ productId: productId, productName: productName, salePrice: disountedPrice, quantity: qty, discount: _discount, subtotal: subtotal });
     });
 
     if (details.length > 0) {
@@ -103,6 +104,7 @@ function submitForm() {
 
                     $('#itemsList tbody').html('');
                     $('.grandTotal').text('0.00');
+                    $('.totalDisc').text('0.00');
                 }))
             } else {
                 Swal.fire({
@@ -196,16 +198,21 @@ function claculatQty(ele) {
     const qty = element.val();
     const qtyTd = element.parent('td');
     const price = qtyTd.prev().children('.discPrice').val();
-    qtyTd.next().text(qty * price);
+    qtyTd.next().text((qty * price).toFixed(2));
     grandTotal();
 }
 
 function grandTotal() {
     let total = 0;
+    let totalDisc = 0;
     $('#itemsList tbody tr').each(function () {
         const subtotal = parseFloat($(this).find('td:eq(6)').text());
+        const price = parseFloat($(this).find('.price').val());
+        const discPrice = parseFloat($(this).find('.discPrice').val());
         total += subtotal;
+        totalDisc += parseFloat((price - discPrice).toFixed(2));
     });
+    $('.totalDisc').text(totalDisc);
     $('.grandTotal').text(total);
 }
 
@@ -247,12 +254,12 @@ function report(data) {
         _html += `<tr><td>${val.productName}</td><td>${val.salePrice}</td><td>${val.quantity}</td><td>${val.subtotal}</td></tr>`;
         total += parseFloat(val.subtotal);
     });
+    $('#totalDisc').text($('.totalDisc').text())
     $('#totalPay').text(total.toFixed(2))
     $('#tbl_data tbody').append(_html);
 
     printInvoice();
 }
-
 
 function reportAFour(data) {
 
@@ -270,13 +277,12 @@ function reportAFour(data) {
         total += parseFloat(val.subtotal);
     });
     $('#itemsBody').append(_html);
-    $('#subTotal').text(total.toFixed(2))
+    $('#totalDisc').text($('.totalDisc').text())
     $('#grandTotal').text(total.toFixed(2))
 
 
     printInvoice();
 }
-
 
 function printInvoice() {
     const _head = printerSize === "Thermal" ? "" : '<head><link href="https://localhost:44374/assets/css/style.bundle.css" rel="stylesheet" type="text/css"></head>';

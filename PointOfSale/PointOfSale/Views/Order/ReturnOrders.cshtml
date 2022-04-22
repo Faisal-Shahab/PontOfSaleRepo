@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "Return Orders";
 }
 
 <div class="card card-flush">
@@ -17,7 +17,7 @@
                     </svg>
                 </span>
                 <!--end::Svg Icon-->
-                <input type="text" data-kt-ecommerce-order-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search Order" />
+                <input type="text" data-kt-ecommerce-return-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search Order" />
             </div>
             <!--end::Search-->
         </div>
@@ -40,7 +40,7 @@
             </div>
 
             <!--begin::Add product-->
-            <a href="~/Order/Sales" class="btn btn-primary">Create Invoice</a>
+            <a href="~/Order/Return" class="btn btn-primary">Create Invoice</a>
             <!--end::Add product-->
         </div>
         <!--end::Card toolbar-->
@@ -49,17 +49,18 @@
     <!--begin::Card body-->
     <div class="card-body pt-0">
         <!--begin::Table-->
-        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_sales_table">
+        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_return_table">
             <!--begin::Table head-->
             <thead>
                 <!--begin::Table row-->
                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-100px">Order ID</th>
+                    <th class="min-w-75px">ID</th>
+                    <th class="min-w-75px">Sale OrderID</th>
                     <th class="min-w-175px">Customer</th>
                     <th class="text-end min-w-100px">Total</th>
                     <th class="text-end min-w-100px">Date Added</th>
                     <th class="text-end min-w-100px">Date Modified</th>
-                    <th class="text-end min-w-100px">Actions</th>
+                    @*<th class="text-end min-w-100px">Actions</th>*@
                 </tr>
                 <!--end::Table row-->
             </thead>
@@ -78,5 +79,5 @@
 
 @section Scripts{
     <script src="~/js/utils/datatable.js"></script>
-    <script src="~/js/pages/saleOrders.js"></script>
+    <script src="~/js/pages/returnOrdes.js"></script>
 }

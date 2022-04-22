@@ -10,7 +10,7 @@ namespace POS.DataAccessLayer.Models.Order
     public class PurchaseOrder
     {
         [Key]
-        public long OrderId { get; set; }
+        public long Id { get; set; }
         public long InvNumber { get; set; }
         public int CompanyId { get; set; }
         public int SupplierId { get; set; }
@@ -29,9 +29,8 @@ namespace POS.DataAccessLayer.Models.Order
     public class PurchaseOrderDetails
     {
         [Key]
-        public long OrderDetailId { get; set; }
-        [ForeignKey("PurchaseOrder")]
-        public long OrderId { get; set; }
+        public long OrderDetailId { get; set; }        
+        public long PurchaseOrderId { get; set; }
         public int ProductId { get; set; }
         public decimal SalePrice { get; set; }
         public int Quantity { get; set; }

@@ -37,6 +37,7 @@ namespace POS.DataAccessLayer.Migrations
                     TaxNumber = table.Column<string>(maxLength: 60, nullable: true),
                     ThankyouNote = table.Column<string>(maxLength: 500, nullable: true),
                     Logo = table.Column<string>(maxLength: 500, nullable: true),
+                    Printer = table.Column<string>(maxLength: 50, nullable: true),
                     CreateBy = table.Column<string>(maxLength: 100, nullable: true),
                     UpdatedBy = table.Column<string>(maxLength: 100, nullable: true),
                     CreateAt = table.Column<DateTime>(nullable: false),
@@ -319,7 +320,7 @@ namespace POS.DataAccessLayer.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)                 
+                    RoleId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -335,7 +336,7 @@ namespace POS.DataAccessLayer.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);                
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -400,7 +401,7 @@ namespace POS.DataAccessLayer.Migrations
                 name: "SaleOrder",
                 columns: table => new
                 {
-                    OrderId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InvNumber = table.Column<long>(nullable: false),
                     CompanyId = table.Column<int>(nullable: false),
@@ -414,7 +415,7 @@ namespace POS.DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SaleOrder", x => x.OrderId);
+                    table.PrimaryKey("PK_SaleOrder", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SaleOrder_Companies_CompanyId",
                         column: x => x.CompanyId,
@@ -433,7 +434,7 @@ namespace POS.DataAccessLayer.Migrations
                 name: "PurchaseOrders",
                 columns: table => new
                 {
-                    OrderId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InvNumber = table.Column<long>(nullable: false),
                     CompanyId = table.Column<int>(nullable: false),
@@ -447,7 +448,7 @@ namespace POS.DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PurchaseOrders", x => x.OrderId);
+                    table.PrimaryKey("PK_PurchaseOrders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PurchaseOrders_Companies_CompanyId",
                         column: x => x.CompanyId,
@@ -463,12 +464,52 @@ namespace POS.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReturnOrders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: false),
+                    SaleOrderId = table.Column<long>(nullable: false),
+                    InvNumber = table.Column<long>(nullable: false),
+                    Total = table.Column<decimal>(nullable: false),
+                    PaymentTypeId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 100, nullable: true),
+                    UpdatedBy = table.Column<string>(maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReturnOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReturnOrders_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "CompanyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReturnOrders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerId",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_ReturnOrders_SaleOrder_SaleOrderId",
+                        column: x => x.SaleOrderId,
+                        principalTable: "SaleOrder",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SaleOrderDetails",
                 columns: table => new
                 {
                     OrderDetailId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<long>(nullable: false),
+                    SaleOrderId = table.Column<long>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     SalePrice = table.Column<decimal>(nullable: false),
                     CostPrice = table.Column<decimal>(nullable: false),
@@ -478,7 +519,7 @@ namespace POS.DataAccessLayer.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    UpdatedBy = table.Column<string>(nullable: true)                 
+                    UpdatedBy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -490,11 +531,11 @@ namespace POS.DataAccessLayer.Migrations
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SaleOrderDetails_SaleOrder_SaleOrderOrderId",
-                        column: x => x.OrderId,
+                        name: "FK_SaleOrderDetails_SaleOrder_SaleOrderId",
+                        column: x => x.SaleOrderId,
                         principalTable: "SaleOrder",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -503,7 +544,7 @@ namespace POS.DataAccessLayer.Migrations
                 {
                     OrderDetailId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<long>(nullable: false),
+                    PurchaseOrderId = table.Column<long>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     SalePrice = table.Column<decimal>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
@@ -511,7 +552,7 @@ namespace POS.DataAccessLayer.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    UpdatedBy = table.Column<string>(nullable: true) 
+                    UpdatedBy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -523,11 +564,44 @@ namespace POS.DataAccessLayer.Migrations
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PurchaseOrderDetails_PurchaseOrders_PurchaseOrderOrderId",
-                        column: x => x.OrderId,
+                        name: "FK_PurchaseOrderDetails_PurchaseOrders_PurchaseOrderId",
+                        column: x => x.PurchaseOrderId,
                         principalTable: "PurchaseOrders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReturnOrderDetails",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReturnOrderId = table.Column<long>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    SalePrice = table.Column<decimal>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    SubTotal = table.Column<decimal>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 100, nullable: true),
+                    UpdatedBy = table.Column<string>(maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReturnOrderDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReturnOrderDetails_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReturnOrderDetails_ReturnOrders_ReturnOrderId",
+                        column: x => x.ReturnOrderId,
+                        principalTable: "ReturnOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -555,7 +629,7 @@ namespace POS.DataAccessLayer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
-                column: "RoleId");       
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -610,9 +684,9 @@ namespace POS.DataAccessLayer.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PurchaseOrderDetails_PurchaseOrderOrderId",
+                name: "IX_PurchaseOrderDetails_PurchaseOrderId",
                 table: "PurchaseOrderDetails",
-                column: "OrderId");
+                column: "PurchaseOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrders_CompanyId",
@@ -623,6 +697,31 @@ namespace POS.DataAccessLayer.Migrations
                 name: "IX_PurchaseOrders_SupplierId",
                 table: "PurchaseOrders",
                 column: "SupplierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReturnOrderDetails_ProductId",
+                table: "ReturnOrderDetails",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReturnOrderDetails_ReturnOrderId",
+                table: "ReturnOrderDetails",
+                column: "ReturnOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReturnOrders_CompanyId",
+                table: "ReturnOrders",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReturnOrders_CustomerId",
+                table: "ReturnOrders",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReturnOrders_SaleOrderId",
+                table: "ReturnOrders",
+                column: "SaleOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleOrder_CompanyId",
@@ -640,9 +739,9 @@ namespace POS.DataAccessLayer.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SaleOrderDetails_SaleOrderOrderId",
+                name: "IX_SaleOrderDetails_SaleOrderId",
                 table: "SaleOrderDetails",
-                column: "OrderId");
+                column: "SaleOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Suppliers_CompanyId",
@@ -677,6 +776,9 @@ namespace POS.DataAccessLayer.Migrations
                 name: "PurchaseOrderDetails");
 
             migrationBuilder.DropTable(
+                name: "ReturnOrderDetails");
+
+            migrationBuilder.DropTable(
                 name: "SaleOrderDetails");
 
             migrationBuilder.DropTable(
@@ -695,13 +797,16 @@ namespace POS.DataAccessLayer.Migrations
                 name: "PurchaseOrders");
 
             migrationBuilder.DropTable(
+                name: "ReturnOrders");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "SaleOrder");
+                name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "Suppliers");
+                name: "SaleOrder");
 
             migrationBuilder.DropTable(
                 name: "Categories");

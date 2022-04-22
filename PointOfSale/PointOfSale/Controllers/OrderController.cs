@@ -51,10 +51,10 @@ namespace PointOfSale.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var query = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId);
                 int totalRows = query.Count();
-                var data = await query.OrderByDescending(x => x.OrderId).Skip(filter.Start).Take(filter.PageLength)
+                var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
                              .Select(x => new
                              {
-                                 x.OrderId,
+                                 OrderId = x.Id,
                                  CustomerName = x.Customer.Name,
                                  x.Total,
                                  OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
@@ -79,7 +79,7 @@ namespace PointOfSale.Controllers
         public async Task<JsonResult> DeleteSaleOrders(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var order = await _appDbContext.SaleOrder.FirstOrDefaultAsync(x => x.CompanyId == user.CompanyId && x.OrderId == id);
+            var order = await _appDbContext.SaleOrder.FirstOrDefaultAsync(x => x.CompanyId == user.CompanyId && x.Id == id);
             _appDbContext.SaleOrder.Remove(order);
             return Json(new { status = await _appDbContext.SaveChangesAsync() > 0 });
         }
@@ -147,7 +147,7 @@ namespace PointOfSale.Controllers
                     foreach (var order in details)
                     {
                         var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
-                        order.OrderId = saleOrder.OrderId;
+                        order.SaleOrderId = saleOrder.Id;
                         order.CreatedAt = DateTime.Now.AddHours(3);
                         order.CreatedBy = user.UserName;
                         order.CostPrice = product.CostPrice;
@@ -166,13 +166,13 @@ namespace PointOfSale.Controllers
                     var orderData = new
                     {
                         invNumber = invNumber,
-                        orderId = saleOrder.OrderId,
+                        orderId = saleOrder.Id,
                         date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
                         qrCode = GenerateQC(invNumber.ToString())
                     };
 
                     trans.Commit();
-                    return Json(new { status = true, message = "Order places successfully", orderData = orderData });
+                    return Json(new { status = true, message = "Order placed successfully", orderData = orderData });
                 }
                 catch (Exception e)
                 {
@@ -182,33 +182,6 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public async Task<JsonResult> GetOrderDetails(int id)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var order = await _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId && x.OrderId == id)
-                           .Select(x => new
-                           {
-                               x.OrderId,
-                               x.InvNumber,
-                               x.Total,
-                               Date = x.CreatedAt.ToString("yyyy-MM-dd"),
-                               CustomerName = x.Customer.Name,
-                               CustomerEmail = x.Customer.Email,
-                               CompanyLogo = x.Company.Logo,
-                               CompanyName = x.Company.Name,
-                               CompanyCrNumber = x.Company.CrNumber,
-                               CompanyTaxNumber = x.Company.TaxNumber,
-                               Details = x.SaleOrderDetails,
-                               //details = x.SaleOrderDetails.Select(d => new
-                               //{
-                               //    productName = d.Product.Name,
-                               //    d.SalePrice,
-                               //    d.Quantity,
-                               //    d.SubTotal
-                               //})
-                           }).ToListAsync();
-            return Json(order);
-        }
         #endregion
 
         #region ==== Purchase ==== 
@@ -257,7 +230,7 @@ namespace PointOfSale.Controllers
 
                     foreach (var order in details)
                     {
-                        order.OrderId = purchaseOrder.OrderId;
+                        order.PurchaseOrderId = purchaseOrder.Id;
                         order.CreatedAt = DateTime.Now.AddHours(3);
                         order.CreatedBy = user.UserName;
                         _appDbContext.PurchaseOrderDetails.Add(order);
@@ -274,7 +247,7 @@ namespace PointOfSale.Controllers
 
                     var purchaseDetails = new
                     {
-                        orderId = purchaseOrder.OrderId,
+                        orderId = purchaseOrder.Id,
                         invNumber = invNumber,
                         date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
                         qrCode = GenerateQC(invNumber.ToString())
@@ -303,10 +276,10 @@ namespace PointOfSale.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var query = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId);
                 int totalRows = query.Count();
-                var data = await query.OrderByDescending(x => x.OrderId).Skip(filter.Start).Take(filter.PageLength)
+                var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
                              .Select(x => new
                              {
-                                 x.OrderId,
+                                 OrderId = x.Id,
                                  supplierName = x.Supplier.Name,
                                  x.Total,
                                  OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
@@ -327,6 +300,137 @@ namespace PointOfSale.Controllers
                 throw;
             }
         }
+
+        #endregion
+
+        #region ==== Return Order =====
+
+        public IActionResult ReturnOrders()
+        {
+            return View();
+        }
+
+        public async Task<JsonResult> GetReturnOrders(SearchFilter filter)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var query = _appDbContext.ReturnOrders.Where(x => x.CompanyId == user.CompanyId);
+                int totalRows = query.Count();
+                var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
+                             .Select(x => new
+                             {
+                                 x.Id,
+                                 x.SaleOrderId,
+                                 CustomerName = x.Customer.Name,
+                                 x.Total,
+                                 OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
+                                 UpdatedDate = x.UpdatedAt.ToString("yyyy-MM-dd")
+                             }).ToListAsync();
+
+                return Json(new
+                {
+                    sEcho = filter.Draw,
+                    iTotalRecords = totalRows,
+                    iTotalDisplayRecords = totalRows,
+                    aaData = data
+                });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<ActionResult> Return()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.Company = await _appDbContext.Companies.FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
+            ViewBag.PaymentTypes = await _dropdownsServices.PaymentTypesDropdown();
+            return View();
+        }
+
+        public async Task<JsonResult> GetOrderDetails(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var order = await _appDbContext.SaleOrder.Where(x => x.Id == id && x.CompanyId == user.CompanyId)
+                  .Select(o => new
+                  {
+                      OrderId = o.Id,
+                      o.InvNumber,
+                      o.Total,
+                      o.CompanyId,
+                      CustomerName = o.Customer != null ? o.Customer.Name : "",
+                      Date = o.CreatedAt.ToString("yyyy-MM-dd"),
+                      OrderDetails = o.SaleOrderDetails.Select(od => new
+                      {
+                          od.ProductId,
+                          ProductName = od.Product.Name,
+                          od.Quantity,
+                          od.SalePrice,
+                          od.SubTotal
+                      })
+                  }).FirstOrDefaultAsync();
+
+            return Json(order);
+        }
+
+
+        public async Task<IActionResult> CreateReturnOrder(ReturnOrder returnOrder, List<ReturnOrderDetail> details)
+        {
+            using (var trans = _appDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    int invNumber = _appDbContext.ReturnOrders.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
+                    returnOrder.CompanyId = (int)user.CompanyId;
+                    returnOrder.InvNumber = invNumber;
+                    returnOrder.CreatedBy = user.UserName;
+                    _appDbContext.ReturnOrders.Add(returnOrder);
+                    _appDbContext.SaveChanges();
+
+                    var productIds = details.Select(x => x.ProductId).ToArray();
+
+                    var products = _appDbContext.Products.Where(x => productIds.Contains(x.ProductId)).ToList();
+
+                    foreach (var order in details)
+                    {
+                        var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
+                        order.ReturnOrderId = returnOrder.Id;
+                        order.CreatedBy = user.UserName;
+                        _appDbContext.ReturnOrderDetails.Add(order);
+
+
+                        if (product != null)
+                        {
+                            product.Quantity = product.Quantity + order.Quantity;
+                            _appDbContext.Products.Update(product);
+                        }
+                    }
+
+                    _appDbContext.SaveChanges();
+
+                    var orderData = new
+                    {
+                        invNumber = invNumber,
+                        orderId = returnOrder.Id,
+                        date = DateTime.Now.AddHours(3).ToString("yyyy-MM-dd hh:mm"),
+                        qrCode = GenerateQC(invNumber.ToString())
+                    };
+
+                    trans.Commit();
+                    return Json(new { status = true, message = "Order placed successfully", orderData = orderData });
+                }
+                catch (Exception e)
+                {
+                    trans.Rollback();
+                    return Json(new { status = false, message = "Operation failed" });
+                }
+            }
+        }
+
 
         #endregion
 

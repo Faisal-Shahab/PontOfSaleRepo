@@ -196,7 +196,7 @@ function claculatQty(ele) {
     const qty = element.val();
     const qtyTd = element.parent('td');
     const price = qtyTd.prev().children('.discPrice').val();
-    qtyTd.next().text(qty * price);
+    qtyTd.next().text((qty * price).toFixed(2));
     grandTotal();
 }
 

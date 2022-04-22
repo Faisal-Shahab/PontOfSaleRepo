@@ -7,6 +7,7 @@ using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Payment;
 using POS.DataAccessLayer.Models.Subscriptions;
 using POS.DataAccessLayer.ViewModels;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace POS.DataAccessLayer
 {
@@ -27,8 +28,11 @@ namespace POS.DataAccessLayer
         public DbSet<SaleOrderDetails> SaleOrderDetails { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderDetails> PurchaseOrderDetails { get; set; }
+        public DbSet<ReturnOrder> ReturnOrders { get; set; }
+        public DbSet<ReturnOrderDetail> ReturnOrderDetails { get; set; }
 
-        [System.Obsolete]
+        [System.Obsolete]   
+        [NotMapped]   
         public DbQuery<UserViewModel> UserView { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
