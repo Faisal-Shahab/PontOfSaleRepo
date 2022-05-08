@@ -9,7 +9,6 @@ var KTAppEcommerceSaveProduct = function () {
 
                     o = document.getElementById("kt_ecommerce_add_product_submit");
 
-
                 e = FormValidation.formValidation(t, {
                     fields: {
                         Name: {
@@ -58,9 +57,9 @@ var KTAppEcommerceSaveProduct = function () {
                                 o.disabled = !0,
                                 setTimeout((function () {
 
-                                    var bg = $('.image-input-wrapper').css('background-image');
-                                    bg = bg.replace('url(', '').replace(')', '').replace(/\"/gi, "");
-                                    $("#avatar_base64").val(bg);
+                                    //var bg = $('.image-input-wrapper').css('background-image');
+                                    //bg = bg.replace('url(', '').replace(')', '').replace(/\"/gi, "");
+                                    //$("#avatar_base64").val(bg);
                                     o.removeAttribute("data-kt-indicator");
                                     var data = $('#kt_ecommerce_add_product_form').serializeArray();
 

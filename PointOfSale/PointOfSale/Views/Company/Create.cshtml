@@ -1,4 +1,7 @@
-﻿@model PointOfSale.Model.CompanyViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@model PointOfSale.Model.CompanyViewModel
 
 <form id="kt_ecommerce_add_company_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/company/Index">
     <!--begin::Aside column-->
@@ -9,7 +12,7 @@
             <div class="card-header">
                 <!--begin::Card title-->
                 <div class="card-title">
-                    <h2>Thumbnail</h2>
+                    <h2>@_localizer["Thumbnail"]</h2>
                 </div>
                 <!--end::Card title-->
             </div>
@@ -61,7 +64,7 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <div class="card-title">
-                    <h2>General</h2>
+                    <h2>@_localizer["General"]</h2>
                 </div>
             </div>
             <!--end::Card header-->
@@ -72,19 +75,16 @@
                     <input type="hidden" asp-for="CompanyId" />
                     <input type="hidden" asp-for="Logo" />
                     <input type="hidden" asp-for="UserEmail" />
-                    <label class="required form-label">Company Name</label>
-                    <input type="text" asp-for="Name" class="form-control mb-2" placeholder="Company name english" />
-                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
+                    <label class="required form-label">@_localizer["Company"] @_localizer["Name"]</label>
+                    <input type="text" asp-for="Name" class="form-control mb-2" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Company Name (Arabic)</label>
-                    <input type="text" asp-for="ArabicName" class="form-control mb-2" placeholder="Company name arabic" />
-                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
+                    <label class="required form-label">@_localizer["Company"] @_localizer["Name"] (@_localizer["Arabic"])</label>
+                    <input type="text" asp-for="ArabicName" class="form-control mb-2"  />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Email</label>
+                    <label class="required form-label">@_localizer["Email"]</label>
                     <input type="text" asp-for="Email" class="form-control mb-2" placeholder="something@gmail.com" />
-                    <div class="text-muted fs-7">A email is required and recommended to be unique.</div>
                 </div>
 
                 @if (Model != null)
@@ -92,9 +92,9 @@
                     if (Model.CompanyId > 0)
                     {
                         <div class="mb-10 fv-row">
-                            <label class="form-label">Printer</label>
+                            <label class="form-label">@_localizer["Printer"]</label>
                             <select class="form-select mb-2" data-control="select2" asp-for="Printer" data-placeholder="Select an option" data-allow-clear="true">
-                                <option value="">Select an option</option>
+                                <option value="">Select</option>
                                 <option value="Thermal">Thermal</option>
                                 <option value="A4">A4</option>
                             </select>
@@ -102,7 +102,7 @@
                         </div>
 
                         <div class="mb-10 fv-row">
-                            <label class="required form-label">Current Password</label>
+                            <label class="required form-label">@_localizer["Current"] @_localizer["Password"]</label>
                             <input type="password" asp-for="CurrentPassword" class="form-control" />
                             <span asp-validation-for="CurrentPassword" class="text-danger"></span>
                         </div>
@@ -110,46 +110,46 @@
                 }
 
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Password</label>
+                    <label class="required form-label">@_localizer["Password"]</label>
                     <input type="text" asp-for="Password" class="form-control mb-2" placeholder="******" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Confirm Password</label>
+                    <label class="required form-label">@_localizer["Confirm"] @_localizer["Password"]</label>
                     <input type="text" asp-for="ConfirmPassword" class="form-control mb-2" placeholder="******" />
                 </div>
 
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Contact #</label>
+                    <label class="required form-label">@_localizer["Contact"] #</label>
                     <input type="text" asp-for="ContactNo" class="form-control mb-2" placeholder="009223123123" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Fax #</label>
+                    <label class="required form-label">@_localizer["Fax"] #</label>
                     <input type="text" asp-for="FaxNo" class="form-control mb-2" placeholder="009223123123" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">CR #</label>
+                    <label class="required form-label">@_localizer["CR"] #</label>
                     <input type="text" asp-for="CrNumber" class="form-control mb-2" placeholder="009223123123" />
                 </div>
 
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Tax #</label>
+                    <label class="required form-label">@_localizer["Tax"] #</label>
                     <input type="text" asp-for="TaxNumber" class="form-control mb-2" />
                 </div>
 
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Address</label>
+                    <label class="required form-label">@_localizer["Address"]</label>
                     <textarea asp-for="Address" class="form-control mb-2">@Model.Address</textarea>
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Thank You Note</label>
+                    <label class="required form-label">@_localizer["ThankYouNotes"]</label>
                     <textarea asp-for="ThankyouNote" class="form-control mb-2">@Model.ThankyouNote</textarea>
                 </div>
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <a href="/Company/Index" id="kt_ecommerce_add_company_cancel" class="btn btn-light me-5">Cancel</a>
+            <a href="/Company/Index" id="kt_ecommerce_add_company_cancel" class="btn btn-light me-5">@_localizer["Cancel"]</a>
             <button type="submit" id="kt_ecommerce_add_company_submit" class="btn btn-primary">
-                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-label">@_localizer["Submit"]</span>
                 <span class="indicator-progress">
                     Please wait...
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>

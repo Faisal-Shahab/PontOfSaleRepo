@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName }).ToList();
+
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString.Value}";
+
+    string name = "";
+    string flag = "";
+    if (requestCulture.RequestCulture.UICulture.Name == "en-US") { name = "English"; flag = "united-states.svg"; } else { name = "عربي"; flag = "saudi-arabia.svg"; };
+}
+
+
+<div class="menu-item px-5" data-kt-menu-trigger="hover" data-kt-menu-placement="left-start">
+    <a href="#" class="menu-link px-5">
+        <span class="menu-title position-relative">
+            Language
+            <span class="fs-8 rounded bg-light px-3 py-2 position-absolute translate-middle-y top-50 end-0">
+                @name
+                <img class="w-15px h-15px rounded-1 ms-2" src="~/assets/media/flags/@flag" alt="" />
+            </span>
+        </span>        
+    </a>
+    <!--begin::Menu sub-->
+    <div class="menu-sub menu-sub-dropdown w-175px py-4">
+        <!--begin::Menu item-->
+        <div class="menu-item px-3">
+            <a asp-controller="Home" asp-action="SetLanguage" asp-route-culture="@cultureItems[0].Value" asp-route-returnUrl="@returnUrl" class="menu-link d-flex px-5 @(name == "English" ? "active" : "")">
+                <span class="symbol symbol-20px me-4">
+                    <img class="rounded-1" src="~/assets/media/flags/united-states.svg" alt="" />
+                </span>@cultureItems[0].Text.Split('(')[0]
+            </a>
+        </div>
+        <!--end::Menu item-->
+        <!--begin::Menu item-->
+        <div class="menu-item px-3">
+            <a asp-controller="Home" asp-action="SetLanguage" asp-route-culture="@cultureItems[1].Value" asp-route-returnUrl="@returnUrl" class="menu-link d-flex px-5 @(name != "English" ? "active" : "")">
+                <span class="symbol symbol-20px me-4">
+                    <img class="rounded-1" src="~/assets/media/flags/saudi-arabia.svg" alt="" />
+                </span>@cultureItems[1].Text.Split('(')[0]
+            </a>
+        </div>
+        <!--end::Menu item-->
+
+    </div>
+    <!--end::Menu sub-->
+</div>

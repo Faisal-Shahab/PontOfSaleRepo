@@ -1,5 +1,9 @@
-﻿@{
-    ViewData["Title"] = "Company";
+﻿
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@{
+    ViewData["Title"] = _localizer["Company"];
 }
 @using POS.DataAccessLayer.Models.Security;
 @using Microsoft.AspNetCore.Identity;
@@ -8,6 +12,7 @@
 @{
     var user = await _userManager.GetUserAsync(User);
 }
+
 <!--begin::company-->
 <div class="card card-flush">
     <!--begin::Card header-->
@@ -24,7 +29,7 @@
                     </svg>
                 </span>
                 <!--end::Svg Icon-->
-                <input type="text" data-kt-ecommerce-company-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search" />
+                <input type="text" data-kt-ecommerce-company-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="@_localizer["Search"]" />
             </div>
             <!--end::Search-->
         </div>
@@ -34,7 +39,7 @@
             <!--begin::Add customer-->
             @if (user.CompanyId == null)
             {
-                <a href="~/Company/Create" class="btn btn-primary">Add</a>
+                <a href="~/Company/Create" class="btn btn-primary">@_localizer["Add"]</a>
             }
             <!--end::Add customer-->
         </div>
@@ -49,12 +54,12 @@
             <thead>
                 <!--begin::Table row-->
                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-70px">Id</th>
-                    <th class="min-w-250px">Name</th>
-                    <th class="min-w-100px">Email</th>
-                    <th class="min-w-100px">Contact#</th>
-                    <th class="min-w-100px">Fax#</th>
-                    <th class="min-w-100px">Actions</th>
+                    <th class="min-w-70px">@_localizer["Id"]</th>
+                    <th class="min-w-250px">@_localizer["Name"]</th>
+                    <th class="min-w-100px">@_localizer["Email"]</th>
+                    <th class="min-w-100px">@_localizer["Contact"]#</th>
+                    <th class="min-w-100px">@_localizer["Fax"]#</th>
+                    <th class="min-w-100px">@_localizer["Actions"]</th>
                 </tr>
                 <!--end::Table row-->
             </thead>

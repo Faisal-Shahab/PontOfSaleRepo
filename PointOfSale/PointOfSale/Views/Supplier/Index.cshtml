@@ -1,9 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Suppliers";
-}
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
 
 @{
-    ViewData["Title"] = "suppliers";
+    ViewData["Title"] = _localizer["Suppliers"];
 }
 
 <!--begin::supplier-->
@@ -22,7 +21,7 @@
                     </svg>
                 </span>
                 <!--end::Svg Icon-->
-                <input type="text" data-kt-ecommerce-supplier-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search supplier" />
+                <input type="text" data-kt-ecommerce-supplier-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="@_localizer["Search"]" />
             </div>
             <!--end::Search-->
         </div>
@@ -30,7 +29,7 @@
         <!--begin::Card toolbar-->
         <div class="card-toolbar">
             <!--begin::Add supplier-->
-            <a href="~/supplier/Create" class="btn btn-primary">Add</a>
+            <a href="~/supplier/Create" class="btn btn-primary">@_localizer["Add"]</a>
             <!--end::Add supplier-->
         </div>
         <!--end::Card toolbar-->
@@ -44,12 +43,12 @@
             <thead>
                 <!--begin::Table row-->
                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-75px">ID</th>
-                    <th class="min-w-250px">Suppliers Name</th>
-                    <th class="min-w-150px">Email</th>
-                    <th class="min-w-150px">Contact #</th>
-                    <th class="min-w-250px">Address</th>
-                    <th class="text-end min-w-70px">Actions</th>
+                    <th class="min-w-75px">@_localizer["Id"]</th>
+                    <th class="min-w-250px">@_localizer["Suppliers"] @_localizer["Name"]</th>
+                    <th class="min-w-150px">@_localizer["Email"]</th>
+                    <th class="min-w-150px">@_localizer["Contact"] #</th>
+                    <th class="min-w-250px">@_localizer["Address"]</th>
+                    <th class="text-end min-w-70px">@_localizer["Actions"]</th>
                 </tr>
                 <!--end::Table row-->
             </thead>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Admin.Components;
@@ -7,10 +8,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models.Security;
@@ -48,11 +53,31 @@ namespace PointOfSale
                .AddDefaultTokenProviders()
                .AddRoleManager<RoleManager<IdentityRole>>();
 
-
-            services.AddMvc(options => { 
-                options.EnableEndpointRouting = false;
-               // options.Filters.Add<AuthorizedAction>();
+            services.AddLocalization(opts =>
+            {
+                opts.ResourcesPath = "Resources";
             });
+
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            }).AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
+              .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+              .AddDataAnnotationsLocalization().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); ;
+
+
+            services.Configure<RequestLocalizationOptions>(option =>
+            {
+                var supportedCultures = new List<CultureInfo>
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("ar-SA")
+                };
+                option.DefaultRequestCulture = new RequestCulture("en-US");
+                option.SupportedCultures = supportedCultures;
+                option.SupportedUICultures = supportedCultures;
+            });
+
 
             services.AddScoped<IProductServices, ProductServices>();
             services.AddScoped<IDropdownsServices, DropdownsServices>();
@@ -77,7 +102,8 @@ namespace PointOfSale
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            //app.UseRouting();
+            var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(locOptions.Value);
 
             app.UseAuthentication();
 

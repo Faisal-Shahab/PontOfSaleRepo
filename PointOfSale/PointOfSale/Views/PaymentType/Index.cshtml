@@ -1,6 +1,10 @@
-﻿@{
-    ViewData["Title"] = "PaymentTypes";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@{
+    ViewData["Title"] = _localizer["PaymentTypes"];
 }
+
 <div class="card">
     <!--begin::Card header-->
     <div class="card-header border-0 pt-6">
@@ -16,7 +20,7 @@
                     </svg>
                 </span>
                 <!--end::Svg Icon-->
-                <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search" />
+                <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="@_localizer["Search"]" />
             </div>
             <!--end::Search-->
         </div>
@@ -31,7 +35,7 @@
                             <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                         </svg>
                     </span>
-                    Add
+                    @_localizer["Add"]
                 </button>
             </div>
         </div>
@@ -42,9 +46,9 @@
         <table class="table align-middle table-row-dashed fs-6 gy-5" id="paymentTypeDataTable">
             <thead>
                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-125px">Id</th>
-                    <th class="min-w-125px">Name</th>
-                    <th class="min-w-100px">Actions</th>
+                    <th class="min-w-125px">@_localizer["Id"]</th>
+                    <th class="min-w-125px">@_localizer["Name"]</th>
+                    <th class="min-w-100px">@_localizer["Actions"]</th>
                 </tr>
             </thead>
             <!--end::Table head-->

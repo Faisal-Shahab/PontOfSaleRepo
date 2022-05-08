@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Roles";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@{
+    ViewData["Title"] = _localizer["Roles"];
 }
 
 <div class="card">
@@ -32,7 +35,7 @@
                             <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                         </svg>
                     </span>
-                    Add
+                    @_localizer["AddNew"]
                 </button>
             </div>
         </div>
@@ -43,9 +46,9 @@
         <table class="table align-middle table-row-dashed fs-6 gy-5" id="rolesTable">
             <thead>
                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-125px">Id</th>
-                    <th class="min-w-125px">Role Name</th>
-                    <th class="min-w-100px">Actions</th>
+                    <th class="min-w-125px">@_localizer["Id"]</th>
+                    <th class="min-w-125px">@_localizer["Name"]</th>
+                    <th class="min-w-100px">@_localizer["Actions"]</th>
                 </tr>
             </thead>
             <!--end::Table head-->

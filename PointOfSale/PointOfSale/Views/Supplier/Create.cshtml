@@ -1,4 +1,7 @@
-﻿@model POS.DataAccessLayer.Models.SupplierModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@model POS.DataAccessLayer.Models.SupplierModel
 
 <form id="kt_ecommerce_add_supplier_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/Supplier/Index">
     <!--begin::Main column-->
@@ -8,7 +11,7 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <div class="card-title">
-                    <h2>General</h2>
+                    <h2>@_localizer["General"]</h2>
                 </div>
             </div>
             <!--end::Card header-->
@@ -18,30 +21,24 @@
                 <div class="mb-10 fv-row">
                     <!--begin::Label-->
                     <input type="hidden" asp-for="SupplierId" />
-                    <label class="required form-label">Supplier Name</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" asp-for="Name" class="form-control mb-2"  />
-                    <!--end::Input-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">Name is required.</div>
-                    <!--end::Description-->
+                    <label class="required form-label">@_localizer["Supplier"] @_localizer["Name"]</label>                 
+                    <input type="text" asp-for="Name" class="form-control mb-2" />              
                 </div>
 
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Email Address</label>
+                    <label class="required form-label">@_localizer["Email"] </label>
                     <input type="email" asp-for="Email" class="form-control mb-2" placeholder="something@gmail.com" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="required form-label">Contact #</label>
+                    <label class="required form-label">@_localizer["Contact"] #</label>
                     <input type="text" asp-for="ContactNo" class="form-control mb-2" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="form-label">Balance</label>
+                    <label class="form-label">@_localizer["Balance"]</label>
                     <input type="text" asp-for="Balance" class="form-control mb-2" />
                 </div>
                 <div class="mb-10 fv-row">
-                    <label class="form-label">Address</label>
+                    <label class="form-label">@_localizer["Address"]</label>
                     <textarea asp-for="Address" class="form-control mb-2" maxlength="500">@Model.Address</textarea>
                 </div>
 
@@ -52,11 +49,11 @@
         <!--end::Automation-->
         <div class="d-flex justify-content-end">
             <!--begin::Button-->
-            <a href="/supplier/Index" id="kt_ecommerce_add_supplier_cancel" class="btn btn-light me-5">Cancel</a>
+            <a href="/supplier/Index" id="kt_ecommerce_add_supplier_cancel" class="btn btn-light me-5">@_localizer["Cancel"]</a>
             <!--end::Button-->
             <!--begin::Button-->
             <button type="submit" id="kt_ecommerce_add_supplier_submit" class="btn btn-primary">
-                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-label">@_localizer["Submit"]</span>
                 <span class="indicator-progress">
                     Please wait...
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>

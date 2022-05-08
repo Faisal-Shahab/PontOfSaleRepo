@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Accounts";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
+@{
+    ViewData["Title"] = _localizer["Accounts"];
 }
 
 <div class="card">
@@ -25,7 +28,7 @@
         <!--begin::Card toolbar-->
         <div class="card-toolbar">
             <!--begin::Toolbar-->
-            <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">              
+            <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                 <!--begin::Add user-->
                 <button type="button" class="btn btn-primary" id="add-new">
                     <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
@@ -35,7 +38,7 @@
                             <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                         </svg>
                     </span>
-                    <!--end::Svg Icon-->Add User
+                    <!--end::Svg Icon-->@_localizer["AddUser"]
                 </button>
                 <!--end::Add user-->
             </div>
@@ -52,19 +55,18 @@
             <thead>
                 <!--begin::Table row-->
                 <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                    <th class="min-w-125px">Username</th>
-                    <th class="min-w-125px">Phone#</th>
-                    <th class="min-w-125px">Email</th>
-                    <th class="min-w-125px">Role</th>
-                    <th class="min-w-125px">Status</th>
-                    <th class="min-w-100px">Actions</th>
+                    <th class="min-w-125px">@_localizer["Username"]</th>
+                    <th class="min-w-125px">@_localizer["Phone"]#</th>
+                    <th class="min-w-125px">@_localizer["Email"]</th>
+                    <th class="min-w-125px">@_localizer["Role"]</th>
+                    <th class="min-w-125px">@_localizer["Status"]</th>
+                    <th class="min-w-100px">@_localizer["Actions"]</th>
                 </tr>
                 <!--end::Table row-->
             </thead>
             <!--end::Table head-->
             <!--begin::Table body-->
-            <tbody class="text-gray-600 fw-bold">     
-                
+            <tbody class="text-gray-600 fw-bold">
             </tbody>
             <!--end::Table body-->
         </table>

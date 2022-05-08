@@ -1,7 +1,10 @@
 ﻿@model PointOfSale.Model.CategoryViewModel
 
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+
 @{
-    ViewData["Title"] = "Create Category";
+    ViewData["Title"] = _localizer["Category"];
 }
 <form id="kt_ecommerce_add_category_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="/Categories/Index">
     <!--begin::Aside column-->
@@ -65,39 +68,19 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <div class="card-title">
-                    <h2>General</h2>
+                    <h2>@_localizer["General"]</h2>
                 </div>
             </div>
-            <!--end::Card header-->
-            <!--begin::Card body-->
             <div class="card-body pt-0">
-                <!--begin::Input group-->
                 <div class="mb-10 fv-row">
-                    <!--begin::Label-->
                     <input type="hidden" asp-for="CategoryId" />
-                    <label class="required form-label">Category Name</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" asp-for="Name" class="form-control mb-2" placeholder="Category name english" />
-                    <!--end::Input-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
-                    <!--end::Description-->
+                    <label class="required form-label">@_localizer["Category"] @_localizer["Name"]</label>
+                    <input type="text" asp-for="Name" class="form-control mb-2" />
                 </div>
-                <!--end::Input group-->
-                <!--begin::Input group-->
                 <div class="mb-10 fv-row">
-                    <!--begin::Label-->
-                    <label class="required form-label">Category Name (Arabic)</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" asp-for="ArabicName" class="form-control mb-2" placeholder="Category name arabic" />
-                    <!--end::Input-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">A category name is required and recommended to be unique.</div>
-                    <!--end::Description-->
+                    <label class="required form-label">@_localizer["Category"] @_localizer["Name"] (@_localizer["Arabic"])</label>
+                    <input type="text" asp-for="ArabicName" class="form-control mb-2" />
                 </div>
-                <!--end::Input group-->
 
             </div>
             <!--end::Card header-->
@@ -106,11 +89,11 @@
         <!--end::Automation-->
         <div class="d-flex justify-content-end">
             <!--begin::Button-->
-            <a href="/Category/Index" id="kt_ecommerce_add_category_cancel" class="btn btn-light me-5">Cancel</a>
+            <a href="/Category/Index" id="kt_ecommerce_add_category_cancel" class="btn btn-light me-5">@_localizer["Cancel"]</a>
             <!--end::Button-->
             <!--begin::Button-->
             <button type="submit" id="kt_ecommerce_add_category_submit" class="btn btn-primary">
-                <span class="indicator-label">Save Changes</span>
+                <span class="indicator-label">@_localizer["Submit"]</span>
                 <span class="indicator-progress">
                     Please wait...
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
