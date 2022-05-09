@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Purchase";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer _localizer
+@{
+    ViewData["Title"] = _localizer["Purchase"];
     var company = ViewBag.Company;
 }
 
@@ -16,8 +18,8 @@
                 <form action="" id="kt_invoice_form">
                     <!--begin::Wrapper-->
                     <div class="d-flex flex-column align-items-start flex-xxl-row">
-                        <div class="d-flex flex-center flex-equal fw-row text-nowrap order-1 order-xxl-2 me-4" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Enter invoice number">
-                            <span class="fs-2x fw-bolder text-gray-800">Invoice</span>
+                        <div class="d-flex flex-center flex-equal fw-row text-nowrap order-1 order-xxl-2 me-4">
+                            <span class="fs-2x fw-bolder text-gray-800">@_localizer["Invoice"]</span>
                             @*<input type="text" class="form-control form-control-flush fw-bolder text-muted fs-3 w-125px" value="2021001" placehoder="..." />*@
                         </div>
                     </div>
@@ -35,7 +37,7 @@
                                         <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
                                     </svg>
                                 </span>
-                                <input type="text" id="productId" class="form-control form-control-solid ps-14" placeholder="Select Items" />
+                                <input type="text" id="productId" class="form-control form-control-solid ps-14" placeholder="@_localizer["Select"] @_localizer["Items"]" />
                             </div>
                         </div>
                         <!--begin::Table wrapper-->
@@ -44,22 +46,22 @@
                                 <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700" id="itemsList">
                                     <thead>
                                         <tr class="border-bottom fs-7 fw-bolder text-gray-700 text-uppercase">
-                                            <th style="display:none">Id</th>
-                                            <th class="min-w-200px w-475px">Product Name</th>
-                                            <th class="min-w-150px w-150px">Price/Unit</th>
-                                            <th>Disc(%)</th>
-                                            <th class="min-w-150px w-150px">Disc Price</th>
-                                            <th class="min-w-75px w-75px">Qty</th>
-                                            <th class="min-w-100px w-150px text-end">Total</th>
-                                            <th class="min-w-75px w-75px text-end">Action</th>
+                                            <th style="display:none">@_localizer["Id"]</th>
+                                            <th class="min-w-200px w-475px">@_localizer["Product"] @_localizer["Name"]</th>
+                                            <th class="min-w-150px w-150px">@_localizer["Price"]/@_localizer["Unit"]</th>
+                                            <th class="min-w-100px w-100px">@_localizer["Disc"] (%)</th>
+                                            <th class="min-w-150px w-150px">@_localizer["Disc"] @_localizer["Price"]</th>
+                                            <th class="min-w-75px w-75px">@_localizer["Qty"]</th>
+                                            <th class="min-w-100px w-150px text-end">@_localizer["Total"]</th>
+                                            <th class="min-w-75px w-75px text-end">@_localizer["Action"]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     </tbody>
                                     <tfoot>
-                                        <tr class="border-top border-top-dashed align-top fs-6 fw-bolder text-gray-700">
+                                        @*<tr class="border-top border-top-dashed align-top fs-6 fw-bolder text-gray-700">
                                             <th class="text-primary">
-                                                @*<button class="btn btn-link py-1" data-kt-element="add-item">Add item</button>*@
+                                                <button class="btn btn-link py-1" data-kt-element="add-item">Add item</button>
                                             </th>
                                             <th colspan="2" class="border-bottom border-bottom-dashed ps-0">
                                                 <div class="d-flex flex-column align-items-start">
@@ -72,10 +74,10 @@
                                                 $
                                                 <span class="grandTotal">0.00</span>
                                             </th>
-                                        </tr>
+                                        </tr>*@
                                         <tr class="align-top fw-bolder text-gray-700">
                                             <th></th>
-                                            <th colspan="2" class="fs-4 ps-0">Total</th>
+                                            <th colspan="2" class="fs-4 ps-0">@_localizer["Total"]</th>
                                             <th colspan="3" class="text-end fs-4 text-nowrap">
                                                 $
                                                 <span class="grandTotal">0.00</span>
@@ -110,12 +112,12 @@
                                 <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
                             </svg>
                         </span>
-                        <input type="text" id="supplierId" class="form-control form-control-solid ps-14" placeholder="Select supplier" />
+                        <input type="text" id="supplierId" class="form-control form-control-solid ps-14" placeholder="@_localizer["Select"] @_localizer["supplier"]" />
                     </div>
                 </div>
                 <div class="separator separator-dashed mb-8"></div>
                 <div class="mb-8">
-                    <label class="form-label fw-bolder fs-6 text-gray-700 mb-5">Payment Methods</label>
+                    <label class="form-label fw-bolder fs-6 text-gray-700 mb-5">@_localizer["Payment"] @_localizer["Method"]</label>
                     @foreach (var item in ViewBag.PaymentTypes)
                     {
                         <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
@@ -133,7 +135,7 @@
                             <path opacity="0.3" d="M20.664 2.06648L2.62602 9.00148C2.44768 9.07085 2.29348 9.19082 2.1824 9.34663C2.07131 9.50244 2.00818 9.68731 2.00074 9.87853C1.99331 10.0697 2.04189 10.259 2.14054 10.4229C2.23919 10.5869 2.38359 10.7185 2.55601 10.8015L7.86601 13.3365C8.02383 13.4126 8.19925 13.4448 8.37382 13.4297C8.54839 13.4145 8.71565 13.3526 8.85801 13.2505L15.43 8.56548L21.711 2.28448C21.5762 2.15096 21.4055 2.05932 21.2198 2.02064C21.034 1.98196 20.8409 1.99788 20.664 2.06648Z" fill="currentColor" />
                         </svg>
                     </span>
-                    <!--end::Svg Icon-->Send Invoice
+                    <!--end::Svg Icon-->@_localizer["Send"] @_localizer["Invoice"]
                 </button>
             </div>
             <!--end::Card body-->
@@ -147,7 +149,7 @@
 {
     <div id="invoice-POS" style="display:none;background-color: white !important; margin-bottom: 0px !important;padding:3px;">
         <center>
-            <h2 style="text-align: center;margin-top: 0px;">Invoice</h2>
+            <h2 style="text-align: center;margin-top: 0px;">@_localizer["Invoice"]</h2>
             @*<div class="info" style="margin-top: -10px; margin-bottom: -20px;">
                     <img src="/logo2.jpeg" style="width:150px;height:150px" alt="">
                 </div>*@
@@ -161,18 +163,18 @@
         <!-- Start of Invoice Header -->
         <table style="margin-top: -3px;width: 100%;background-color:#ebdcdc !important;font-size:13px;">
             <tr>
-                <td style="text-align:right;width:50%"><b>Company Reg #</b></td>
+                <td style="text-align:right;width:50%"><b>@_localizer["Company"] @_localizer["Reg"] #</b></td>
                 <td style="text-align:left;width:50%">@company.CrNumber</td>
             </tr>
             <tr>
-                <td style="text-align:right;width:50%"><b>Tax #</b></td>
+                <td style="text-align:right;width:50%"><b>@_localizer["Tax"] #</b></td>
                 <td style="text-align:left;width:50%">@company.TaxNumber</td>
             </tr>
             <tr style="background-color:white;">
                 <td colspan="2" style="text-align:center; background-color:white;" id="orderTime"></td>
             </tr>
             <tr style="background-color:white;">
-                <td style="background-color:white;width:50%;">Invoice #</td>
+                <td style="background-color:white;width:50%;">@_localizer["Invoice"] #</td>
                 <td style="text-align:right;background-color:white;width:50%;" id="invNum"></td>
             </tr>
         </table>
@@ -184,10 +186,10 @@
                 <table class="contentTable" style="width: 100%;border:1px solid black;border-collapse: collapse" id="tbl_data">
                     <thead>
                         <tr class="tblstyle" style="background-color:#ebdcdc;border:1px solid black">
-                            <th class="tblstyle" style="width: 55%; text-align:center !important">Item Name</th>
-                            <th class="tblstyle" style="width: 15%; text-align:center !important">Rate</th>
-                            <th class="tblstyle" style="width: 15%; text-align:center !important">Qty</th>
-                            <th class="tblstyle" style="width: 15%;text-align:center !important">Amount</th>
+                            <th class="tblstyle" style="width: 55%; text-align:center !important">@_localizer["Items"]</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">@_localizer["Rate"]</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">@_localizer["Qty"]</th>
+                            <th class="tblstyle" style="width: 15%;text-align:center !important">@_localizer["Amount"]</th>
                         </tr>
                     </thead>
                     <!-- End of table Header -->
@@ -205,7 +207,7 @@
                                 <h4></h4>
                             </td>
                             <td style="font-weight: bold;">
-                                Total Amount:
+                                @_localizer["Total"] @_localizer["Amount"]:
                             </td>
                             <td class="payment" id="totalPay" style="text-align:right;">
                             </td>
@@ -237,7 +239,7 @@ else
                     <div class="mw-lg-950px mx-auto w-100">
                         <!-- begin::Header-->
                         <div class="d-flex justify-content-between flex-column flex-sm-row mb-19">
-                            <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">@company.Name - INVOICE</h4>
+                            <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">@company.Name - @_localizer["INVOICE"]</h4>
                             <img id="qrCode" alt="" style="height:150px;width:150px" />
                             <!--end::Logo-->
                             <div style="text-align:right !important;margin-top:-29%">
@@ -248,8 +250,8 @@ else
                                 <!--end::Logo-->
                                 <!--begin::Text-->
                                 <div class="text-sm-end fw-bold fs-4 text-muted mt-7">
-                                    <div>Company Reg# <span>@company.CrNumber</span></div>
-                                    <div>Tax# <span id="taxNum">@company.TaxNumber</span></div>
+                                    <div>@_localizer["Company"] @_localizer["Reg"]# <span>@company.CrNumber</span></div>
+                                    <div>@_localizer["Tax"]# <span id="taxNum">@company.TaxNumber</span></div>
                                 </div>
                                 <!--end::Text-->
                             </div>
@@ -276,9 +278,9 @@ else
                                         <table class="table align-middle gy-5 fw-bolder mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-muted fw-bolder" style="padding-top:0px; padding-bottom:0px !important">Order ID</th>
-                                                    <th class="text-muted fw-bolder" style="text-align:center;padding-top:0px;padding-bottom:0px !important">Date</th>
-                                                    <th class="text-muted fw-bolder" style="text-align:right;padding-top:0px;padding-bottom:0px !important">Invoice ID</th>
+                                                    <th class="text-muted fw-bolder" style="padding-top:0px; padding-bottom:0px !important">@_localizer["Order"] @_localizer["Id"]</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:center;padding-top:0px;padding-bottom:0px !important">@_localizer["Date"]</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:right;padding-top:0px;padding-bottom:0px !important">@_localizer["Invoice"] @_localizer["Id"]</th>
                                                 </tr>
                                                 <tr>
                                                     <th class="fs-5" style="padding-top:0px;" id="orderId">#14534</th>
@@ -298,30 +300,24 @@ else
                                         <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
                                             <thead>
                                                 <tr class="border-bottom fs-6 fw-bolder text-muted">
-                                                    <th class="min-w-175px pb-2">Products</th>
-                                                    <th class="min-w-80px text-end pb-2">Price</th>
-                                                    <th class="min-w-80px text-end pb-2">QTY</th>
-                                                    <th class="min-w-100px text-end pb-2">Total</th>
+                                                    <th class="min-w-175px pb-2">@_localizer["Items"]</th>
+                                                    <th class="min-w-80px text-end pb-2">@_localizer["Price"]</th>
+                                                    <th class="min-w-80px text-end pb-2">@_localizer["QTY"]</th>
+                                                    <th class="min-w-100px text-end pb-2">@_localizer["Total"]</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="fw-bold text-gray-600" id="itemsBody">
                                             </tbody>
-                                            <tfoot>
-                                                <!--begin::Subtotal-->
-                                                <tr>
-                                                    <td colspan="3" class="text-end">Subtotal</td>
-                                                    <td class="text-end" id="subTotal">$264.00</td>
-                                                </tr>
-                                                <!--end::Subtotal-->
+                                            <tfoot>                                               
                                                 <!--begin::VAT-->
                                                 <tr>
-                                                    <td colspan="3" class="text-end">VAT (0%)</td>
+                                                    <td colspan="3" class="text-end">@_localizer["VAT"] (0%)</td>
                                                     <td class="text-end" id="tax">$0.00</td>
                                                 </tr>
                                                 <!--end::VAT-->
                                                 <!--begin::Grand total-->
                                                 <tr>
-                                                    <td colspan="3" class="fs-3 text-dark fw-bolder text-end">Grand Total</td>
+                                                    <td colspan="3" class="fs-3 text-dark fw-bolder text-end">@_localizer["Grand"] @_localizer["Total"]</td>
                                                     <td class="text-dark fs-3 fw-boldest text-end" id="grandTotal">$269.00</td>
                                                 </tr>
                                                 <!--end::Grand total-->

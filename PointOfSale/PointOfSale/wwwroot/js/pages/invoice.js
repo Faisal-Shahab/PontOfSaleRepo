@@ -243,6 +243,8 @@ function removeItem(ele) {
 
 function report(data) {
 
+    $('#orderId').text("#" + data.orderId)
+
     $('#invNum').text("Inv-" + data.invNumber)
     $('#orderTime').text(data.date)
     $('#qrCode').attr('src', data.qrCode);
@@ -263,7 +265,7 @@ function report(data) {
 
 function reportAFour(data) {
 
-    $('#invNum').text("#" + data.orderId)
+    $('#orderId').text("#" + data.orderId)
     $('#invNum').text("#Inv-" + data.invNumber)
     $('#invDate').text(data.date)
     $('#qrCode').attr('src', data.qrCode);
