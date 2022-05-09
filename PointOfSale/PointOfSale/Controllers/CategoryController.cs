@@ -20,12 +20,14 @@ namespace PointOfSale.Controllers
         AppDbContext _context;
         private int languageId;
         UserManager<User> _userManager;
+        System.Globalization.CultureInfo info;
         public CategoryController(IRepository<Category> categoryRepo, AppDbContext context,
            UserManager<User> userManager)
         {
             _categoryRepo = categoryRepo;
             _context = context;
-            languageId = 1;
+            info = System.Globalization.CultureInfo.CurrentCulture;
+            languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _userManager = userManager;
         }
 

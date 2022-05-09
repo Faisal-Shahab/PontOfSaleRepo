@@ -15,12 +15,13 @@ namespace PointOfSale.Controllers
     public class ProductController : Controller
     {
         private int languageId;
+        System.Globalization.CultureInfo info;
         IProductServices _productServices;
         IDropdownsServices _dropdownsServices;
         UserManager<User> _userManager;
         public ProductController(IProductServices productServices, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
-            languageId = 1;
+            languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _productServices = productServices;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;

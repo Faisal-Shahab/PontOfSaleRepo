@@ -24,6 +24,7 @@ namespace PointOfSale.Controllers
         RoleManager<IdentityRole> _roleManager;
         IDropdownsServices _dropdownsServices;
         SignInManager<User> _signInManager;
+        System.Globalization.CultureInfo info;
 
         public AccountController(AppDbContext appContext,
                             UserManager<User> userManager,
@@ -35,7 +36,8 @@ namespace PointOfSale.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _dropdownsServices = dropdownsServices;
-            _dropdownsServices.LanguageId = 1;
+            info = System.Globalization.CultureInfo.CurrentCulture;
+            _dropdownsServices.LanguageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _signInManager = signInManager;
         }
 
@@ -74,7 +76,7 @@ namespace PointOfSale.Controllers
 
                 throw;
             }
-        
+
         }
 
         public IActionResult Index()

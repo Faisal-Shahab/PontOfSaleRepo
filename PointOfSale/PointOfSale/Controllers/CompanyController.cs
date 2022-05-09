@@ -26,6 +26,7 @@ namespace PointOfSale.Controllers
         RoleManager<IdentityRole> _roleManager;
         AppDbContext _appDbContext;
         int language = 1;
+        System.Globalization.CultureInfo info;
         public CompanyController(IRepository<CompanyModel> companyRepo,
                                     IHostingEnvironment hostingEnvironment,
                                      UserManager<User> userManager,
@@ -37,6 +38,9 @@ namespace PointOfSale.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _appDbContext = appDbContext;
+
+            language = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
+
         }
 
         public IActionResult Index() => View();

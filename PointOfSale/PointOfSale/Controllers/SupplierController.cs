@@ -27,14 +27,14 @@ namespace PointOfSale.Controllers
     {
         IRepository<SupplierModel> _supplierRepo;       
         private int languageId;
+        System.Globalization.CultureInfo info;
         IDropdownsServices _dropdownsServices;
         UserManager<User> _userManager;
         public SupplierController(IRepository<SupplierModel> supplierRepo,
                                 IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
             _supplierRepo = supplierRepo;            
-            languageId = 1;
-
+            languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;
             _userManager = userManager;

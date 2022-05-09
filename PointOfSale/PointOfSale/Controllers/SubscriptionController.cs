@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models.Company;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
 
 namespace PointOfSale.Controllers
@@ -16,16 +18,18 @@ namespace PointOfSale.Controllers
     {
         IRepository<SubscriptionModel> _subscriptionRepo;
         private readonly IRepository<CompanySubscriptionModel> _companySubscriptionRepo;
-        IDropdownsServices _dropdownsServices;
-        private readonly string user;
+        IDropdownsServices _dropdownsServices;        
         private int languageId;
-        public SubscriptionController(IDropdownsServices dropdownsServices, IRepository<SubscriptionModel> subscriptionRepo, IRepository<CompanySubscriptionModel> companySubscriptionRepo)
+        System.Globalization.CultureInfo info;
+        UserManager<User> _userManager;
+        public SubscriptionController(IDropdownsServices dropdownsServices, IRepository<SubscriptionModel> subscriptionRepo,
+            IRepository<CompanySubscriptionModel> companySubscriptionRepo, UserManager<User> userManager)
         {
             _subscriptionRepo = subscriptionRepo;
             _companySubscriptionRepo = companySubscriptionRepo;
-            _dropdownsServices = dropdownsServices;
-            user = "test";
-            languageId = 1;
+            _dropdownsServices = dropdownsServices;           
+            languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
+            _userManager = userManager;
         }
 
         public IActionResult Index() => View();
@@ -48,17 +52,18 @@ namespace PointOfSale.Controllers
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
                 if (model.SubscriptionId > 0)
                 {
                     model.UpdatedAt = DateTime.Now;
-                    model.UpdatedBy = user;
+                    model.UpdatedBy = user.UserName;
                     result = await _subscriptionRepo.Update(model);
                 }
                 else
                 {
                     model.CreateAt = DateTime.Now;
                     model.UpdatedAt = DateTime.Now;
-                    model.CreateBy = user;
+                    model.CreateBy = user.UserName;
                     result = await _subscriptionRepo.Insert(model);
                 }
                 return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
@@ -98,17 +103,18 @@ namespace PointOfSale.Controllers
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
                 if (model.SubscriptionId > 0)
                 {
                     model.UpdatedAt = DateTime.Now;
-                    model.UpdatedBy = user;
+                    model.UpdatedBy = user.UserName;
                     result = await _companySubscriptionRepo.Update(model);
                 }
                 else
                 {
                     model.CreateAt = DateTime.Now;
                     model.UpdatedAt = DateTime.Now;
-                    model.CreateBy = user;
+                    model.CreateBy = user.UserName;
                     result = await _companySubscriptionRepo.Insert(model);
                 }
             }
