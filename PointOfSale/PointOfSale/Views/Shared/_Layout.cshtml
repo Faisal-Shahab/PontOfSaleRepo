@@ -169,8 +169,11 @@
                 </div>
                 <!--end::Header-->
                 <!--begin::Content-->
-                <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-
+                <div class="content d-flex flex-column flex-column-fluid" id="kt_content">                   
+                    @if (Context.Request.Path.Value.ToLower() == "/home/index" || Context.Request.Path.Value == "/")
+                    {
+                        <partial name="_toolBar" />
+                    }
                     <!--begin::Post-->
                     <div class="post d-flex flex-column-fluid" id="kt_post">
                         <!--begin::Container-->

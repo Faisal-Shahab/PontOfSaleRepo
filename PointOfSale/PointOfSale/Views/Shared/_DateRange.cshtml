@@ -1,0 +1,19 @@
+﻿<div class="mb-0">
+    <label class="form-label">Example</label>
+    <input class="form-control form-control-solid" id="kt_daterangepicker_3" />
+</div>
+
+<script>
+    function initDatePicker() {
+        $("#kt_daterangepicker_3").daterangepicker({
+            //singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 2022,
+            maxYear: parseInt(moment().format("YYYY"), 10)
+        }, function (start, end, label) {
+
+            alert(start + " You are " + end + " years old!");
+        }
+        )
+    };   
+</script>
