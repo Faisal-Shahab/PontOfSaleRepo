@@ -3,9 +3,23 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="row">
+<style>
+    .toolbar {
+        padding: 2rem 0;
+        z-index: 99;
+        /*padding: -1px !important;*/
+    }
+
+    @@media (min-width: 992px) {
+         .toolbar {
+              padding: 2rem 0 !important;
+         }
+    }
+</style>
+
+<div class="row pt-10">
     <div class="col-xl-6">
-        <!--begin::Charts Widget 2-->        
+        <!--begin::Charts Widget 2-->
         <div class="card card-xl-stretch mb-5 mb-xl-8">
             <!--begin::Header-->
             <div class="card-header border-0 pt-5">
@@ -325,7 +339,7 @@
                     toolbar: {
                         show: false,
                     }
-                },                
+                },
                 plotOptions: {
                     bar: {
                         borderRadius: 4,
@@ -347,7 +361,7 @@
 
         function bestSellingProducts(data) {
 
-           document.querySelector("#productsChart").innerHTML = "";
+            document.querySelector("#productsChart").innerHTML = "";
             const options = {
                 series: [{
                     name: 'Orders',
