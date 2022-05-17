@@ -35,9 +35,10 @@ namespace PointOfSale.Controllers
                 var query = _app.SaleOrder.Where(x => x.CreatedAt >= fromDate && x.CreatedAt <= toDate); //.ToListAsync();
                 var sale = await query.Select(x => new
                 {
-                    Label = (filter.FromDate == filter.ToDate) ? x.CreatedAt.ToString("HH") 
+                    Label = (filter.FromDate == filter.ToDate) ? "Hour " + x.CreatedAt.ToString("HH")
                                                                : x.CreatedAt.ToString("yyyy-MM-dd")
-                    ,x.Total
+                    ,
+                    x.Total
                 }).ToListAsync();
                 var sales = sale.GroupBy(x => x.Label).Select(s => new { Label = s.Key, Total = s.Sum(x => x.Total), Orders = s.Count() }).ToList();
 

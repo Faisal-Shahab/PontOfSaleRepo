@@ -150,7 +150,7 @@
                     products = [], productsSold = [];
 
                 $.map(reponse.sales, function (item) {
-                    labels.push("Hour " + item.label);
+                    labels.push(item.label);
                     sales.push(item.total);
                     orders.push(item.orders);
                 });
