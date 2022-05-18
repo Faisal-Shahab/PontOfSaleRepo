@@ -33,7 +33,8 @@ namespace PointOfSale.Controllers
         public SupplierController(IRepository<SupplierModel> supplierRepo,
                                 IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
-            _supplierRepo = supplierRepo;            
+            _supplierRepo = supplierRepo;  
+            info = System.Globalization.CultureInfo.CurrentCulture; 
             languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;

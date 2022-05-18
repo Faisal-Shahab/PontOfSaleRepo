@@ -21,6 +21,7 @@ namespace PointOfSale.Controllers
         UserManager<User> _userManager;
         public ProductController(IProductServices productServices, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
+            info = System.Globalization.CultureInfo.CurrentCulture;
             languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _productServices = productServices;
             _dropdownsServices = dropdownsServices;

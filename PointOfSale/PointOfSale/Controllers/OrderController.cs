@@ -32,6 +32,7 @@ namespace PointOfSale.Controllers
         public OrderController(IDropdownsServices dropdownsServices, AppDbContext appDbContext,
              UserManager<User> userManager)
         {
+            info = System.Globalization.CultureInfo.CurrentCulture;
             LanguageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = LanguageId;

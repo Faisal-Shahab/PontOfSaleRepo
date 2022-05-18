@@ -27,7 +27,8 @@ namespace PointOfSale.Controllers
         {
             _subscriptionRepo = subscriptionRepo;
             _companySubscriptionRepo = companySubscriptionRepo;
-            _dropdownsServices = dropdownsServices;           
+            _dropdownsServices = dropdownsServices;         
+            info = System.Globalization.CultureInfo.CurrentCulture;
             languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _userManager = userManager;
         }

@@ -38,7 +38,7 @@ namespace PointOfSale.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _appDbContext = appDbContext;
-
+            info = System.Globalization.CultureInfo.CurrentCulture;
             language = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
 
         }

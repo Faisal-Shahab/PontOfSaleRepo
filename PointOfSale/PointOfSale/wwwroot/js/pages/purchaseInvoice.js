@@ -97,9 +97,12 @@ function submitForm() {
                     }
                 }).then((function () {
 
-                    if (printerSize === "Thermal")
+                    if (printerSize === "Thermal") {
                         report(response.purchaseDetails);
-                    else reportAFour(response.purchaseDetails);
+                    }
+                    else {
+                        reportAFour(response.purchaseDetails);
+                    }
 
                     $('#itemsList tbody').html('');
                     $('.grandTotal').text('0.00');
@@ -141,16 +144,16 @@ function addItemToList(prodId = 0, prodName = "") {
             const discount = data.discount;
             const price = data.price;
             const qty = 1;
-            const disountedPrice = (price - (((discount / 100) || 1) * price));
+            const discountedPrice = parseFloat((price - (((discount / 100) || 1) * price)).toFixed(2));
 
-            const subtotal = ((disountedPrice === 0 ? price : disountedPrice) * qty);
+            const subtotal = ((discount == 0 ? price : discountedPrice) * qty);
 
             if (!isProductExist(productId)) {
                 let _html = `<tr class="border-bottom border-bottom-dashed"><td style="display:none">${productId}</td>
                                          <td class="pe-7">${productName}</td>
                                          <td><input type="text" class="form-control text-end form-control-solid price" onkeyup="priceCalculat(this)" value="${price}" /></td>
                                          <td><input type="text" class="form-control form-control-solid dicPrecent" onkeyup="claculatPrecentage(this)" value="${discount}" /></td>
-                                         <td><input type="text" value="${(disountedPrice == 0 ? price : disountedPrice)}" disabled class="form-control form-control-solid discPrice"/></td>
+                                         <td><input type="text" value="${(discount == 0 ? price : discountedPrice)}" disabled class="form-control form-control-solid discPrice"/></td>
                                          <td class="ps-0"><input type="text" onkeyup="claculatQty(this)" value="${qty}" class="form-control form-control-solid qty"/></td>
                                          <td class="pt-8 text-end text-nowrap">${subtotal}</td>
                                          <td class="pt-5 text-end">
@@ -179,14 +182,14 @@ function addItemToList(prodId = 0, prodName = "") {
 
 function claculatPrecentage(ele) {
     const element = $(ele);
-    const discount = parseFloat((element.val() || 0));
+    let discount = parseFloat((element.val() || 0));
     const price = parseFloat(element.parent('td').prev().children('.price').val());
 
-    const disountedPrice = (price - (((discount / 100) || 1) * price));
+    const discountedPrice = parseFloat((price - (((discount / 100) || 1) * price)).toFixed(2));
     const discEle = element.parent('td').next().children('.discPrice');
-    discEle.val((disountedPrice == 0 ? price : disountedPrice));
+    discEle.val((discount == 0 ? price : discountedPrice));
     const qtyEletd = discEle.parent('td').next();
-    qtyEletd.next().text((disountedPrice == 0 ? price : disountedPrice) * qtyEletd.children('.qty').val());
+    qtyEletd.next().text((discount == 0 ? price : discountedPrice) * qtyEletd.children('.qty').val());
 
     grandTotal();
 }

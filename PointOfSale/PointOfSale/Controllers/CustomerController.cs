@@ -22,6 +22,7 @@ namespace PointOfSale.Controllers
         public CustomerController(IRepository<CustomerModel> customerRepo, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
             _customerRepo = customerRepo;
+            info = System.Globalization.CultureInfo.CurrentCulture;
             languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;
