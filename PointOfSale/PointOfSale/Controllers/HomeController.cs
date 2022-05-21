@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using POS.DataAccessLayer;
+using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.ViewModels;
 
 namespace PointOfSale.Controllers
@@ -16,9 +18,11 @@ namespace PointOfSale.Controllers
     public class HomeController : Controller
     {
         AppDbContext _app;
-        public HomeController(AppDbContext app)
+        UserManager<User> _userManager;
+        public HomeController(AppDbContext app, UserManager<User> userManager)
         {
             _app = app;
+            _userManager = userManager;
         }
         public IActionResult Index()
         {
@@ -31,8 +35,8 @@ namespace PointOfSale.Controllers
             var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
             try
             {
-
-                var query = _app.SaleOrder.Where(x => x.CreatedAt >= fromDate && x.CreatedAt <= toDate); //.ToListAsync();
+                var user = await _userManager.GetUserAsync(User);
+                var query = _app.SaleOrder.Where(x => x.CreatedAt >= fromDate && x.CreatedAt <= toDate && x.CompanyId == user.CompanyId); //.ToListAsync();
                 var sale = await query.Select(x => new
                 {
                     Label = (filter.FromDate == filter.ToDate) ? "Hour " + x.CreatedAt.ToString("HH")

@@ -4,16 +4,24 @@
 </div>
 
 <script>
-    function initDatePicker() {
+    function initDatePicker(_start, _end) {
+
+        const start = _start || moment();
+        const end = _end || moment();
+
         $("#kt_daterangepicker_3").daterangepicker({
             //singleDatePicker: true,
             showDropdowns: true,
             minYear: 2022,
-            maxYear: parseInt(moment().format("YYYY"), 10)
+            start: start,
+            end: end,
+            maxYear: parseInt(moment().format("YYYY"), 10),
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
         }, function (start, end, label) {
 
             alert(start + " You are " + end + " years old!");
-        }
-        )
-    };   
+        })
+    };
 </script>

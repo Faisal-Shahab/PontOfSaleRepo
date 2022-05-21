@@ -53,6 +53,8 @@ var KTAppEcommerceCategories =
         };
         return {
             init: function () {
+                let fromDate = moment().subtract(1, 'days').format("YYYY-MM-DD");
+                let toDate = moment().format("YYYY-MM-DD");
                 (t = document.querySelector("#kt_ecommerce_purchase_table")) && ((e = $(t).DataTable({
                     //info: !1,
                     //order: [],
@@ -61,7 +63,10 @@ var KTAppEcommerceCategories =
                         "url": '/Order/GetPurchaseOrders',
                         "type": "post",
                         "data": function (data) {
-                            return posDataTable.setDataTableFilters(data);
+                           let params = posDataTable.setDataTableFilters(data);
+                            params.fromDate = fromDate;
+                            params.toDate = toDate;
+                            return params;
                         }
                     },
                     "columns": [
@@ -69,13 +74,40 @@ var KTAppEcommerceCategories =
                         { data: "supplierName", "sortable": false },
                         { data: "total", "sortable": false, "className": "text-end pe-0" },
                         { data: "orderDate", "sortable": false, "className": "text-end" },
-                        { data: "updatedDate", "sortable": false, "className": "text-end" }                        
+                        { data: "updatedDate", "sortable": false, "className": "text-end" }
                     ]
                 })).on("draw", (function () {
                     n()
                 })), document.querySelector('[data-kt-ecommerce-order-filter="search"]').addEventListener("keyup", (function (t) {
                     e.search(t.target.value).draw()
                 })), n())
+
+                const start = moment();
+                const end = moment();
+
+                $("#kt_ecommerce_sales_flatpickr").daterangepicker({
+                    showDropdowns: true,
+                    minYear: 2022,
+                    maxYear: parseInt(moment().format("YYYY"), 10),
+                    start: start,
+                    end: end,
+                    locale: {
+                        format: 'YYYY-MM-DD'
+                    }
+                }, function (start, end) {
+                    fromDate = start.format("YYYY-MM-DD");
+                    toDate = end.format("YYYY-MM-DD");
+                    $("#kt_ecommerce_sales_flatpickr").val(fromDate + " - " + toDate);
+                    $("#kt_ecommerce_purchase_table").DataTable().draw();
+                });
+
+                $("#exportButton").click(function () {
+                    const searchTerm = $('[data-kt-ecommerce-order-filter="search"]').val();
+                    const url = `/Order/ExportPurchaseOrders?fromDate=${fromDate}&toDate=${toDate}&searchTerm=${searchTerm}`;
+
+                    window.location.href = url;
+
+                });
             },
         }
     }();

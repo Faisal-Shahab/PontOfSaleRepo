@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Model;
+using PointOfSale.Utility;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models;
@@ -47,10 +48,21 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> GetSaleOrders(SearchFilter filter)
         {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var query = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId);
+
+                long.TryParse(filter.SearchTerm, out long orderId);
+
+                var query = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
+
+                if (orderId > 0)
+                {
+                    query = query.Where(x => x.Id == orderId);
+                }
+
                 int totalRows = query.Count();
                 var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
                              .Select(x => new
@@ -72,10 +84,49 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }
+
+        public async Task<IActionResult> ExportSaleOrders(SearchFilter filter)
+        {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                long.TryParse(filter.SearchTerm, out long orderId);
+
+                var query = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId
+                                         && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
+
+                if (orderId > 0)
+                {
+                    query = query.Where(x => x.Id == orderId);
+                }
+
+                var fileContents = ExportExcelReport.GetExcelFile(query.Select(p =>
+                    new
+                    {
+                        OrderId = p.Id,
+                        CustomerName = p.Customer.Name,
+                        p.Total,
+                        OrderDate = p.CreatedAt.ToString("yyyy-MM-dd")
+                    }).ToList());
+                return File(
+                    fileContents: fileContents,
+                    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileDownloadName: $"Sale_Orders_{filter.FromDate}_To_{filter.ToDate}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
 
         public async Task<JsonResult> DeleteSaleOrders(int id)
         {
@@ -272,10 +323,12 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> GetPurchaseOrders(SearchFilter filter)
         {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var query = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId);
+                var query = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
                 int totalRows = query.Count();
                 var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
                              .Select(x => new
@@ -302,6 +355,45 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<IActionResult> ExportPurchaseOrders(SearchFilter filter)
+        {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                long.TryParse(filter.SearchTerm, out long orderId);
+
+                var query = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId
+                                         && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
+
+                if (orderId > 0)
+                {
+                    query = query.Where(x => x.Id == orderId);
+                }
+
+                var fileContents = ExportExcelReport.GetExcelFile(query.Select(p =>
+                    new
+                    {
+                        OrderId = p.Id,
+                        SupplierName = p.Supplier.Name,
+                        p.Total,
+                        OrderDate = p.CreatedAt.ToString("yyyy-MM-dd")
+                    }).ToList());
+                return File(
+                    fileContents: fileContents,
+                    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileDownloadName: $"Purchase_Orders_{filter.FromDate}_To_{filter.ToDate}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         #endregion
 
         #region ==== Return Order =====
@@ -313,10 +405,13 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> GetReturnOrders(SearchFilter filter)
         {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
+
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-                var query = _appDbContext.ReturnOrders.Where(x => x.CompanyId == user.CompanyId);
+                var query = _appDbContext.ReturnOrders.Where(x => x.CompanyId == user.CompanyId && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
                 int totalRows = query.Count();
                 var data = await query.OrderByDescending(x => x.Id).Skip(filter.Start).Take(filter.PageLength)
                              .Select(x => new
@@ -325,8 +420,8 @@ namespace PointOfSale.Controllers
                                  x.SaleOrderId,
                                  CustomerName = x.Customer.Name,
                                  x.Total,
-                                 OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
-                                 UpdatedDate = x.UpdatedAt.ToString("yyyy-MM-dd")
+                                 OrderDate = (x.CreatedAt != null) ? x.CreatedAt.ToString("yyyy-MM-dd") : "",
+                                 UpdatedDate = (x.UpdatedAt != null) ? x.UpdatedAt.ToString("yyyy-MM-dd") : ""
                              }).ToListAsync();
 
                 return Json(new
@@ -432,7 +527,45 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<IActionResult> ExportReturnOrders(SearchFilter filter)
+        {
+            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
 
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                long.TryParse(filter.SearchTerm, out long orderId);
+
+                var query = _appDbContext.ReturnOrders.Where(x => x.CompanyId == user.CompanyId
+                                         && x.CreatedAt >= fromDate && x.CreatedAt <= toDate);
+
+                if (orderId > 0)
+                {
+                    query = query.Where(x => x.Id == orderId);
+                }
+
+                var fileContents = ExportExcelReport.GetExcelFile(query.Select(p =>
+                    new
+                    {
+                        ReturnId = p.Id,
+                        SaleOrderId = p.SaleOrderId,
+                        SupplierName = p.Customer.Name,
+                        Total = p.Total,
+                        OrderDate = p.CreatedAt.ToString("yyyy-MM-dd")
+                    }).ToList());
+                return File(
+                    fileContents: fileContents,
+                    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileDownloadName: $"Return_Orders_{filter.FromDate}_To_{filter.ToDate}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
         #endregion
 
         private string GenerateQC(string value)
