@@ -123,6 +123,9 @@
   <data name="Added" xml:space="preserve">
     <value>مضاف</value>
   </data>
+  <data name="Balance" xml:space="preserve">
+    <value>التعادل</value>
+  </data>
   <data name="Create" xml:space="preserve">
     <value>خلق</value>
   </data>

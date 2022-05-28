@@ -3,8 +3,19 @@
 
 @{
     ViewData["Title"] = _localizer["Orders"];
+    var company = ViewBag.Company;
 }
+<style>
+    button.details-control {
+        background: url('../images/details_open.png') no-repeat center center;
+        cursor: pointer;
+        border: 0px;
+    }
 
+    tr.shown button.details-control {
+        background: url('../images/details_close.png') no-repeat center center;
+    }
+</style>
 <div class="card card-flush">
     <!--begin::Card header-->
     <div class="card-header align-items-center py-5 gap-2 gap-md-5">
@@ -78,7 +89,233 @@
     <!--end::Card body-->
 </div>
 
+
+
+
+@if (company.Printer.ToLower() == "thermal")
+{
+    <div id="invoice-POS" style="display:none;background-color: white !important; margin-bottom: 0px !important;padding:3px;">
+        <center>
+            <h2 style="text-align: center;margin-top: 0px;">@_localizer["Invoice"]</h2>
+            @*<div class="info" style="margin-top: -10px; margin-bottom: -20px;">
+                    <img src="/logo2.jpeg" style="width:150px;height:150px" alt="">
+                </div>*@
+            <!--End Info-->
+            <h3 style="text-align: center;">@company.Name</h3>
+        </center>
+        <!--End InvoiceTop-->
+        <hr style="color:black;font-weight:boder; margin-top: 0px; margin-bottom: 0px;">
+
+        <!--End Invoice Mid-->
+        <!-- Start of Invoice Header -->
+        <table style="margin-top: -3px;width: 100%;background-color:#ebdcdc !important;font-size:13px;">
+            <tr>
+                <td style="text-align:right;width:50%"><b>@_localizer["Company"] @_localizer["Reg"] #</b></td>
+                <td style="text-align:left;width:50%">@company.CrNumber</td>
+            </tr>
+            <tr>
+                <td style="text-align:right;width:50%"><b>@_localizer["Tax"] #</b></td>
+                <td style="text-align:left;width:50%">@company.TaxNumber</td>
+            </tr>
+            <tr style="background-color:white;">
+                <td colspan="2" style="text-align:center; background-color:white;" id="orderTime"></td>
+            </tr>
+            <tr style="background-color:white;">
+                <td style="background-color:white;width:50%;">@_localizer["Order"] #</td>
+                <td style="text-align:right;background-color:white;width:50%;" id="orderId"></td>
+            </tr>
+            <tr style="background-color:white;">
+                <td style="background-color:white;width:50%;">@_localizer["Invoice"] #</td>
+                <td style="text-align:right;background-color:white;width:50%;" id="invNum"></td>
+            </tr>
+        </table>
+        <hr style="color:black;font-weight:boder; margin-bottom: 0px;">
+        <!-- End of Invoice Header -->
+
+        <div id="bot" style="margin-bottom: 5px !important">
+            <div id="table">
+                <table class="contentTable" style="width: 100%;border:1px solid black;border-collapse: collapse" id="tbl_data">
+                    <thead>
+                        <tr class="tblstyle" style="background-color:#ebdcdc;border:1px solid black">
+                            <th class="tblstyle" style="width: 55%; text-align:center !important">@_localizer["Item"] @_localizer["Name"]</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">@_localizer["Rate"]</th>
+                            <th class="tblstyle" style="width: 15%; text-align:center !important">@_localizer["Qty"]</th>
+                            <th class="tblstyle" style="width: 15%;text-align:center !important">@_localizer["Amount"]</th>
+                        </tr>
+                    </thead>
+                    <!-- End of table Header -->
+                    <tbody style="background-color:white; font-size:13px;">
+                    </tbody>
+                </table>
+                <br>
+
+                <table style="margin-top: -13px;width: 100%;">
+                    <tbody>
+                        <tr class="tabletitle">
+                            <td style="font-weight: bold;" id="customerName">
+                            </td>
+                            <td class="payment">
+                                <h4></h4>
+                            </td>
+                            <td style="font-weight: bold;">
+                                @_localizer["Total"] @_localizer["Discount"]:
+                            </td>
+                            <td class="payment" id="totalDisc" style="text-align:right;">
+                            </td>
+                        </tr>
+                    <tbody>
+                        <tr class="tabletitle">
+                            <td style="font-weight: bold;" id="customerName">
+                            </td>
+                            <td class="payment">
+                                <h4></h4>
+                            </td>
+                            <td style="font-weight: bold;">
+                                @_localizer["Total"] @_localizer["Amount"]:
+                            </td>
+                            <td class="payment" id="totalPay" style="text-align:right;">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--End Table-->
+            <div id="legalcopy" style="margin-top: -20px !important; margin-bottom: 0px !important;">
+                <h4 style="text-align:center;">@company.ThankyouNote</h4>
+                <h5 style="text-align: center; margin-top: -18px;">Powered By .net</h5>
+            </div>
+            <div style="text-align:center;">
+                <img id="qrCode" alt="" style="height:150px;width:150px" />
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="post d-flex flex-column-fluid" style="display:none !important;" id="invoice-POS">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!-- begin::Invoice 3-->
+            <div class="card">
+                <!-- begin::Body-->
+                <div class="card-body py-20">
+                    <!-- begin::Wrapper-->
+                    <div class="mw-lg-950px mx-auto w-100">
+                        <!-- begin::Header-->
+                        <div class="d-flex justify-content-between flex-column flex-sm-row mb-19">
+                            <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">@company.Name - @_localizer["INVOICE"]</h4>
+                            <img id="qrCode" alt="" style="height:150px;width:150px" />
+                            <!--end::Logo-->
+                            <div style="text-align:right !important;margin-top:-29%">
+                                <!--begin::Logo-->
+                                <a href="#">
+                                    <img alt="Logo" src="~/CompanyLogo/@company.Logo" style="text-align:right !important;width:150px" />
+                                </a>
+                                <!--end::Logo-->
+                                <!--begin::Text-->
+                                <div class="text-sm-end fw-bold fs-4 text-muted mt-7">
+                                    <div>@_localizer["Company"] @_localizer["Reg"]# <span>@company.CrNumber</span></div>
+                                    <div>@_localizer["Tax"]# <span id="taxNum">@company.TaxNumber</span></div>
+                                </div>
+                                <!--end::Text-->
+                            </div>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Body-->
+                        <div class="pb-12">
+                            <!--begin::Wrapper-->
+                            <div class="d-flex flex-column gap-7 gap-md-10">
+                                <!--begin::Message-->
+                                <div class="fw-bolder fs-2" id="customerName">
+                                    @*Dear Emma Bold
+                                        <span class="fs-6" id="customerEmail">(emma@intenso.com)</span>,*@
+                                    <br />
+                                    <span class="text-muted fs-5">@company.ThankyouNote</span>
+                                </div>
+                                <!--begin::Message-->
+                                <!--begin::Separator-->
+                                <div class="separator"></div>
+                                <!--begin::Separator-->
+                                <!--begin::Order details-->
+                                <div class="d-flex justify-content-between flex-column">
+                                    <div class="table-responsive mb-9">
+                                        <table class="table align-middle gy-5 fw-bolder mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-muted fw-bolder" style="padding-top:0px; padding-bottom:0px !important">@_localizer["Order"] @_localizer["Id"]</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:center;padding-top:0px;padding-bottom:0px !important">@_localizer["Date"]</th>
+                                                    <th class="text-muted fw-bolder" style="text-align:right;padding-top:0px;padding-bottom:0px !important">@_localizer["Invoice"] @_localizer["Id"]</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fs-5" style="padding-top:0px;" id="orderId">#14534</th>
+                                                    <th class="fs-5" style="text-align:center;padding-top:0px;" id="invDate">30 March, 2022</th>
+                                                    <th class="fs-5" style="text-align:right;padding-top:0px;" id="invNum">#INV-000414</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!--end::Order details-->
+                                <!--begin:Order summary-->
+                                <div class="d-flex justify-content-between flex-column">
+                                    <!--begin::Table-->
+                                    <div class="table-responsive border-bottom mb-9">
+                                        <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
+                                            <thead>
+                                                <tr class="border-bottom fs-6 fw-bolder text-muted">
+                                                    <th class="min-w-175px pb-2">@_localizer["Items"]</th>
+                                                    <th class="min-w-80px text-end pb-2">@_localizer["Price"]</th>
+                                                    <th class="min-w-80px text-end pb-2">@_localizer["QTY"]</th>
+                                                    <th class="min-w-100px text-end pb-2">@_localizer["Total"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-bold text-gray-600" id="itemsBody">
+                                            </tbody>
+                                            <tfoot>
+                                                <!--begin::Subtotal-->
+                                                <tr>
+                                                    <td colspan="3" class="text-end">@_localizer["Total"] @_localizer["Disc"]</td>
+                                                    <td class="text-end" id="totalDisc">$264.00</td>
+                                                </tr>
+                                                <!--end::Subtotal-->
+                                                <!--begin::VAT-->
+                                                <tr>
+                                                    <td colspan="3" class="text-end">@_localizer["VAT"] (0%)</td>
+                                                    <td class="text-end" id="tax">$0.00</td>
+                                                </tr>
+                                                <!--end::VAT-->
+                                                <!--begin::Grand total-->
+                                                <tr>
+                                                    <td colspan="3" class="fs-3 text-dark fw-bolder text-end">@_localizer["Grand"] @_localizer["Total"]</td>
+                                                    <td class="text-dark fs-3 fw-boldest text-end" id="grandTotal">$269.00</td>
+                                                </tr>
+                                                <!--end::Grand total-->
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <!--end::Table-->
+                                </div>
+                                <!--end:Order summary-->
+                            </div>
+                            <!--end::Wrapper-->
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!-- end::Wrapper-->
+                </div>
+                <!-- end::Body-->
+            </div>
+            <!-- end::Invoice 1-->
+        </div>
+        <!--end::Container-->
+    </div>
+}
+
 @section Scripts{
     <script src="~/js/utils/datatable.js"></script>
+    <script>
+        var printerSize = '@company.Printer';
+    </script>
     <script src="~/js/pages/saleOrders.js"></script>
 }

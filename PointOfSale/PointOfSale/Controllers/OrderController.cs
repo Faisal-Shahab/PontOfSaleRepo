@@ -41,8 +41,11 @@ namespace PointOfSale.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            ViewBag.Company = await _appDbContext.Companies.FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
             return View();
         }
 
@@ -73,7 +76,6 @@ namespace PointOfSale.Controllers
                                  OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
                                  UpdatedDate = x.UpdatedAt.HasValue ? x.UpdatedAt.Value.ToString("yyyy-MM-dd") : ""
                              }).ToListAsync();
-
                 return Json(new
                 {
                     sEcho = filter.Draw,
@@ -86,6 +88,21 @@ namespace PointOfSale.Controllers
             {
                 throw;
             }
+        }
+
+        public async Task<JsonResult> GetSaleOrderDetails(int id)
+        {
+            var data = await _appDbContext.SaleOrderDetails.Where(x => x.SaleOrderId == id)
+                          .Select(x => new
+                          {
+                              ProductName = x.Product.Name,
+                              x.CostPrice,
+                              x.SalePrice,
+                              x.Discount,
+                              x.Quantity,
+                              x.SubTotal,
+                          }).ToListAsync();
+            return Json(new { data = data });
         }
 
         public async Task<IActionResult> ExportSaleOrders(SearchFilter filter)
@@ -127,13 +144,39 @@ namespace PointOfSale.Controllers
             }
         }
 
-
-        public async Task<JsonResult> DeleteSaleOrders(int id)
+        public async Task<JsonResult> PrintSaleOrderDetails(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var order = await _appDbContext.SaleOrder.FirstOrDefaultAsync(x => x.CompanyId == user.CompanyId && x.Id == id);
-            _appDbContext.SaleOrder.Remove(order);
-            return Json(new { status = await _appDbContext.SaveChangesAsync() > 0 });
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var order = _appDbContext.SaleOrder.Where(x => x.CompanyId == user.CompanyId && x.Id == id)
+                                               .Select(x => new
+                                               {
+                                                   x.InvNumber,
+                                                   OrderId = x.Id,
+                                                   Date = x.CreatedAt.ToString("yyyy-MMM-dd"),
+                                                   details = x.SaleOrderDetails.Select(od => new
+                                                   {
+                                                       ProductName = od.Product.Name,
+                                                       od.SalePrice,
+                                                       od.Quantity,
+                                                       Subtotal = od.SubTotal
+                                                   }).ToList()
+                                               }).ToList().Select(x => new
+                                               {
+                                                   qrCode = GenerateQC(x.InvNumber.ToString()),
+                                                   x.InvNumber,
+                                                   OrderId = x.OrderId,
+                                                   Date = x.Date,
+                                                   x.details
+                                               }).FirstOrDefault();
+
+                return Json(order);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         #region ==== Sales ==== 
@@ -316,8 +359,11 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public IActionResult PurchaseOrders()
+        public async Task<IActionResult> PurchaseOrders()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            ViewBag.Company = await _appDbContext.Companies.FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
             return View();
         }
 
@@ -335,6 +381,7 @@ namespace PointOfSale.Controllers
                              {
                                  OrderId = x.Id,
                                  supplierName = x.Supplier.Name,
+                                 Balance = x.Supplier.Balance,
                                  x.Total,
                                  OrderDate = x.CreatedAt.ToString("yyyy-MM-dd"),
                                  UpdatedDate = x.UpdatedAt.HasValue ? x.UpdatedAt.Value.ToString("yyyy-MM-dd") : ""
@@ -394,12 +441,70 @@ namespace PointOfSale.Controllers
             }
         }
 
+        public async Task<JsonResult> GetPurchaseOrderDetail(int id)
+        {
+            try
+            {
+                var data = await _appDbContext.PurchaseOrderDetails.Where(x => x.OrderDetailId == id)
+                        .Select(x => new
+                        {
+                            ProductName = x.Product.Name,
+                            x.SalePrice,
+                            x.Quantity,
+                            x.SubTotal,
+                        }).ToListAsync();
+                return Json(new { data = data });
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<JsonResult> GetPurchaseOrderInvoiceDetails(int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var order = _appDbContext.PurchaseOrders.Where(x => x.CompanyId == user.CompanyId && x.Id == id)
+                                               .Select(x => new
+                                               {
+                                                   x.InvNumber,
+                                                   OrderId = x.Id,
+                                                   Date = x.CreatedAt.ToString("yyyy-MMM-dd"),
+                                                   details = x.PurchaseOrderDetails.Select(od => new
+                                                   {
+                                                       ProductName = od.Product.Name,
+                                                       od.SalePrice,
+                                                       od.Quantity,
+                                                       Subtotal = od.SubTotal
+                                                   }).ToList()
+                                               }).ToList().Select(x => new
+                                               {
+                                                   qrCode = GenerateQC(x.InvNumber.ToString()),
+                                                   x.InvNumber,
+                                                   OrderId = x.OrderId,
+                                                   Date = x.Date,
+                                                   x.details
+                                               }).FirstOrDefault();
+
+                return Json(order);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
         #endregion
 
         #region ==== Return Order =====
 
-        public IActionResult ReturnOrders()
+        public async Task<IActionResult> ReturnOrders()
         {
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.Company = await _appDbContext.Companies
+                                                 .FirstOrDefaultAsync(c => c.CompanyId == user.CompanyId);
             return View();
         }
 
@@ -471,7 +576,6 @@ namespace PointOfSale.Controllers
 
             return Json(order);
         }
-
 
         public async Task<IActionResult> CreateReturnOrder(ReturnOrder returnOrder, List<ReturnOrderDetail> details)
         {
@@ -564,6 +668,61 @@ namespace PointOfSale.Controllers
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        public async Task<JsonResult> GetReturnOrderDetail(int id)
+        {
+            try
+            {
+                var data = await _appDbContext.ReturnOrderDetails.Where(x => x.ReturnOrderId == id)
+                        .Select(x => new
+                        {
+                            ProductName = x.Product.Name,
+                            x.SalePrice,
+                            x.Quantity,
+                            x.SubTotal,
+                        }).ToListAsync();
+                return Json(new { data = data });
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public async Task<JsonResult> GetReturnOrderInvoiceDetails(int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var order = _appDbContext.ReturnOrders.Where(x => x.CompanyId == user.CompanyId && x.Id == id)
+                                               .Select(x => new
+                                               {
+                                                   x.InvNumber,
+                                                   OrderId = x.Id,
+                                                   Date = x.CreatedAt.ToString("yyyy-MMM-dd"),
+                                                   details = x.ReturnOrderDetails.Select(od => new
+                                                   {
+                                                       ProductName = od.Product.Name,                                                       
+                                                       od.SalePrice,
+                                                       od.Quantity,
+                                                       Subtotal = od.SubTotal
+                                                   }).ToList()
+                                               }).ToList().Select(x => new
+                                               {
+                                                   qrCode = GenerateQC(x.InvNumber.ToString()),
+                                                   x.InvNumber,
+                                                   OrderId = x.OrderId,
+                                                   Date = x.Date,
+                                                   x.details
+                                               }).FirstOrDefault();
+
+                return Json(order);
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
         #endregion
