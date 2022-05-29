@@ -13,6 +13,16 @@ function initEvents() {
             }
         }
     });
+
+    $("#selectAll").change(function () {
+        if ($(this).is(':checked')) {
+            $('.returnCheckBox').prop('checked', true);
+        } else {
+            $('.returnCheckBox').prop('checked', false);
+        }
+
+        grandTotal();
+    });    
 }
 
 function submitForm() {
@@ -23,13 +33,14 @@ function submitForm() {
 
     const returnOrder = { customerId: customerId, saleOrderId: $('#invoiceSearch').val(), paymentTypeId: $('input[name="paymentType"]:checked').val(), total: $('.grandTotal').last().text() };
 
-    $('#itemsList tr').each(function () {
+    $('.returnCheckBox:checked').each(function () {
+        const tr = $(this).closest('tr');
 
-        const productId = $(this).find('td:eq(0)').text();
-        const productName = $(this).find('td:eq(1)').text();
-        const qty = $(this).find('.qty').val();
-        const price = $(this).find('.price').val();
-        const subtotal = $(this).find('td:eq(4)').text();
+        const productId = $(tr).find('td:eq(0)').text();
+        const productName = $(tr).find('td:eq(1)').text();
+        const qty = $(tr).find('.qty').val();
+        const price = $(tr).find('.price').val();
+        const subtotal = $(tr).find('td:eq(4)').text();
 
         details.push({ productId: productId, productName: productName, salePrice: price, quantity: qty, subtotal: subtotal });
     });
@@ -104,16 +115,17 @@ function claculatQty(ele) {
 
 function grandTotal() {
     let total = 0;
-    $('#itemsList tr').each(function () {
-        const subtotal = parseFloat($(this).find('td:eq(4)').text());
+    $('.returnCheckBox:checked').each(function () {
+        const tr = $(this).closest('tr');
+        const subtotal = parseFloat($(tr).find('td:eq(4)').text());  
         total += subtotal;
     });
     $('.grandTotal').text(total);
 }
 
-function removeItem(ele) {
-    const element = $(ele);
-    element.closest('tr').remove();
+function selectItem(ele) {
+ //   const element = $(ele);
+
     grandTotal();
 }
 
@@ -206,7 +218,7 @@ function getInvoice(invoiceNumber) {
         $('#customerName').val(response.customerName);
         $('#customerId').val(response.customerId);
         let _html = "";
-        
+
         $('#itemsList').html(_html);
         $.each(response.orderDetails, function (i, val) {
             _html += `<tr class="border-bottom border-bottom-dashed"><td style="display:none">${val.productId}</td>
@@ -215,17 +227,7 @@ function getInvoice(invoiceNumber) {
                                          <td class="ps-0"><input type="text" onkeyup="claculatQty(this)" value="${val.quantity}" class="form-control form-control-solid qty"/></td>
                                          <td class="pt-8 text-end text-nowrap">${val.subTotal}</td>
                                          <td class="pt-5 text-end">
-                                                 <button type="button" class="btn btn-sm btn-icon btn-active-color-primary" onclick="removeItem(this)">
-                                                     <!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
-                                                     <span class="svg-icon svg-icon-3">
-                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                             <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
-                                                             <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
-                                                             <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
-                                                         </svg>
-                                                     </span>
-                                                     <!--end::Svg Icon-->
-                                                 </button>
+                                                 <span><input type="checkbox" class="returnCheckBox" onchange="selectItem(this)" /></span>
                                          </td></tr>`;
         });
         $('#itemsList').append(_html);
