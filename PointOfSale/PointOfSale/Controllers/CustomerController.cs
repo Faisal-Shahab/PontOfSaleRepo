@@ -15,11 +15,12 @@ namespace PointOfSale.Controllers
     public class CustomerController : Controller
     {
         IRepository<CustomerModel> _customerRepo;
+        IRepository<CustomerTransaction> _customerTrans;
         private int languageId;
         IDropdownsServices _dropdownsServices;
         UserManager<User> _userManager;
         System.Globalization.CultureInfo info;
-        public CustomerController(IRepository<CustomerModel> customerRepo, IDropdownsServices dropdownsServices, UserManager<User> userManager)
+        public CustomerController(IRepository<CustomerModel> customerRepo, IRepository<CustomerTransaction> customerTrans, IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
             _customerRepo = customerRepo;
             info = System.Globalization.CultureInfo.CurrentCulture;
@@ -27,6 +28,7 @@ namespace PointOfSale.Controllers
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;
             _userManager = userManager;
+            _customerTrans = customerTrans;
         }
 
         public IActionResult Index() => View();
@@ -55,7 +57,7 @@ namespace PointOfSale.Controllers
                 x.Name,
                 x.Email,
                 x.ContactNo,
-                x.Address                
+                x.Address
             });
             return Json(new
             {
@@ -90,6 +92,11 @@ namespace PointOfSale.Controllers
                     model.CreateBy = user.UserName;
                     model.CompanyId = (int)user.CompanyId;
                     result = await _customerRepo.Insert(model);
+                    if (model.Balance > 0)
+                    {
+                        CustomerTransaction transaction = new CustomerTransaction { Balance = model.Balance };
+                        result = await _customerTrans.Insert(transaction);
+                    }
                 }
                 return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
             }
@@ -98,8 +105,8 @@ namespace PointOfSale.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var user = await _userManager.GetUserAsync(User);            
-            
+            var user = await _userManager.GetUserAsync(User);
+
             var customer = await _customerRepo.GetById(id);
             if (customer.CompanyId == user.CompanyId)
                 return View("Create", customer);
@@ -114,9 +121,46 @@ namespace PointOfSale.Controllers
             var customer = await _customerRepo.GetById(id);
             if (customer.CompanyId == user.CompanyId)
             {
-                 result = await _customerRepo.Delete(customer);              
+                result = await _customerRepo.Delete(customer);
             }
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
+        }
+
+        public async Task<IActionResult> CustomerPayment()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var query = await _customerRepo.GetAll();
+            ViewBag.Customers = query.Where(x => x.CompanyId == user.CompanyId).ToList();
+            return View();
+        }
+
+        public async Task<JsonResult> getCustTransactionById(int id)
+        {
+            var cust = await _customerRepo.GetById(id);
+            return Json(cust.Balance);
+        }
+
+        public async Task<JsonResult> CreateTransaction(CustomerTransaction model)
+        {
+            try
+            {
+                model.SaleOrderId = null;
+                var user = await _userManager.GetUserAsync(User);
+                model.CompanyId = (int)user.CompanyId;
+                model.CreateBy = user.UserName;
+                var result = await _customerTrans.Insert(model);
+                var cust = await _customerRepo.GetById(model.CustomerId);
+                cust.Balance = model.Balance;
+                cust.UpdatedBy = user.UserName;
+                cust.UpdatedAt = DateTime.Now;
+                result = await _customerRepo.Update(cust);
+                return Json(new { status = result });
+            }
+            catch (Exception e)
+            {
+                return Json(new { status = false });
+            }
+
         }
     }
 }

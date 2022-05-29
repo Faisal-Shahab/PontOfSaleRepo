@@ -63,6 +63,20 @@ function initEvents() {
             }
         }
     });
+
+    $("#amountPaid").keyup(function () {
+        const paidEle = $(this);
+        const total = parseFloat($('.grandTotal').text());
+        const amountPaid = parseFloat(paidEle.val());
+
+        if (amountPaid > total) {
+            paidEle.val(total);
+            $('#remainingAmount').text(0.00)
+            return false;
+        }
+        $('#remainingAmount').text((total - amountPaid).toFixed(2))
+
+    });
 }
 
 function submitForm() {
@@ -70,8 +84,10 @@ function submitForm() {
     const customerId = ($("#customerId").data("uiAutocomplete").selectedItem ?.id || null);
 
     details = [];
-
-    const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), discount: $('.totalDisc').text(), total: $('.grandTotal').last().text() };
+    const grandTotal = $('.grandTotal').last().text();
+    const amountPaid = $('#amountPaid').val();
+    const remainingAmount = $('#remainingAmount').text();
+    const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), discount: $('.totalDisc').text(), total: grandTotal, amountPaid: amountPaid, remainingAmount: remainingAmount };
 
     $('#itemsList tbody tr').each(function () {
 
@@ -86,7 +102,7 @@ function submitForm() {
     });
 
     if (details.length > 0) {
-        $.post('/Order/CreateSaleOrder', { saleOrder: saleOrder, details: details }, function (response) {
+        $.post('/Order/CreateSaleOrder', { model: saleOrder, details: details }, function (response) {
             if (response.status) {
                 Swal.fire({
                     text: response.message,
@@ -216,6 +232,11 @@ function grandTotal() {
     });
     $('.totalDisc').text(totalDisc);
     $('.grandTotal').text(total);
+    $('.grandTotal').text(total);
+
+    const amountPaid = parseFloat($('#amountPaid').val());
+
+    $('#remainingAmount').text((total - amountPaid).toFixed(2))
 }
 
 function isProductExist(productId) {

@@ -63,6 +63,20 @@ function initEvents() {
             }
         }
     });
+
+    $("#amountPaid").keyup(function () {
+        const paidEle = $(this);
+        const total = parseFloat($('.grandTotal').text());
+        const amountPaid = parseFloat(paidEle.val());
+
+        if (amountPaid > total) {
+            paidEle.val(total);
+            $('#remainingAmount').text(0.00)
+            return false;
+        }
+        $('#remainingAmount').text((total - amountPaid).toFixed(2))
+
+    });
 }
 
 function submitForm() {
@@ -70,8 +84,11 @@ function submitForm() {
     const supplierId = ($("#supplierId").data("uiAutocomplete").selectedItem ?.id || 0);
 
     details = [];
+    const total = $('.grandTotal').last().text();
+    const amountPaid = $('#amountPaid').val();
+    const remainingAmount = $('#remainingAmount').text();
 
-    const purchaseOrder = { supplierId: supplierId, paymentTypeId: $('input[name="paymentType"]:checked').val(), total: $('.grandTotal').last().text() };
+    const purchaseOrder = { supplierId: supplierId, paymentTypeId: $('input[name="paymentType"]:checked').val(), total: total, amountPaid: amountPaid, remainingAmount: remainingAmount };
 
     $('#itemsList tbody tr').each(function () {
 
@@ -79,13 +96,13 @@ function submitForm() {
         const productName = $(this).find('td:eq(1)').text();
         const disountedPrice = $(this).find('.discPrice').val();
         const qty = $(this).find('.qty').val();
-        const subtotal = $(this).find('td:eq(6)').text();
+        const subtotal = $(this).find('td:eq(6)').text();       
 
         details.push({ productId: productId, productName: productName, salePrice: disountedPrice, quantity: qty, subtotal: subtotal });
     });
 
     if (details.length > 0) {
-        $.post('/Order/CreatePurchaseOrder', { purchaseOrder: purchaseOrder, details: details }, function (response) {
+        $.post('/Order/CreatePurchaseOrder', { model: purchaseOrder, details: details }, function (response) {
             if (response.status) {
                 Swal.fire({
                     text: response.message,
@@ -210,6 +227,10 @@ function grandTotal() {
         total += subtotal;
     });
     $('.grandTotal').text(total);
+
+    const amountPaid = parseFloat($('#amountPaid').val());
+
+    $('#remainingAmount').text((total - amountPaid).toFixed(2))
 }
 
 function isProductExist(productId) {

@@ -7,8 +7,10 @@ using PointOfSale.Utility;
 using POS.DataAccessLayer;
 using POS.DataAccessLayer.IServices;
 using POS.DataAccessLayer.Models;
+using POS.DataAccessLayer.Models.Customer;
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
+using POS.DataAccessLayer.Models.Supplier;
 using POS.DataAccessLayer.ViewModels;
 using QRCoder;
 using Rotativa.AspNetCore;
@@ -220,12 +222,13 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public async Task<IActionResult> CreateSaleOrder(SaleOrder saleOrder, List<SaleOrderDetails> details)
+        public async Task<IActionResult> CreateSaleOrder(SalePurchaseOrderViewModel model, List<SaleOrderDetails> details)
         {
             using (var trans = _appDbContext.Database.BeginTransaction())
             {
                 try
                 {
+                    var saleOrder = PosAutoMaper.Map<SaleOrder, SalePurchaseOrderViewModel>(new SaleOrder(), model);
                     var user = await _userManager.GetUserAsync(User);
                     int invNumber = _appDbContext.SaleOrder.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
                     saleOrder.CompanyId = (int)user.CompanyId;
@@ -235,6 +238,24 @@ namespace PointOfSale.Controllers
                     _appDbContext.SaleOrder.Add(saleOrder);
                     _appDbContext.SaveChanges();
 
+                    if (model.CustomerId > 0)
+                    {
+                        var cust = _appDbContext.Customers.AsNoTracking().FirstOrDefault(x => x.CompanyId == user.CompanyId && x.CustomerId == model.CustomerId);
+
+                        CustomerTransaction custTransaction = new CustomerTransaction
+                        {
+                            SaleOrderId = saleOrder.Id,
+                            CustomerId = (int)model.CustomerId,
+                            CompanyId = (int)user.CompanyId,
+                            Credit = model.RemainingAmount,
+                            Debit = model.AmountPaid,
+                            Balance = (cust?.Balance ?? 0 + model.RemainingAmount),
+                            CreateBy = user.UserName
+                        };
+                        cust.Balance = custTransaction.Balance;
+                        _appDbContext.CustomerTransactions.Add(custTransaction);
+                        _appDbContext.Customers.Update(cust);
+                    }
                     var productIds = details.Select(x => x.ProductId).ToArray();
 
                     var products = _appDbContext.Products.Where(x => productIds.Contains(x.ProductId)).ToList();
@@ -247,7 +268,6 @@ namespace PointOfSale.Controllers
                         order.CreatedBy = user.UserName;
                         order.CostPrice = product.CostPrice;
                         _appDbContext.SaleOrderDetails.Add(order);
-
 
                         if (product != null)
                         {
@@ -304,12 +324,13 @@ namespace PointOfSale.Controllers
             }
         }
 
-        public async Task<IActionResult> CreatePurchaseOrder(PurchaseOrder purchaseOrder, List<PurchaseOrderDetails> details)
+        public async Task<IActionResult> CreatePurchaseOrder(SalePurchaseOrderViewModel model, List<PurchaseOrderDetails> details)
         {
             using (var trans = _appDbContext.Database.BeginTransaction())
             {
                 try
                 {
+                    var purchaseOrder = PosAutoMaper.Map<PurchaseOrder, SalePurchaseOrderViewModel>(new PurchaseOrder(), model);
                     var user = await _userManager.GetUserAsync(User);
                     int invNumber = _appDbContext.PurchaseOrders.Max(x => (int?)x.InvNumber) ?? 0; invNumber += 1;
                     purchaseOrder.CompanyId = (int)user.CompanyId;
@@ -319,6 +340,25 @@ namespace PointOfSale.Controllers
                     _appDbContext.PurchaseOrders.Add(purchaseOrder);
                     _appDbContext.SaveChanges();
 
+                    if (model.SupplierId > 0)
+                    {
+                        var sup = _appDbContext.Suppliers.AsNoTracking().FirstOrDefault(x => x.CompanyId == user.CompanyId && x.SupplierId == model.SupplierId);
+
+                        SupplierTransaction supTransaction = new SupplierTransaction
+                        {
+                            PurchaseOrderId = purchaseOrder.Id,
+                            SupplierId = model.SupplierId,
+                            CompanyId = (int)user.CompanyId,
+                            Credit = model.AmountPaid,
+                            Debit = model.RemainingAmount,
+                            Balance = (sup?.Balance ?? 0 + model.RemainingAmount),
+                            CreateBy = user.UserName
+                        };
+
+                        _appDbContext.SupplierTransactions.Add(supTransaction);
+                        sup.Balance = supTransaction.Balance;
+                        _appDbContext.Suppliers.Update(sup);
+                    }
                     var productIds = details.Select(x => x.ProductId).ToArray();
 
                     var products = _appDbContext.Products.Where(x => productIds.Contains(x.ProductId)).ToList();
@@ -351,7 +391,7 @@ namespace PointOfSale.Controllers
                     trans.Commit();
                     return Json(new { status = true, message = "Order has been placed successfully", purchaseDetails = purchaseDetails });
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     trans.Rollback();
                     return Json(new { status = false, message = "Operation failed" });
@@ -704,7 +744,7 @@ namespace PointOfSale.Controllers
                                                    Date = x.CreatedAt.ToString("yyyy-MMM-dd"),
                                                    details = x.ReturnOrderDetails.Select(od => new
                                                    {
-                                                       ProductName = od.Product.Name,                                                       
+                                                       ProductName = od.Product.Name,
                                                        od.SalePrice,
                                                        od.Quantity,
                                                        Subtotal = od.SubTotal

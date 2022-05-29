@@ -16,29 +16,32 @@ using POS.DataAccessLayer.Models.Company;
 using POS.DataAccessLayer.Models.Customer;
 using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
+using POS.DataAccessLayer.Models.Supplier;
 using POS.DataAccessLayer.ViewModels;
 
 namespace PointOfSale.Controllers
 {
 
     [Authorize(Roles = "Admin")]
-   // [AuthorizedAction]
+    // [AuthorizedAction]
     public class SupplierController : Controller
     {
-        IRepository<SupplierModel> _supplierRepo;       
+        IRepository<SupplierModel> _supplierRepo;
+        IRepository<SupplierTransaction> _supplierTrans;
         private int languageId;
         System.Globalization.CultureInfo info;
         IDropdownsServices _dropdownsServices;
         UserManager<User> _userManager;
-        public SupplierController(IRepository<SupplierModel> supplierRepo,
-                                IDropdownsServices dropdownsServices, UserManager<User> userManager)
+        public SupplierController(IRepository<SupplierModel> supplierRepo, IRepository<SupplierTransaction> supplierTrans,
+        IDropdownsServices dropdownsServices, UserManager<User> userManager)
         {
-            _supplierRepo = supplierRepo;  
-            info = System.Globalization.CultureInfo.CurrentCulture; 
+            _supplierRepo = supplierRepo;
+            info = System.Globalization.CultureInfo.CurrentCulture;
             languageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = languageId;
             _userManager = userManager;
+            _supplierTrans = supplierTrans;
         }
 
         public IActionResult Index() => View();
@@ -103,6 +106,11 @@ namespace PointOfSale.Controllers
                         model.CreateBy = user.UserName;
                         model.CompanyId = (int)user.CompanyId;
                         result = await _supplierRepo.Insert(model);
+                        if (model.Balance > 0)
+                        {
+                            SupplierTransaction transaction = new SupplierTransaction { Balance = model.Balance };
+                            result = await _supplierTrans.Insert(transaction);
+                        }
                     }
                     return Json(new { status = result, message = result ? "Record has been submitted successfully" : "Error occured please try again" });
                 }
@@ -110,7 +118,6 @@ namespace PointOfSale.Controllers
             }
             catch (Exception e)
             {
-
                 throw;
             }
 
@@ -133,6 +140,43 @@ namespace PointOfSale.Controllers
             var supplier = suppliers.FirstOrDefault(x => x.SupplierId == id && x.CompanyId == user.CompanyId);
             var result = await _supplierRepo.Delete(supplier);
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
+        }
+
+        public async Task<IActionResult> SupplierPayment()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var query = await _supplierRepo.GetAll();
+            ViewBag.Suppliers = query.Where(x => x.CompanyId == user.CompanyId).ToList();
+            return View();
+        }
+
+        public async Task<JsonResult> getSupTransactionById(int id)
+        {
+            var sup = await _supplierRepo.GetById(id);
+            return Json(sup.Balance);
+        }
+
+        public async Task<JsonResult> CreateTransaction(SupplierTransaction model)
+        {
+            try
+            {
+                model.PurchaseOrderId = null;
+                var user = await _userManager.GetUserAsync(User);
+                model.CompanyId = (int)user.CompanyId;
+                model.CreateBy = user.UserName;
+                var result = await _supplierTrans.Insert(model);
+                var sup = await _supplierRepo.GetById(model.SupplierId);
+                sup.Balance = model.Balance;
+                sup.UpdatedBy = user.UserName;
+                sup.UpdatedAt = DateTime.Now;
+                result = await _supplierRepo.Update(sup);
+                return Json(new { status = result });
+            }
+            catch (Exception e)
+            {
+                return Json(new { status = false });
+            }
+
         }
     }
 }

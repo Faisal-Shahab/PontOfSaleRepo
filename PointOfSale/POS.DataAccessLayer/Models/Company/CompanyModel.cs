@@ -2,6 +2,7 @@
 using POS.DataAccessLayer.Models.Order;
 using POS.DataAccessLayer.Models.Security;
 using POS.DataAccessLayer.Models.Subscriptions;
+using POS.DataAccessLayer.Models.Supplier;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -40,6 +41,8 @@ namespace POS.DataAccessLayer.Models.Company
         public DateTime CreateAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public virtual ICollection<CustomerModel> Customers { get; set; }
+        public virtual ICollection<CustomerTransaction> CustomerTransactions { get; set; }
+        public virtual ICollection<SupplierTransaction> SupplierTransactions { get; set; }
         public virtual ICollection<SupplierModel> Suppliers { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Product> Products { get; set; }
