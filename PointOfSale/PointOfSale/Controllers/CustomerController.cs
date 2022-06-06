@@ -40,10 +40,10 @@ namespace PointOfSale.Controllers
             customers = customers.Where(x => x.CompanyId == user.CompanyId);
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
-                var isNumber = double.TryParse(filter.SearchTerm, out double numericValue);
+                var isNumber = Int32.TryParse(filter.SearchTerm, out Int32 numericValue);
                 if (isNumber)
                 {
-                    customers = customers.Where(x => x.CustomerId == Convert.ToInt32(filter.SearchTerm));
+                    customers = customers.Where(x => x.CustomerId == Convert.ToInt32(filter.SearchTerm) || x.ContactNo == filter.SearchTerm);
                 }
                 else
                 {
@@ -57,6 +57,7 @@ namespace PointOfSale.Controllers
                 x.Name,
                 x.Email,
                 x.ContactNo,
+                x.Balance,
                 x.Address
             });
             return Json(new
@@ -126,18 +127,33 @@ namespace PointOfSale.Controllers
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
         }
 
-        public async Task<IActionResult> CustomerPayment()
+        public async Task<IActionResult> CustomerPayment(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var query = await _customerRepo.GetAll();
-            ViewBag.Customers = query.Where(x => x.CompanyId == user.CompanyId).ToList();
-            return View();
+            var customer = await _customerRepo.GetById(id);
+            var balance = customer?.Balance ?? 0.00m;
+            return View(new CustomerTransaction { CustomerId = id, Balance = balance, Credit = balance });
         }
 
-        public async Task<JsonResult> getCustTransactionById(int id)
+        public async Task<JsonResult> GetCustTransactionBalance(int id)
         {
             var cust = await _customerRepo.GetById(id);
             return Json(cust.Balance);
+        }
+
+        public async Task<JsonResult> GetCustTransactions(int id)
+        {
+            var cust = await _customerTrans.GetAll();
+            return Json(new
+            {
+                data = cust.Where(x => x.CustomerId == id).OrderByDescending(x => x.Id)
+                            .Select(x => new
+                            {
+                                x.Debit,
+                                x.Credit,
+                                x.Balance,
+                                createdAt = x.CreateAt.ToString("yyyy-MMM-dd")
+                            }).ToList()
+            });
         }
 
         public async Task<JsonResult> CreateTransaction(CustomerTransaction model)

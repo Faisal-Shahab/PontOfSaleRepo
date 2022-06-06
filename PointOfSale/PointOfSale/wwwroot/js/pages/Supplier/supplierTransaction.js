@@ -9,7 +9,6 @@ var KTAppEcommerceSaveCustomer = function () {
 
                     o = document.getElementById("kt_ecommerce_add_customer_submit");
 
-
                 e = FormValidation.formValidation(t, {
                     fields: {
                         Debit: {
@@ -44,13 +43,12 @@ var KTAppEcommerceSaveCustomer = function () {
                                 o.disabled = !0,
                                 setTimeout((function () {
 
-                                    let balance = $('#Balance').val();
                                     const debit = parseFloat($('#Debit').val());
-                                    const credit = $('#Credit').val();
+                                    const credit = parseFloat($('#Credit').val());
                                     const supplierId = $('#SupplierId').val();
-                                    balance = debit > 0 ? balance = debit : 0.00;
+                                    let balance = debit > 0 ? debit : 0.00;
 
-                                    $.post("/supplier/createtransaction", { supplierId: supplierId, balance: balance, debit: debit, credit: credit }, function (res) {
+                                    $.post("/supplier/createtransaction", { supplierId: supplierId, balance: balance, debit: 0.00, credit: credit }, function (res) {
 
                                         if (res.status) {
                                             Swal.fire({
@@ -67,6 +65,7 @@ var KTAppEcommerceSaveCustomer = function () {
                                                 $("#SupplierId").val('').trigger('change');
 
                                                 o.removeAttribute("data-kt-indicator");
+                                                window.location.href = '/Supplier/Index';
                                             }))
                                         } else {
                                             Swal.fire({
@@ -87,14 +86,14 @@ var KTAppEcommerceSaveCustomer = function () {
                     }))
             })()
 
-            $('#SupplierId').change(function () {
-                const custId = $(this).val();
-                $.post('/supplier/getSupTransactionById', { id: custId }, function (response) {
-                    $('input[type=text]').val(0.00);
-                    $('#Balance').val(response);
-                    $('#Debit').val(response);
-                });
-            });
+            //$('#SupplierId').change(function () {
+            //    const custId = $(this).val();
+            //    $.post('/supplier/getSupTransactionBalace', { id: custId }, function (response) {
+            //        $('input[type=text]').val(0.00);
+            //        $('#Balance').val(response);
+            //        $('#Debit').val(response);
+            //    });
+            //});
 
             $('#Credit').keyup(function () {
                 const balance = parseFloat($('#Balance').val());

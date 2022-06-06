@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,13 +30,13 @@ namespace PointOfSale.Controllers
     {
         private readonly IDropdownsServices _dropdownsServices;
         private int LanguageId;
-        System.Globalization.CultureInfo info;
+        CultureInfo info;
         AppDbContext _appDbContext;
         UserManager<User> _userManager;
         public OrderController(IDropdownsServices dropdownsServices, AppDbContext appDbContext,
              UserManager<User> userManager)
         {
-            info = System.Globalization.CultureInfo.CurrentCulture;
+            info = CultureInfo.CurrentCulture;
             LanguageId = info.TwoLetterISOLanguageName == "ar" ? 2 : 1;
             _dropdownsServices = dropdownsServices;
             _dropdownsServices.LanguageId = LanguageId;
@@ -53,10 +54,12 @@ namespace PointOfSale.Controllers
 
         public async Task<JsonResult> GetSaleOrders(SearchFilter filter)
         {
-            var fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
-            var toDate = Convert.ToDateTime($"{filter.ToDate} 23:59:59");
+
             try
             {
+                DateTime fromDate = Convert.ToDateTime($"{filter.FromDate} 00:00:00");
+                DateTime toDate = Convert.ToDateTime($"{ filter.ToDate} 23:59:59");
+
                 var user = await _userManager.GetUserAsync(User);
 
                 long.TryParse(filter.SearchTerm, out long orderId);
@@ -238,7 +241,7 @@ namespace PointOfSale.Controllers
                     _appDbContext.SaleOrder.Add(saleOrder);
                     _appDbContext.SaveChanges();
 
-                    if (model.CustomerId > 0)
+                    if (model.CustomerId > 0 && model.RemainingAmount > 0)
                     {
                         var cust = _appDbContext.Customers.AsNoTracking().FirstOrDefault(x => x.CompanyId == user.CompanyId && x.CustomerId == model.CustomerId);
 
@@ -248,8 +251,8 @@ namespace PointOfSale.Controllers
                             CustomerId = (int)model.CustomerId,
                             CompanyId = (int)user.CompanyId,
                             Credit = model.RemainingAmount,
-                            Debit = model.AmountPaid,
-                            Balance = (cust?.Balance ?? 0 + model.RemainingAmount),
+                            Debit = 0,
+                            Balance = ((cust?.Balance ?? 0) + model.RemainingAmount),
                             CreateBy = user.UserName
                         };
                         cust.Balance = custTransaction.Balance;
@@ -340,7 +343,7 @@ namespace PointOfSale.Controllers
                     _appDbContext.PurchaseOrders.Add(purchaseOrder);
                     _appDbContext.SaveChanges();
 
-                    if (model.SupplierId > 0)
+                    if (model.SupplierId > 0 && model.RemainingAmount > 0)
                     {
                         var sup = _appDbContext.Suppliers.AsNoTracking().FirstOrDefault(x => x.CompanyId == user.CompanyId && x.SupplierId == model.SupplierId);
 
@@ -349,9 +352,9 @@ namespace PointOfSale.Controllers
                             PurchaseOrderId = purchaseOrder.Id,
                             SupplierId = model.SupplierId,
                             CompanyId = (int)user.CompanyId,
-                            Credit = model.AmountPaid,
+                            Credit = 0,
                             Debit = model.RemainingAmount,
-                            Balance = (sup?.Balance ?? 0 + model.RemainingAmount),
+                            Balance = ((sup?.Balance ?? 0) + model.RemainingAmount),
                             CreateBy = user.UserName
                         };
 

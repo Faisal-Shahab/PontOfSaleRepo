@@ -85,7 +85,7 @@ function submitForm() {
 
     details = [];
     const grandTotal = $('.grandTotal').last().text();
-    const amountPaid = $('#amountPaid').val();
+    const amountPaid = $('#amountPaid').val()|| 0;
     const remainingAmount = $('#remainingAmount').text();
     const saleOrder = { customerId: customerId, paymentTypeId: $('input[name="paymentType"]:checked').val(), discount: $('.totalDisc').text(), total: grandTotal, amountPaid: amountPaid, remainingAmount: remainingAmount };
 

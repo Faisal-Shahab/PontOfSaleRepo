@@ -44,13 +44,12 @@ var KTAppEcommerceSaveCustomer = function () {
                                 o.disabled = !0,
                                 setTimeout((function () {
 
-                                    let balance = $('#Balance').val();
                                     const debit = parseFloat($('#Debit').val());
-                                    const credit = $('#Credit').val();
+                                    const credit = parseFloat($('#Credit').val());
                                     const customerId = $('#CustomerId').val();
-                                    balance = credit > 0 ? balance = credit : 0.00;
+                                    let balance = credit > 0 ? credit : 0.00;
 
-                                    $.post("/customer/createtransaction", { customerId: customerId, balance: balance, debit: debit, credit: credit }, function (res) {
+                                    $.post("/customer/createtransaction", { customerId: customerId, balance: balance, debit: debit, credit: 0.00 }, function (res) {
 
                                         if (res.status) {
                                             Swal.fire({
@@ -65,8 +64,8 @@ var KTAppEcommerceSaveCustomer = function () {
                                                 e.isConfirmed && (o.disabled = !1)
                                                 $('input[type=text]').val(0.00);
                                                 $("#CustomerId").val('').trigger('change');
-
                                                 o.removeAttribute("data-kt-indicator");
+                                                window.location.href = '/Customer/Index';
                                             }))
                                         } else {
                                             Swal.fire({
@@ -87,14 +86,14 @@ var KTAppEcommerceSaveCustomer = function () {
                     }))
             })()
 
-            $('#CustomerId').change(function () {
-                const custId = $(this).val();
-                $.post('/customer/getCustTransactionById', { id: custId }, function (response) {
-                    $('input[type=text]').val(0.00);
-                    $('#Balance').val(response);
-                    $('#Credit').val(response);
-                });
-            });
+            //$('#CustomerId').change(function () {
+            //    const custId = $(this).val();
+            //    $.post('/customer/getCustTransactionBalance', { id: custId }, function (response) {
+            //        $('input[type=text]').val(0.00);
+            //        $('#Balance').val(response);
+            //        $('#Credit').val(response);
+            //    });
+            //});
 
             $('#Debit').keyup(function () {
                 const balance = parseFloat($('#Balance').val());

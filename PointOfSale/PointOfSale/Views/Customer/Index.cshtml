@@ -5,6 +5,18 @@
     ViewData["Title"] = _localizer["Customers"];
 }
 
+<style>
+    button.details-control {
+        background: url('../images/details_open.png') no-repeat center center;
+        cursor: pointer;
+        border: 0px;
+    }
+
+    tr.shown button.details-control {
+        background: url('../images/details_close.png') no-repeat center center;
+    }
+</style>
+
 <!--begin::customer-->
 <div class="card card-flush">
     <!--begin::Card header-->
@@ -44,11 +56,12 @@
                 <!--begin::Table row-->
                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                     <th class="min-w-75px">@_localizer["Id"]</th>
-                    <th class="min-w-250px">@_localizer["Customer"] @_localizer["Name"]</th>
+                    <th class="min-w-150px">@_localizer["Customer"] @_localizer["Name"]</th>
                     <th class="min-w-150px">@_localizer["Email"]</th>
                     <th class="min-w-150px">@_localizer["Contact"] #</th>
-                    <th class="min-w-250px">@_localizer["Address"]</th>
-                    <th class="text-end min-w-70px">@_localizer["Actions"]</th>
+                    <th class="min-w-70px">@_localizer["Balance"]</th>
+                    <th class="min-w-200px">@_localizer["Address"]</th>
+                    <th class="min-w-200px">@_localizer["Actions"]</th>
                 </tr>
                 <!--end::Table row-->
             </thead>

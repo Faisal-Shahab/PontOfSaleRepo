@@ -76,6 +76,8 @@ namespace PointOfSale
                 option.DefaultRequestCulture = new RequestCulture("en-US");
                 option.SupportedCultures = supportedCultures;
                 option.SupportedUICultures = supportedCultures;
+                DateTimeFormatInfo engDateFormat = new CultureInfo("en-US").DateTimeFormat;
+                option.SupportedCultures.Last().DateTimeFormat = engDateFormat;
             });
 
 

@@ -23,14 +23,7 @@
             <div class="card-body pt-0">
                 <!--begin::Input group-->
                 <div class="mb-10 fv-row">
-                    <!--begin::Label-->
-                    <label class="required form-label">@_localizer["Customer"]</label>
-                    <select class="form-select mb-2"
-                            data-control="select2" asp-for="CustomerId" asp-items="@(new SelectList(ViewBag.Customers,"CustomerId","Name"))">
-                        <option value="">@_localizer["Select"]</option>
-                    </select>
-                </div>
-                <div class="mb-10 fv-row">
+                    <input type="hidden" asp-for="CustomerId" />
                     <label class="form-label">@_localizer["Balance"]</label>
                     <input type="text" asp-for="Balance" disabled class="form-control mb-2" />
                 </div>

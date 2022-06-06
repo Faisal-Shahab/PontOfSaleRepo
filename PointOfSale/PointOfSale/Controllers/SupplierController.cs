@@ -70,6 +70,7 @@ namespace PointOfSale.Controllers
                 x.Name,
                 x.ContactNo,
                 x.Email,
+                x.Balance,
                 x.Address
             }).OrderByDescending(x => x.SupplierId).Skip(filter.Start).Take(filter.PageLength);
             return Json(new
@@ -142,18 +143,33 @@ namespace PointOfSale.Controllers
             return Json(new { status = result, message = result ? "Record has been deleted successfully" : "Error occured please try again" });
         }
 
-        public async Task<IActionResult> SupplierPayment()
+        public async Task<IActionResult> SupplierPayment(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var query = await _supplierRepo.GetAll();
-            ViewBag.Suppliers = query.Where(x => x.CompanyId == user.CompanyId).ToList();
-            return View();
+            var supplier = await _supplierRepo.GetById(id);
+            var balance = supplier?.Balance ?? 0.00m;
+            return View(new SupplierTransaction { SupplierId = id, Balance = balance, Debit = balance });
         }
 
-        public async Task<JsonResult> getSupTransactionById(int id)
+        //public async Task<JsonResult> GetSupTransactionBalace(int id)
+        //{
+        //    var sup = await _supplierRepo.GetById(id);
+        //    return Json(sup.Balance);
+        //}
+
+        public async Task<JsonResult> GetSupTransactions(int id)
         {
-            var sup = await _supplierRepo.GetById(id);
-            return Json(sup.Balance);
+            var sup = await _supplierTrans.GetAll();
+            return Json(new
+            {
+                data = sup.Where(x => x.SupplierId == id).OrderByDescending(x => x.Id)
+                                    .Select(x => new
+                                    {
+                                        x.Debit,
+                                        x.Credit,
+                                        x.Balance,
+                                        CreatedAt = x.CreateAt.ToString("yyyy-MMM-dd")
+                                    }).ToList()
+            });
         }
 
         public async Task<JsonResult> CreateTransaction(SupplierTransaction model)
